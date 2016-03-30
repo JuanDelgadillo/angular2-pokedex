@@ -3,7 +3,7 @@ module.exports = function (grunt) {
     watch: {
       project: {
         files: [
-          'public/*.ts',
+          'public/app/**/*.ts',
         ],
         tasks: ['shell']
       }
