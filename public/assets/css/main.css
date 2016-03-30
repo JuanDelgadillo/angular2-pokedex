@@ -19,6 +19,10 @@ body {
   margin-bottom: 10px;
 }
 
+.form-group {
+  padding: 10px;
+}
+
 .type {
   margin-left: 1px;
 }
@@ -113,5 +117,20 @@ body {
   border: solid 1px #9b6470;
 }
 
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+color: #787887 !important;
+}
+ 
+input:-moz-placeholder, textarea:-moz-placeholder { /* Firefox 18- */
+color: #787887 !important;  
+}
+ 
+input:-ms-input-placeholder, textarea:-ms-input-placeholder {  
+color: #787887 !important;  
+}
+
+input::placeholder, textarea::placeholder { 
+color: #787887 !important;  
+}
 
 
