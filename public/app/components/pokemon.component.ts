@@ -1,7 +1,9 @@
 import {Component} from 'angular2/core'
+import { ImageifyPipe } from '../pipes/imageify.pipe'
 
 @Component({
   selector: 'pokemon',
+  pipes: [ImageifyPipe],
   template: `
     <div class="container">
       <!-- pokemon -->
@@ -14,7 +16,7 @@ import {Component} from 'angular2/core'
         </div>
         <div class="row">
           <div class="col-md-6">
-            <img class="avatar center-block" src="public/assets/img/pokemons/{{pokemon.name | lowercase}}.jpg">
+            <img class="avatar center-block" src="{{pokemon.name | imageify}}">
           </div>
           <div class="col-md-6">
             <ul class="nav nav-tabs nav-justified">
@@ -90,7 +92,7 @@ import {Component} from 'angular2/core'
               <div *ngIf="tab === 3">
                 <div class="text-center" *ngFor="#evolution of pokemon.evolution, #last = last">
                   <a href="#">
-                    <img src="public/assets/img/pokemons/{{evolution | lowercase}}.jpg" width="160">
+                    <img src="{{evolution | imageify}}" width="160">
                     <p>
                       <strong>{{evolution}}</strong>
                     </p>

@@ -3,7 +3,9 @@ module.exports = function (grunt) {
     watch: {
       project: {
         files: [
+          'public/app/*.ts',
           'public/app/**/*.ts',
+          'public/app/**/**/*.ts'
         ],
         tasks: ['shell']
       }
