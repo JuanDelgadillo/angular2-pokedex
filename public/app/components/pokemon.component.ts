@@ -3,17 +3,50 @@ import {Component} from 'angular2/core'
 @Component({
   selector: 'pokemon',
   template: `
-    <div>
-      <h1>{{ pokemon.name }} #{{ pokemon.id }}</h1>
-      <h2>{{ pokemon.species }}</h2>
-      <img src="public/assets/img/{{ pokemon.name | lowercase }}.jpg">
-      <h2>Pokédex</h2>
-      <ul>
-        <li><strong>Type</strong> {{ pokemon.type.join(', ') }}</li>
-        <li><strong>Height</strong> {{ pokemon.height }}</li>
-        <li><strong>Weight</strong> {{ pokemon.weight }}</li>
-        <li><strong>Abilities</strong> {{ pokemon.abilities.join(', ') }}</li>
-      </ul>
+    <div class="container">
+      <!-- pokemon -->
+        <div class="page-header">
+          <h1>
+            {{pokemon.name}}
+            <small>{{pokemon.species}}</small>
+            <span class="label label-primary pull-right">#{{pokemon.id}}</span>
+          </h1>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <img class="avatar center-block" src="public/assets/img/pokemons/{{pokemon.name | lowercase}}.jpg">
+          </div>
+          <div class="col-md-6">
+            <ul class="nav nav-tabs nav-justified">
+              <li class="active"><a href="#">Pokédex</a></li>
+              <li><a href="#">Stats</a></li>
+              <li><a href="#">Evolution</a></li>
+            </ul>
+            <div class="tab-content">
+              <div>
+                <ul class="list-group">
+                  <li class="list-group-item">
+                    <strong>Type</strong>
+                    <span class="pull-right">{{pokemon.type.join(', ')}}</span>
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Height</strong>
+                    <span class="pull-right">{{pokemon.height}}</span>
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Weight</strong>
+                    <span class="pull-right">{{pokemon.weight}}</span>
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Abilities</strong>
+                    <span class="pull-right">{{pokemon.abilities.join(', ')}}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      <!-- /pokemon -->
     </div>
   `
 })
