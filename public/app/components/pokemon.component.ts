@@ -27,7 +27,11 @@ import {Component} from 'angular2/core'
                 <ul class="list-group">
                   <li class="list-group-item">
                     <strong>Type</strong>
-                    <span class="pull-right">{{pokemon.type.join(', ')}}</span>
+                    <span class="pull-right">
+                      <span class="label type type-{{type | lowercase}}" *ngFor="#type of pokemon.type">
+                        {{type}}
+                      </span>
+                    </span>
                   </li>
                   <li class="list-group-item">
                     <strong>Height</strong>
@@ -39,7 +43,11 @@ import {Component} from 'angular2/core'
                   </li>
                   <li class="list-group-item">
                     <strong>Abilities</strong>
-                    <span class="pull-right">{{pokemon.abilities.join(', ')}}</span>
+                    <ul>
+                      <li *ngFor="#ability of pokemon.abilities">
+                        {{ ability }}
+                      </li>
+                    </ul>
                   </li>
                 </ul>
               </div>
