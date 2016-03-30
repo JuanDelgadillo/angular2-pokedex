@@ -1,0 +1,32 @@
+{
+  "name": "angular2-pokedex",
+  "version": "1.0.0",
+  "description": "A Pokedex built in Angular.js version 2",
+  "scripts": {
+    "start": "concurrent \"npm run tsc:w\" \"npm run lite\" ",    
+    "tsc": "tsc",
+    "tsc:w": "tsc -w",
+    "lite": "lite-server",
+    "typings": "typings",
+    "postinstall": "typings install" 
+  },  
+  "author": "Juan Delgadillo <j.mnuelh@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "angular2": "2.0.0-beta.7",
+    "systemjs": "0.19.22",
+    "es6-promise": "^3.0.2",
+    "es6-shim": "^0.33.3",
+    "reflect-metadata": "0.1.2",
+    "rxjs": "5.0.0-beta.2",
+    "zone.js": "0.5.15"
+  },
+  "devDependencies": {
+    "concurrently": "^2.0.0",
+    "lite-server": "^2.1.0",
+    "typescript": "^1.7.5",
+    "grunt": "^0.4.5",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-shell": "~0.7.0"
+  }
+}
