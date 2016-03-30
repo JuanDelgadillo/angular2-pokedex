@@ -18,12 +18,12 @@ import {Component} from 'angular2/core'
           </div>
           <div class="col-md-6">
             <ul class="nav nav-tabs nav-justified">
-              <li class="active"><a href="#">Pokédex</a></li>
-              <li><a href="#">Stats</a></li>
-              <li><a href="#">Evolution</a></li>
+              <li [ngClass]="{ 'active': tab === 1 }"><a href="#" (click)="selectTab(1)">Pokédex</a></li>
+              <li [ngClass]="{ 'active': tab === 2 }"><a href="#" (click)="selectTab(2)">Stats</a></li>
+              <li [ngClass]="{ 'active': tab === 3 }"><a href="#" (click)="selectTab(3)">Evolution</a></li>
             </ul>
             <div class="tab-content">
-              <div>
+              <div *ngIf="tab === 1">
                 <ul class="list-group">
                   <li class="list-group-item">
                     <strong>Type</strong>
@@ -53,7 +53,7 @@ import {Component} from 'angular2/core'
               </div>
 
               <!-- Stats -->
-              <div>
+              <div *ngIf="tab === 2">
                 <ul class="list-group">
                   <li class="list-group-item">
                     <strong>HP</strong>
@@ -87,7 +87,7 @@ import {Component} from 'angular2/core'
               </div>
 
               <!-- Evolution -->
-              <div>
+              <div *ngIf="tab === 3">
                 <div class="text-center" *ngFor="#evolution of pokemon.evolution, #last = last">
                   <a href="#">
                     <img src="public/assets/img/pokemons/{{evolution | lowercase}}.jpg" width="160">
@@ -108,6 +108,8 @@ import {Component} from 'angular2/core'
 })
 
 export class PokemonComponent {
+  tab = 1
+
   pokemon = {
       id: "001",
       name: "Bulbasaur",
@@ -127,4 +129,5 @@ export class PokemonComponent {
       },
       evolution: [ "Bulbasaur", "Ivysaur", "Venusaur" ]
     }
+  selectTab = tab => this.tab = tab
 }
