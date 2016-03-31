@@ -4,7 +4,13 @@ import { Pipe, PipeTransform } from 'angular2/core'
 
 export class ImageifyPipe implements PipeTransform {
 	transform(value: string, args: string[]) {
-		var url = "public/assets/img/pokemons/" + value.toLowerCase() + ".jpg";
+		let pokemonName = value
+							.replace('♀', 'f')
+                  			.replace('♂', 'm')
+                  			.replace(/\W+/g, "")
+							.toLocaleLowerCase()
+ 
+		let url = "public/assets/img/pokemons/" + pokemonName + ".jpg";
       return url;
 	}
 }
