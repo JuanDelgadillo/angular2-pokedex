@@ -10,15 +10,15 @@ import {Component, Input} from 'angular2/core'
             <h1 class="panel-title">Comments <button class="close pull-right" (click)="toggle()">&times;</button></h1>
           </div>
           <div class="panel-body">
-            <form class="form-horizontal" (ngSubmit)="addComment()" role="form">
+            <form name="commentsForm" #f="ngForm" class="form-horizontal" role="form">
               <div class="form-group">
                 <div class="col-sm-6">
-                  <textarea [(ngModel)]="comment.body" placeholder="Please tell us what do you think about {{ pokemon.name}}" class="form-control"></textarea>
+                  <textarea ngControl="body" #body="ngForm" [(ngModel)]="comment.body" placeholder="Please tell us what do you think about {{ pokemon.name}}" class="form-control" required></textarea>
                 </div>
                 <div class="col-sm-4">
-                  <input [(ngModel)]="comment.email" [disabled]="comment.anonymous" type="email" placeholder="Please enter your email address" class="form-control">
+                  <input ngControl="email" [(ngModel)]="comment.email" [attr.required]="!comment.anonymous" [disabled]="comment.anonymous" type="email" placeholder="Please enter your email address" class="form-control">
                   <label>
-                    <input [(ngModel)]="comment.anonymous" (change)="anonymousChanged()" id="anonymous" type="checkbox">
+                    <input ngControl="anonymous" [(ngModel)]="comment.anonymous" (change)="anonymousChanged()" id="anonymous" type="checkbox">
                     Anonymous
                   </label>
                 </div>
