@@ -1,11 +1,12 @@
 import {Component} from 'angular2/core'
 import { ImageifyPipe } from '../pipes/imageify.pipe'
 import { CommentsComponent } from './comments.component'
+import { PokemonDataComponent } from './pokemon-data.component'
 
 @Component({
   selector: 'pokemon',
   pipes: [ImageifyPipe],
-  directives:[CommentsComponent],
+  directives:[CommentsComponent, PokemonDataComponent],
   template: `
     <div class="container-fluid">
       <!-- pokemon -->
@@ -28,32 +29,7 @@ import { CommentsComponent } from './comments.component'
             </ul>
             <div class="tab-content">
               <div *ngIf="tab === 1">
-                <ul class="list-group">
-                  <li class="list-group-item">
-                    <strong>Type</strong>
-                    <span class="pull-right">
-                      <span class="label type type-{{type | lowercase}}" *ngFor="#type of pokemon.type">
-                        {{type}}
-                      </span>
-                    </span>
-                  </li>
-                  <li class="list-group-item">
-                    <strong>Height</strong>
-                    <span class="pull-right">{{pokemon.height}}</span>
-                  </li>
-                  <li class="list-group-item">
-                    <strong>Weight</strong>
-                    <span class="pull-right">{{pokemon.weight}}</span>
-                  </li>
-                  <li class="list-group-item">
-                    <strong>Abilities</strong>
-                    <ul>
-                      <li *ngFor="#ability of pokemon.abilities">
-                        {{ ability }}
-                      </li>
-                    </ul>
-                  </li>
-                </ul>
+                <pokemon-data [pokemon]="pokemon"></pokemon-data>
               </div>
 
               <!-- Stats -->
