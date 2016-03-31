@@ -16,7 +16,7 @@ import {Component, Input} from 'angular2/core'
                   <textarea [(ngModel)]="comment.body" placeholder="Please tell us what do you think about {{ pokemon.name}}" class="form-control"></textarea>
                 </div>
                 <div class="col-sm-4">
-                  <input [(ngModel)]="comment.email" type="email" placeholder="Please enter your email address" class="form-control">
+                  <input [(ngModel)]="comment.email" [disabled]="comment.anonymous" type="email" placeholder="Please enter your email address" class="form-control">
                   <label>
                     <input [(ngModel)]="comment.anonymous" id="anonymous" type="checkbox">
                     Anonymous
@@ -30,7 +30,11 @@ import {Component, Input} from 'angular2/core'
             <blockquote>
                 <p>OMG Bulbasaur is AMAZING!!!</p>
                 <footer>
-                  Comment by <a href="mailto:{{comment.email}}">{{comment.email}}</a> on <span>{{comment.date}}</span>
+                  Comment by 
+                  <a *ngIf="!comment.anonymous" href="mailto:{{comment.email}}">{{comment.email}}</a>
+                  <em *ngIf="comment.anonymous">Anonymous</em>
+                   on <span>{{comment.date}}</span>
+                  
                 </footer>
               </blockquote>
               <blockquote>
