@@ -1,0 +1,41 @@
+import { Component, Input } from 'angular2/core'
+
+@Component({
+	selector: 'pokemon-stats',
+	template: `
+		<ul class="list-group">
+                  <li class="list-group-item">
+                    <strong>HP</strong>
+                    <span class="badge">{{ pokemon.stats.hp}}</span>
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Attack</strong>
+                    <span class="badge">{{ pokemon.stats.attack}}</span>
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Defense</strong>
+                    <span class="badge">{{ pokemon.stats.defense}}</span>
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Special Attack</strong>
+                    <span class="badge">{{ pokemon.stats['sp.atk']}}</span>
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Special Defense</strong>
+                    <span class="badge">{{ pokemon.stats['sp.def']}}</span>
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Speed</strong>
+                    <span class="badge">{{ pokemon.stats.speed}}</span>
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Total</strong>
+                    <span class="badge">{{ pokemon.stats.total}}</span>
+                  </li>
+                </ul>
+	`
+})
+
+export class PokemonStatsComponent {
+	@Input() pokemon:Object = {}
+}

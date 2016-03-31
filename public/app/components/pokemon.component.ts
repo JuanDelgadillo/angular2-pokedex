@@ -2,24 +2,24 @@ import {Component} from 'angular2/core'
 import { ImageifyPipe } from '../pipes/imageify.pipe'
 import { CommentsComponent } from './comments.component'
 import { PokemonDataComponent } from './pokemon-data.component'
+import { PokemonNameComponent } from './pokemon-name.component'
+import { PokemonImageComponent } from './pokemon-image.component'
+import { PokemonStatsComponent } from './pokemon-stats.component'
+import { PokemonEvolutionComponent } from './pokemon-evolution.component'
 
 @Component({
   selector: 'pokemon',
   pipes: [ImageifyPipe],
-  directives:[CommentsComponent, PokemonDataComponent],
+  directives:[CommentsComponent, PokemonDataComponent, PokemonNameComponent, PokemonImageComponent, PokemonStatsComponent, PokemonEvolutionComponent],
   template: `
     <div class="container-fluid">
       <!-- pokemon -->
         <div class="page-header">
-          <h1>
-            {{pokemon.name}}
-            <small>{{pokemon.species}}</small>
-            <span class="label label-primary pull-right">#{{pokemon.id}}</span>
-          </h1>
+          <pokemon-name [pokemon]="pokemon"></pokemon-name>
         </div>
         <div class="row">
           <div class="col-md-6">
-            <img class="avatar center-block" src="{{pokemon.name | imageify}}">
+            <pokemon-image [pokemon]="pokemon"></pokemon-image>
           </div>
           <div class="col-md-6">
             <ul class="nav nav-tabs nav-justified">
@@ -34,49 +34,12 @@ import { PokemonDataComponent } from './pokemon-data.component'
 
               <!-- Stats -->
               <div *ngIf="tab === 2">
-                <ul class="list-group">
-                  <li class="list-group-item">
-                    <strong>HP</strong>
-                    <span class="badge">{{ pokemon.stats.hp}}</span>
-                  </li>
-                  <li class="list-group-item">
-                    <strong>Attack</strong>
-                    <span class="badge">{{ pokemon.stats.attack}}</span>
-                  </li>
-                  <li class="list-group-item">
-                    <strong>Defense</strong>
-                    <span class="badge">{{ pokemon.stats.defense}}</span>
-                  </li>
-                  <li class="list-group-item">
-                    <strong>Special Attack</strong>
-                    <span class="badge">{{ pokemon.stats['sp.atk']}}</span>
-                  </li>
-                  <li class="list-group-item">
-                    <strong>Special Defense</strong>
-                    <span class="badge">{{ pokemon.stats['sp.def']}}</span>
-                  </li>
-                  <li class="list-group-item">
-                    <strong>Speed</strong>
-                    <span class="badge">{{ pokemon.stats.speed}}</span>
-                  </li>
-                  <li class="list-group-item">
-                    <strong>Total</strong>
-                    <span class="badge">{{ pokemon.stats.total}}</span>
-                  </li>
-                </ul>
+                <pokemon-stats [pokemon]="pokemon"></pokemon-stats>
               </div>
 
               <!-- Evolution -->
               <div *ngIf="tab === 3">
-                <div class="text-center" *ngFor="#evolution of pokemon.evolution, #last = last">
-                  <a href="#">
-                    <img src="{{evolution | imageify}}" width="160">
-                    <p>
-                      <strong>{{evolution}}</strong>
-                    </p>
-                  </a>
-                  <span *ngIf="!last" class="glyphicon glyphicon-arrow-down"></span>
-                </div>
+                <pokemon-evolution [pokemon]="pokemon"></pokemon-evolution>
               </div>
 
             </div>
