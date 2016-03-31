@@ -10,7 +10,7 @@ import {Component, Input} from 'angular2/core'
             <h1 class="panel-title">Comments <button class="close pull-right" (click)="toggle()">&times;</button></h1>
           </div>
           <div class="panel-body">
-            <form class="form-horizontal" role="form">
+            <form class="form-horizontal" (ngSubmit)="addComment()" role="form">
               <div class="form-group">
                 <div class="col-sm-6">
                   <textarea [(ngModel)]="comment.body" placeholder="Please tell us what do you think about {{ pokemon.name}}" class="form-control"></textarea>
@@ -23,24 +23,18 @@ import {Component, Input} from 'angular2/core'
                   </label>
                 </div>
                 <div class="col-sm-2">
-                  <button class="btn btn-lg">Comment</button>
+                  <button type="submit" class="btn btn-lg">Comment</button>
                 </div>
               </div>
             </form>
-            <blockquote>
-                <p>OMG Bulbasaur is AMAZING!!!</p>
+            <blockquote *ngFor="#comment of comments">
+                <p>{{ comment.body }}</p>
                 <footer>
                   Comment by 
                   <a *ngIf="!comment.anonymous" href="mailto:{{comment.email}}">{{comment.email}}</a>
                   <em *ngIf="comment.anonymous">Anonymous</em>
                    on <span>{{comment.date}}</span>
                   
-                </footer>
-              </blockquote>
-              <blockquote>
-                <p>Nah, I hate it -_-</p>
-                <footer>
-                  Comment by <em>Anonymous</em> on <span>Sep 12, 2014, 11:00:00 PM</span>
                 </footer>
               </blockquote>
           </div>
@@ -52,8 +46,13 @@ import {Component, Input} from 'angular2/core'
 export class CommentsComponent {
   comment = {}
   @Input() pokemon:Object = {}
-	comments:Object = []
+	comments = []
 	show:boolean = false
 	toggle:Function = () => this.show = !this.show
   anonymousChanged:Function = () => this.comment.email = ''
+  
+  addComment:Function = () => {
+    this.comments.push(this.comment)
+    this.comment = {}
+  }
 }
