@@ -18,7 +18,7 @@ import {Component, Input} from 'angular2/core'
                 <div class="col-sm-4">
                   <input [(ngModel)]="comment.email" [disabled]="comment.anonymous" type="email" placeholder="Please enter your email address" class="form-control">
                   <label>
-                    <input [(ngModel)]="comment.anonymous" id="anonymous" type="checkbox">
+                    <input [(ngModel)]="comment.anonymous" (change)="anonymousChanged()" id="anonymous" type="checkbox">
                     Anonymous
                   </label>
                 </div>
@@ -55,4 +55,5 @@ export class CommentsComponent {
 	comments:Object = []
 	show:boolean = false
 	toggle:Function = () => this.show = !this.show
+  anonymousChanged:Function = () => this.comment.email = ''
 }
