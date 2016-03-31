@@ -13,12 +13,12 @@ import {Component, Input} from 'angular2/core'
             <form class="form-horizontal" role="form">
               <div class="form-group">
                 <div class="col-sm-6">
-                  <textarea placeholder="Please tell us what do you think about {{ pokemon.name}}" class="form-control"></textarea>
+                  <textarea [(ngModel)]="comment.body" placeholder="Please tell us what do you think about {{ pokemon.name}}" class="form-control"></textarea>
                 </div>
                 <div class="col-sm-4">
-                  <input type="email" placeholder="Please enter your email address" class="form-control">
+                  <input [(ngModel)]="comment.email" type="email" placeholder="Please enter your email address" class="form-control">
                   <label>
-                    <input id="anonymous" type="checkbox">
+                    <input [(ngModel)]="comment.anonymous" id="anonymous" type="checkbox">
                     Anonymous
                   </label>
                 </div>
@@ -30,7 +30,7 @@ import {Component, Input} from 'angular2/core'
             <blockquote>
                 <p>OMG Bulbasaur is AMAZING!!!</p>
                 <footer>
-                  Comment by <a href="mailto:pepe@pepe.com">pepe@pepe.com</a> on <span>Sep 12, 2014, 11:00:00 PM</span>
+                  Comment by <a href="mailto:{{comment.email}}">{{comment.email}}</a> on <span>{{comment.date}}</span>
                 </footer>
               </blockquote>
               <blockquote>
@@ -46,6 +46,7 @@ import {Component, Input} from 'angular2/core'
 })
 
 export class CommentsComponent {
+  comment = {}
   @Input() pokemon:Object = {}
 	comments:Object = []
 	show:boolean = false
