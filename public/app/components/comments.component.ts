@@ -33,7 +33,7 @@ import {Component, Input} from 'angular2/core'
                   Comment by 
                   <a *ngIf="!comment.anonymous" href="mailto:{{comment.email}}">{{comment.email}}</a>
                   <em *ngIf="comment.anonymous">Anonymous</em>
-                   on <span>{{comment.date}}</span>
+                   on <span>{{comment.date | date: 'medium'}}</span>
                   
                 </footer>
               </blockquote>
@@ -52,6 +52,7 @@ export class CommentsComponent {
   anonymousChanged:Function = () => this.comment.email = ''
   
   addComment:Function = () => {
+    this.comment.date = Date.now()
     this.comments.push(this.comment)
     this.comment = {}
   }
