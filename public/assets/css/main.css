@@ -133,4 +133,11 @@ input::placeholder, textarea::placeholder {
 color: #787887 !important;  
 }
 
+.ng-invalid.ng-dirty {
+  border-color: #D9230F;
+}
+ 
+.ng-valid.ng-dirty {
+  border-color: #468847;
+}
 
