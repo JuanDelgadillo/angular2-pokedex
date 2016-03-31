@@ -12,7 +12,6 @@ import { PokemonEvolutionComponent } from './pokemon-evolution.component'
   pipes: [ImageifyPipe],
   directives:[CommentsComponent, PokemonDataComponent, PokemonNameComponent, PokemonImageComponent, PokemonStatsComponent, PokemonEvolutionComponent],
   template: `
-    <div class="container-fluid">
       <!-- pokemon -->
         <div class="page-header">
           <pokemon-name [pokemon]="pokemon"></pokemon-name>
@@ -23,9 +22,9 @@ import { PokemonEvolutionComponent } from './pokemon-evolution.component'
           </div>
           <div class="col-md-6">
             <ul class="nav nav-tabs nav-justified">
-              <li [ngClass]="{ 'active': tab === 1 }"><a href="#" (click)="selectTab(1)">Pokédex</a></li>
-              <li [ngClass]="{ 'active': tab === 2 }"><a href="#" (click)="selectTab(2)">Stats</a></li>
-              <li [ngClass]="{ 'active': tab === 3 }"><a href="#" (click)="selectTab(3)">Evolution</a></li>
+              <li [ngClass]="{ 'active': tab === 1 }"><a (click)="selectTab(1)">Pokédex</a></li>
+              <li [ngClass]="{ 'active': tab === 2 }"><a (click)="selectTab(2)">Stats</a></li>
+              <li [ngClass]="{ 'active': tab === 3 }"><a (click)="selectTab(3)">Evolution</a></li>
             </ul>
             <div class="tab-content">
               <div *ngIf="tab === 1">
@@ -47,7 +46,6 @@ import { PokemonEvolutionComponent } from './pokemon-evolution.component'
         </div>
       <!-- /pokemon -->
       <comments [pokemon]="pokemon"></comments>
-    </div>
   `
 })
 
