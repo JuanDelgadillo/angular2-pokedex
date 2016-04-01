@@ -1,4 +1,4 @@
-import {Component, Input} from 'angular2/core'
+import {Component, Input, AfterContentChecked} from 'angular2/core'
 import { PokemonService } from '../services/pokemon.service'
 
 @Component({
@@ -12,7 +12,7 @@ import { PokemonService } from '../services/pokemon.service'
             <h1 class="panel-title">Comments <button class="close pull-right" (click)="toggle()">&times;</button></h1>
           </div>
           <div class="panel-body">
-            <form name="commentsForm" #f="ngForm" class="form-horizontal" role="form">
+            <form name="commentsForm" #f="ngForm" (ngSubmit)="addComment()" class="form-horizontal" role="form">
               <div class="form-group">
                 <div class="col-sm-6">
                   <textarea ngControl="body" #body="ngForm" [(ngModel)]="comment.body" placeholder="Please tell us what do you think about {{ pokemon.name}}" class="form-control" required></textarea>
@@ -45,7 +45,7 @@ import { PokemonService } from '../services/pokemon.service'
 	`
 })
 
-export class CommentsComponent {
+export class CommentsComponent implements AfterContentChecked {
   comment = {}
   @Input() pokemon:Object = {}
 	comments = []
@@ -57,9 +57,16 @@ export class CommentsComponent {
     
   }
   
+  ngAfterContentChecked () {
+    if (this.pokemon.name) {
+      this.comments = this._pokemonService.getComments(this.pokemon.name)     
+    }
+  }
+  
   addComment:Function = () => {
     this.comment.date = Date.now()
-    this.comments.push(this.comment)
+    this._pokemonService.saveComment(this.pokemon.name, this.comment)
+    this.comments = this._pokemonService.getComments(this.pokemon.name)
     this.comment = {}
   }
 }
