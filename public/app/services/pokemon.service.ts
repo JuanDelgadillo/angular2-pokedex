@@ -18,8 +18,14 @@ export class PokemonService {
 	}
 	
 	getPokemonByName (name:string) {
-		return this.getPokemons()
-			.filter((pokemon) => pokemon.name === name)
+		return Observable.create((observer) => {
+			this.getPokemons()
+				.subscribe(pokemons => {
+					let pokemon = pokemons.filter((pokemon) => pokemon.name === name)
+					observer.next(pokemon)
+					observer.complete()	
+				})
+		}) 
 	}
 	
 	getPokemonsByType (type:string) {
