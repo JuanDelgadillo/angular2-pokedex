@@ -6,7 +6,7 @@ import {PokedexComponent} from './components/pokedex.component'
 
  @RouteConfig([
      { path: '/',  name: 'Pokedex', component: PokedexComponent, useAsDefault: true },
-     { path: '/pokemon/:id', name: 'Pokemon', component: PokemonComponent },
+     { path: '/pokemon/:name', name: 'Pokemon', component: PokemonComponent },
      { path: '/*other', name: 'Other', redirectTo: ['Pokedex'] }
  ])
 
