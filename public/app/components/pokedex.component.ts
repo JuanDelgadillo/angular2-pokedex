@@ -15,7 +15,7 @@ import { PokemonTypeComponent } from './pokemon-type.component'
 	template: `
 		<div>
   			<div class="page-header">
-    		<h1>Pokédex</h1>
+    		<h1>Pokédex <small class="pull-right">Showing <span class="badge">{{pokemons.length}}</span> Pokémons</small></h1>
   			</div>
 			<div class="pokemon" *ngFor="#pokemon of pokemons">
 				<a [routerLink]="['Pokemon', { name: pokemon.name }]">
