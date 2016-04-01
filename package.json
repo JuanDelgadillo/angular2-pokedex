@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "A Pokedex built in Angular.js version 2",
   "scripts": {
-    "start": "concurrent \"npm run tsc:w\" \"npm run lite\" ",    
+    "start": "concurrent \"npm run tsc:w\" \"npm run lite\" ",
     "tsc": "tsc",
     "tsc:w": "tsc -w",
     "lite": "lite-server",
     "typings": "typings",
-    "postinstall": "typings install" 
-  },  
+    "postinstall": "typings install"
+  },
   "author": "Juan Delgadillo <j.mnuelh@gmail.com>",
   "license": "MIT",
   "dependencies": {
