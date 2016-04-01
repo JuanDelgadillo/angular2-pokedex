@@ -4,6 +4,8 @@ import { Pipe, PipeTransform } from 'angular2/core'
 
 export class ImageifyPipe implements PipeTransform {
 	transform(value: string, args: string[]) {
+		if (!value) return ''
+		
 		let pokemonName = value
 							.replace('♀', 'f')
                   			.replace('♂', 'm')

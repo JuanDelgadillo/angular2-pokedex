@@ -1,4 +1,6 @@
-import {Component} from 'angular2/core'
+import { Component } from 'angular2/core'
+import { HTTP_PROVIDERS } from 'angular2/http'
+import { RouteParams } from 'angular2/router'
 import { ImageifyPipe } from '../pipes/imageify.pipe'
 import { CommentsComponent } from './comments.component'
 import { PokemonDataComponent } from './pokemon-data.component'
@@ -6,10 +8,12 @@ import { PokemonNameComponent } from './pokemon-name.component'
 import { PokemonImageComponent } from './pokemon-image.component'
 import { PokemonStatsComponent } from './pokemon-stats.component'
 import { PokemonEvolutionComponent } from './pokemon-evolution.component'
+import { PokemonService } from '../services/pokemon.service'
 
 @Component({
   selector: 'pokemon',
   pipes: [ImageifyPipe],
+  providers: [PokemonService, HTTP_PROVIDERS],
   directives:[CommentsComponent, PokemonDataComponent, PokemonNameComponent, PokemonImageComponent, PokemonStatsComponent, PokemonEvolutionComponent],
   template: `
       <!-- pokemon -->
@@ -50,26 +54,16 @@ import { PokemonEvolutionComponent } from './pokemon-evolution.component'
 })
 
 export class PokemonComponent {
+  pokemon = {}
   tab = 1
+  
+  constructor (
+    private _pokemonService: PokemonService,
+    private _routeParams: RouteParams) {
+    this._pokemonService.getPokemonByName(this._routeParams.get('name'))
+        .subscribe(pokemon => this.pokemon = pokemon[0])
+  }
 
-  pokemon = {
-      id: "001",
-      name: "Bulbasaur",
-      species: "Seed Pokémon",
-      type: [ "Grass", "Poison" ],
-      height: "2′4″ (0.71m)",
-      weight: "15.2 lbs (6.9 kg)",
-      abilities: [ "Overgrow", "Chlorophyll"],
-      stats: {
-        hp: 45,
-        attack: 49,
-        defense: 49,
-        "sp.atk": 65,
-        "sp.def": 65,
-        speed: 45,
-        total: 318
-      },
-      evolution: [ "Bulbasaur", "Ivysaur", "Venusaur" ]
-    }
+  
   selectTab = tab => this.tab = tab
 }
