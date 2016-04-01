@@ -16,7 +16,7 @@ import { PokemonTypeComponent } from './pokemon-type.component'
 	template: `
 		<div>
   			<div class="page-header">
-    			<h1>Pokédex <small class="pull-right">Showing <span class="badge">{{pokemons.length}}</span> Pokémons</small></h1>
+    			<h1>Pokédex <small class="pull-right" [style.marginTop]="'20px'">Showing <span class="badge">{{pokemons.length}}</span> Pokémons</small></h1>
 				<h2 *ngIf="pokemonType"><span class="label type-{{pokemonType | lowercase}}">{{pokemonType}}</span></h2>
   			</div>
 			<div class="row" *ngFor="#group of groupped">
