@@ -6,6 +6,7 @@ import {Observable} from 'rxjs/Rx'
 @Injectable()
 export class PokemonService {
 	private _resource = 'public/data/pokemons.json'
+	private _localStorage = window.localStorage
 	
 	constructor (private _http: Http) {
 		
@@ -29,7 +30,19 @@ export class PokemonService {
 				observer.next(results)
 				observer.complete()
 			})
-		})
-			
+		})	
+	}
+	
+	saveComment (pokemon, comment) {
+		let comments = this.getComments(pokemon)
+		
+		comments.push(comment)
+		this._localStorage.setItem(pokemon, JSON.stringify(comments))
+	}
+	
+	getComments (pokemon) {
+		var comments = this._localStorage.getItem(pokemon)
+		(!comments) ? comments = [] : comments = JSON.parse(comments)
+		return comments
 	}
 }

@@ -1,7 +1,9 @@
 import {Component, Input} from 'angular2/core'
+import { PokemonService } from '../services/pokemon.service'
 
 @Component({
 	selector: 'comments',
+  providers: [PokemonService],
 	template: `
 			<!-- comments -->
         <button class="btn btn-primary" *ngIf="!show" (click)="toggle()">Show comments <span class="badge">{{comments.length}}</span></button>
@@ -50,6 +52,10 @@ export class CommentsComponent {
 	show:boolean = false
 	toggle:Function = () => this.show = !this.show
   anonymousChanged:Function = () => this.comment.email = ''
+  
+  constructor (private _pokemonService: PokemonService ) {
+    
+  }
   
   addComment:Function = () => {
     this.comment.date = Date.now()
