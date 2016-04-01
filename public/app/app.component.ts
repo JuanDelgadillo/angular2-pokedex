@@ -5,7 +5,8 @@ import {PokedexNavbarComponent} from './components/pokedex-navbar.component'
 import {PokedexComponent} from './components/pokedex.component'
 
  @RouteConfig([
-     { path: '/',  name: 'Pokedex', component: PokedexComponent, useAsDefault: true },
+     { path: '/pokedex/',  name: 'Pokedex', component: PokedexComponent, useAsDefault: true },
+     { path: '/pokedex/pokemons/type/:type',  name: 'PokedexPokemonsByType', component: PokedexComponent },
      { path: '/pokemon/:name', name: 'Pokemon', component: PokemonComponent },
      { path: '/*other', name: 'Other', redirectTo: ['Pokedex'] }
  ])
