@@ -62,7 +62,7 @@ body {
   border: solid 1px #c183c1;
 }
 
-.type-eletric {
+.type-electric {
   background-color: #f8d030;
   border: solid 1px #a1871f;
 }
@@ -117,26 +117,10 @@ body {
   border: solid 1px #9b6470;
 }
 
-input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
-color: #787887 !important;
-}
- 
-input:-moz-placeholder, textarea:-moz-placeholder { /* Firefox 18- */
-color: #787887 !important;  
-}
- 
-input:-ms-input-placeholder, textarea:-ms-input-placeholder {  
-color: #787887 !important;  
-}
-
-input::placeholder, textarea::placeholder { 
-color: #787887 !important;  
-}
-
 .ng-invalid.ng-dirty {
   border-color: #D9230F;
 }
- 
+
 .ng-valid.ng-dirty {
   border-color: #468847;
 }
@@ -155,3 +139,8 @@ color: #787887 !important;
 .pokemon img {
   width: 300px;
 }
+
+.pokemon pokemon-type {
+  font-size: 22px;
+}
+

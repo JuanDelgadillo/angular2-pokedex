@@ -1,15 +1,15 @@
 import { Component, Input } from 'angular2/core'
+import { PokemonTypeComponent } from './pokemon-type.component'
 
 @Component({
 	selector: 'pokemon-data',
+  directives: [PokemonTypeComponent],
 	template: `
 		<ul class="list-group">
                   <li class="list-group-item">
                     <strong>Type</strong>
                     <span class="pull-right">
-                      <span class="label type type-{{type | lowercase}}" *ngFor="#type of pokemon.type">
-                        {{type}}
-                      </span>
+                      <pokemon-type [pokemon]="pokemon" ></pokemon-type>
                     </span>
                   </li>
                   <li class="list-group-item">
