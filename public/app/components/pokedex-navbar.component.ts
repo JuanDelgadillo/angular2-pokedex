@@ -1,9 +1,7 @@
-import { Component } from 'angular2/core'
-import { ROUTER_DIRECTIVES } from 'angular2/router'
+import { Component } from '@angular/core'
 
 @Component({
   selector: 'pokedex-navbar',
-  directives: [ROUTER_DIRECTIVES],
   template: `
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container-fluid">
@@ -14,7 +12,7 @@ import { ROUTER_DIRECTIVES } from 'angular2/router'
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" [routerLink]="['Pokedex']">
+          <a class="navbar-brand" [routerLink]="['pokedex']">
             <img src="public/assets/img/logo.png">
             Pokédex |
           </a>

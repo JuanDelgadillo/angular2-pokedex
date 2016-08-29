@@ -1,32 +1,31 @@
-import { Component } from 'angular2/core'
-import { HTTP_PROVIDERS } from 'angular2/http'
-import { ROUTER_DIRECTIVES } from 'angular2/router'
-import { RouteParams } from 'angular2/router'
+import { Component, OnInit } from '@angular/core'
+import { ActivatedRoute } from '@angular/router'
 import { ImageifyPipe } from '../pipes/imageify.pipe'
 import { PokemonService } from '../services/pokemon.service'
 import { PokemonNameComponent } from './pokemon-name.component'
 import { PokemonImageComponent } from './pokemon-image.component'
 import { PokemonTypeComponent } from './pokemon-type.component'
+import * as _ from '_'
 
 @Component({
 	selector: 'pokedex',
 	pipes: [ImageifyPipe],
-	directives: [PokemonNameComponent, PokemonImageComponent, PokemonTypeComponent, ROUTER_DIRECTIVES],
-	providers: [PokemonService, HTTP_PROVIDERS],
+	directives: [PokemonNameComponent, PokemonImageComponent, PokemonTypeComponent],
+	providers: [PokemonService],
 	template: `
 		<div>
   			<div class="page-header">
     			<h1>Pokédex <small class="pull-right">Showing <span class="badge">{{pokemons.length}}</span> Pokémons</small></h1>
 				<h2 *ngIf="pokemonType"><span class="label type-{{pokemonType | lowercase}}">{{pokemonType}}</span></h2>
   			</div>
-			<div class="row" *ngFor="#group of groupped">
-				<div class="col-lg-3" *ngFor="#pokemon of group">
+			<div class="row" *ngFor="let group of groupped">
+				<div class="col-lg-3" *ngFor="let pokemon of group">
 					<div class="pokemon panel panel-primary">
 						<div class="panel-heading">
           					<pokemon-name [pokemon]="pokemon" ></pokemon-name>
         				</div>
 						<div class="panel-body">
-							<a [routerLink]="['Pokemon', { name: pokemon.name }]">
+							<a [routerLink]="['/pokemon', pokemon.name ]">
 								<pokemon-image [pokemon]="pokemon" ></pokemon-image>
 							</a>
 						</div>
@@ -42,29 +41,33 @@ import { PokemonTypeComponent } from './pokemon-type.component'
 	`
 })
 
-export class PokedexComponent {
+export class PokedexComponent implements OnInit {
 	pokemons = []
 	pokemonType:string
 	groupped
 	
 	constructor (
 		private _pokemonService: PokemonService,
-		private _routeParams: RouteParams) {
-		if (this._routeParams.params.type) {
-			this.pokemonType = this._routeParams.get('type')
-			this._pokemonService.getPokemonsByType(this.pokemonType)
+		private _routeParams: ActivatedRoute) {
+		
+	}
+
+	ngOnInit() {
+		this._routeParams.params.map(params => params.type).subscribe(pokemonType => {
+			if (pokemonType) {
+				this._pokemonService.getPokemonsByType(pokemonType)
+					.subscribe(pokemons => {
+						this.pokemons = pokemons
+						this.groupped = this.partition(pokemons, 4)
+					})
+			} else {
+				this._pokemonService.getPokemons()
 				.subscribe(pokemons => {
 					this.pokemons = pokemons
 					this.groupped = this.partition(pokemons, 4)
 				})
-		} else {
-			this._pokemonService.getPokemons()
-			.subscribe(pokemons => {
-				this.pokemons = pokemons
-				this.groupped = this.partition(pokemons, 4)
-			})
-		}
-		
+			}
+		})
 	}
 	
 	partition = (data, n) => {
