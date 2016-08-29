@@ -1,6 +1,5 @@
-import { Component } from 'angular2/core'
-import { HTTP_PROVIDERS } from 'angular2/http'
-import { RouteParams } from 'angular2/router'
+import { Component, OnInit } from '@angular/core'
+import { ActivatedRoute } from '@angular/router'
 import { ImageifyPipe } from '../pipes/imageify.pipe'
 import { CommentsComponent } from './comments.component'
 import { PokemonDataComponent } from './pokemon-data.component'
@@ -13,7 +12,7 @@ import { PokemonService } from '../services/pokemon.service'
 @Component({
   selector: 'pokemon',
   pipes: [ImageifyPipe],
-  providers: [PokemonService, HTTP_PROVIDERS],
+  providers: [PokemonService],
   directives:[CommentsComponent, PokemonDataComponent, PokemonNameComponent, PokemonImageComponent, PokemonStatsComponent, PokemonEvolutionComponent],
   template: `
       <!-- pokemon -->
@@ -53,17 +52,21 @@ import { PokemonService } from '../services/pokemon.service'
   `
 })
 
-export class PokemonComponent {
+export class PokemonComponent implements OnInit {
   pokemon = {}
   tab = 1
   
   constructor (
     private _pokemonService: PokemonService,
-    private _routeParams: RouteParams) {
-    this._pokemonService.getPokemonByName(this._routeParams.get('name'))
-        .subscribe(pokemon => this.pokemon = pokemon[0])
+    private _routeParams: ActivatedRoute) {
   }
 
+  ngOnInit () {
+    this._routeParams.params.map(params => params.name).subscribe(pokemonName => { 
+      this._pokemonService.getPokemonByName(pokemonName)
+        .subscribe(pokemon => this.pokemon = pokemon[0])
+    })
+  }
   
   selectTab = tab => this.tab = tab
 }
