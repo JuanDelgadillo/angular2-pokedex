@@ -17,6 +17,7 @@ var core_1 = require('@angular/core');
 var forms_1 = require('@angular/forms');
 var http_1 = require('@angular/http');
 var app_routes_1 = require('./app.routes');
+core_1.enableProdMode();
 var AppModule = (function () {
     function AppModule() {
     }

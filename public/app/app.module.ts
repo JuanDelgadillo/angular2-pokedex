@@ -3,10 +3,12 @@ import { PokedexComponent } from './components/pokedex.component';
 import { PokemonComponent } from './components/pokemon.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent }  from './app.component';
-import { NgModule, provide } from '@angular/core';
+import { NgModule, provide, enableProdMode } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { appRouting } from './app.routes'
+
+enableProdMode();
 
 @NgModule({
   imports:      [
@@ -25,4 +27,5 @@ import { appRouting } from './app.routes'
 		provide(LocationStrategy, { useClass: HashLocationStrategy }) 
 	]
 })
+
 export class AppModule { }
