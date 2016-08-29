@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var common_1 = require('@angular/common');
 var pokedex_component_1 = require('./components/pokedex.component');
 var pokemon_component_1 = require('./components/pokemon.component');
 var platform_browser_1 = require('@angular/platform-browser');
@@ -21,9 +22,21 @@ var AppModule = (function () {
     }
     AppModule = __decorate([
         core_1.NgModule({
-            imports: [platform_browser_1.BrowserModule, app_routes_1.appRouting, forms_1.FormsModule, http_1.HttpModule],
-            declarations: [app_component_1.AppComponent, pokedex_component_1.PokedexComponent, pokemon_component_1.PokemonComponent],
-            bootstrap: [app_component_1.AppComponent]
+            imports: [
+                platform_browser_1.BrowserModule,
+                app_routes_1.appRouting,
+                forms_1.FormsModule,
+                http_1.HttpModule
+            ],
+            declarations: [
+                app_component_1.AppComponent,
+                pokedex_component_1.PokedexComponent,
+                pokemon_component_1.PokemonComponent
+            ],
+            bootstrap: [app_component_1.AppComponent],
+            providers: [
+                core_1.provide(common_1.LocationStrategy, { useClass: common_1.HashLocationStrategy })
+            ]
         }), 
         __metadata('design:paramtypes', [])
     ], AppModule);
