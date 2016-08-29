@@ -1,0 +1,90 @@
+{
+  "_args": [
+    [
+      {
+        "name": "@angular/tsc-wrapped",
+        "raw": "@angular/tsc-wrapped@^0.2.0",
+        "rawSpec": "^0.2.0",
+        "scope": "@angular",
+        "spec": ">=0.2.0 <0.3.0",
+        "type": "range"
+      },
+      "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex/node_modules/@angular/compiler-cli"
+    ]
+  ],
+  "_from": "@angular/tsc-wrapped@>=0.2.0 <0.3.0",
+  "_id": "@angular/tsc-wrapped@0.2.2",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/@angular/tsc-wrapped",
+  "_nodeVersion": "5.4.1",
+  "_npmOperationalInternal": {
+    "host": "packages-16-east.internal.npmjs.com",
+    "tmp": "tmp/tsc-wrapped-0.2.2.tgz_1470758464049_0.17854319931939244"
+  },
+  "_npmUser": {
+    "email": "angular-core+npm@google.com",
+    "name": "angular"
+  },
+  "_npmVersion": "3.9.2",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "@angular/tsc-wrapped",
+    "raw": "@angular/tsc-wrapped@^0.2.0",
+    "rawSpec": "^0.2.0",
+    "scope": "@angular",
+    "spec": ">=0.2.0 <0.3.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/@angular/compiler-cli"
+  ],
+  "_resolved": "https://registry.npmjs.org/@angular/tsc-wrapped/-/tsc-wrapped-0.2.2.tgz",
+  "_shasum": "6ecc9ac7deffe24a994505a25a35da3dbfb71220",
+  "_shrinkwrap": null,
+  "_spec": "@angular/tsc-wrapped@^0.2.0",
+  "_where": "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex/node_modules/@angular/compiler-cli",
+  "bugs": {
+    "url": "https://github.com/angular/angular/issues"
+  },
+  "contributors": [
+    {
+      "email": "alexeagle@google.com",
+      "name": "Alex Eagle"
+    },
+    {
+      "email": "chuckj@google.com",
+      "name": "Chuck Jazdzewski"
+    }
+  ],
+  "dependencies": {
+    "tsickle": "0.1.6"
+  },
+  "description": "Wraps the tsc CLI, allowing extensions.",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "6ecc9ac7deffe24a994505a25a35da3dbfb71220",
+    "tarball": "https://registry.npmjs.org/@angular/tsc-wrapped/-/tsc-wrapped-0.2.2.tgz"
+  },
+  "homepage": "https://github.com/angular/angular/tree/master/tools/tsc-wrapped",
+  "license": "MIT",
+  "maintainers": [
+    {
+      "email": "angular-core+npm@google.com",
+      "name": "angular"
+    }
+  ],
+  "name": "@angular/tsc-wrapped",
+  "optionalDependencies": {},
+  "peerDependencies": {
+    "typescript": "^1.9.0-dev"
+  },
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angular/angular.git"
+  },
+  "scripts": {},
+  "version": "0.2.2"
+}

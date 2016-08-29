@@ -1,14 +1,12 @@
-import { Component, Input } from 'angular2/core'
+import { Component, Input } from '@angular/core'
 import { ImageifyPipe } from '../pipes/imageify.pipe'
-import { ROUTER_DIRECTIVES } from 'angular2/router'
 
 @Component({
 	selector: 'pokemon-evolution',
 	pipes: [ImageifyPipe],
-  directives: [ROUTER_DIRECTIVES],
 	template: `
-		<div class="text-center" *ngFor="#evolution of pokemon.evolution, #last = last">
-                  <a [routerLink]="['Pokemon', { name: evolution }]">
+		<div class="text-center" *ngFor="let evolution of pokemon.evolution, let last = last">
+                  <a [routerLink]="['/pokemon', evolution ]">
                     <img src="{{evolution | imageify}}" width="160">
                     <p>
                       <strong>{{evolution}}</strong>

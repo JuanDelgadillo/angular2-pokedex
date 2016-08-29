@@ -1,4 +1,4 @@
-import { Component, Input } from 'angular2/core'
+import { Component, Input } from '@angular/core'
 import { PokemonTypeComponent } from './pokemon-type.component'
 
 @Component({
@@ -23,7 +23,7 @@ import { PokemonTypeComponent } from './pokemon-type.component'
                   <li class="list-group-item">
                     <strong>Abilities</strong>
                     <ul>
-                      <li *ngFor="#ability of pokemon.abilities">
+                      <li *ngFor="let ability of pokemon.abilities">
                         {{ ability }}
                       </li>
                     </ul>

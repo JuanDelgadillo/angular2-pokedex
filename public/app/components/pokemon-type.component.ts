@@ -1,11 +1,9 @@
-import { Component, Input } from 'angular2/core'
-import { ROUTER_DIRECTIVES } from 'angular2/router'
+import { Component, Input } from '@angular/core'
 
 @Component({
 	selector: 'pokemon-type',
-	directives: [ROUTER_DIRECTIVES],
 	template: `
-	<a [routerLink]="['PokedexPokemonsByType', { type: type }]" *ngFor="#type of pokemon.type">
+	<a [routerLink]="['/pokedex/pokemons/type', type ]" *ngFor="let type of pokemon.type">
 		<span class="label type type-{{type | lowercase}}" >
         	{{type}}
         </span>
