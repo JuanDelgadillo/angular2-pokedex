@@ -1,4 +1,4 @@
-import {Component, Input, AfterContentChecked} from 'angular2/core'
+import {Component, Input, AfterContentChecked} from '@angular/core'
 import { PokemonService } from '../services/pokemon.service'
 
 @Component({
@@ -12,15 +12,15 @@ import { PokemonService } from '../services/pokemon.service'
             <h1 class="panel-title">Comments <button class="close pull-right" (click)="toggle()">&times;</button></h1>
           </div>
           <div class="panel-body">
-            <form name="commentsForm" #f="ngForm" (ngSubmit)="addComment()" class="form-horizontal" role="form">
+            <form name="commentsForm" #f (ngSubmit)="addComment()" class="form-horizontal" role="form">
               <div class="form-group">
                 <div class="col-sm-6">
-                  <textarea ngControl="body" #body="ngForm" [(ngModel)]="comment.body" placeholder="Please tell us what do you think about {{ pokemon.name}}" class="form-control" required></textarea>
+                  <textarea ngControl="body" #body [(ngModel)]="comment.body" name="body" placeholder="Please tell us what do you think about {{ pokemon.name}}" class="form-control" required></textarea>
                 </div>
                 <div class="col-sm-4">
-                  <input ngControl="email" [(ngModel)]="comment.email" [attr.required]="!comment.anonymous" [disabled]="comment.anonymous" type="email" placeholder="Please enter your email address" class="form-control">
+                  <input ngControl="email" [(ngModel)]="comment.email" name="email" [attr.required]="!comment.anonymous" [disabled]="comment.anonymous" type="email" placeholder="Please enter your email address" class="form-control">
                   <label>
-                    <input ngControl="anonymous" [(ngModel)]="comment.anonymous" (change)="anonymousChanged()" id="anonymous" type="checkbox">
+                    <input ngControl="anonymous" [(ngModel)]="comment.anonymous" name="anonymous" (change)="anonymousChanged()" id="anonymous" type="checkbox">
                     Anonymous
                   </label>
                 </div>
@@ -29,7 +29,7 @@ import { PokemonService } from '../services/pokemon.service'
                 </div>
               </div>
             </form>
-            <blockquote *ngFor="#comment of comments">
+            <blockquote *ngFor="let comment of comments">
                 <p>{{ comment.body }}</p>
                 <footer>
                   Comment by 
