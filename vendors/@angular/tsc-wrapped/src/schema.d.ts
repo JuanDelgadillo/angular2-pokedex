@@ -1,10 +1,11 @@
 export declare const VERSION: number;
+export declare type MetadataEntry = ClassMetadata | FunctionMetadata | MetadataValue;
 export interface ModuleMetadata {
     __symbolic: 'module';
     version: number;
     exports?: ModuleExportMetadata[];
     metadata: {
-        [name: string]: (ClassMetadata | FunctionMetadata | MetadataValue);
+        [name: string]: MetadataEntry;
     };
 }
 export declare function isModuleMetadata(value: any): value is ModuleMetadata;
@@ -36,7 +37,7 @@ export interface MethodMetadata extends MemberMetadata {
     __symbolic: 'constructor' | 'method';
     parameterDecorators?: (MetadataSymbolicExpression | MetadataError)[][];
 }
-export declare function isMethodMetadata(value: any): value is MemberMetadata;
+export declare function isMethodMetadata(value: any): value is MethodMetadata;
 export interface ConstructorMetadata extends MethodMetadata {
     __symbolic: 'constructor';
     parameters?: (MetadataSymbolicExpression | MetadataError | null)[];

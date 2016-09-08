@@ -1,4 +1,5 @@
 import * as ts from 'typescript';
+import NgOptions from './options';
 /**
  * Implementation of CompilerHost that forwards all methods to another instance.
  * Useful for partial implementations to override only methods they care about.
@@ -12,6 +13,7 @@ export declare abstract class DelegatingHost implements ts.CompilerHost {
     getDefaultLibLocation: () => string;
     writeFile: ts.WriteFileCallback;
     getCurrentDirectory: () => string;
+    getDirectories: (path: string) => string[];
     getCanonicalFileName: (fileName: string) => string;
     useCaseSensitiveFileNames: () => boolean;
     getNewLine: () => string;
@@ -29,8 +31,9 @@ export declare class TsickleHost extends DelegatingHost {
 }
 export declare class MetadataWriterHost extends DelegatingHost {
     private program;
+    private ngOptions;
     private metadataCollector;
-    constructor(delegate: ts.CompilerHost, program: ts.Program);
+    constructor(delegate: ts.CompilerHost, program: ts.Program, ngOptions: NgOptions);
     private writeMetadata(emitFilePath, sourceFile);
     writeFile: ts.WriteFileCallback;
 }

@@ -5,76 +5,165 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-"use strict";
-var common_1 = require('@angular/common');
-var core_1 = require('@angular/core');
-var common_router_providers_1 = require('./common_router_providers');
-var router_link_1 = require('./directives/router_link');
-var router_link_active_1 = require('./directives/router_link_active');
-var router_outlet_1 = require('./directives/router_outlet');
-var router_1 = require('./router');
-var router_config_loader_1 = require('./router_config_loader');
-var router_outlet_map_1 = require('./router_outlet_map');
-var router_state_1 = require('./router_state');
-var url_tree_1 = require('./url_tree');
+import { APP_BASE_HREF, HashLocationStrategy, Location, LocationStrategy, PathLocationStrategy, PlatformLocation } from '@angular/common';
+import { ANALYZE_FOR_ENTRY_COMPONENTS, APP_BOOTSTRAP_LISTENER, ApplicationRef, Compiler, Inject, Injector, NgModule, NgModuleFactoryLoader, OpaqueToken, Optional, SkipSelf, SystemJsNgModuleLoader } from '@angular/core';
+import { RouterLink, RouterLinkWithHref } from './directives/router_link';
+import { RouterLinkActive } from './directives/router_link_active';
+import { RouterOutlet } from './directives/router_outlet';
+import { Router } from './router';
+import { ROUTES } from './router_config_loader';
+import { RouterOutletMap } from './router_outlet_map';
+import { ActivatedRoute } from './router_state';
+import { DefaultUrlSerializer, UrlSerializer } from './url_tree';
+import { flatten } from './utils/collection';
 /**
  * @stable
  */
-exports.ROUTER_DIRECTIVES = [router_outlet_1.RouterOutlet, router_link_1.RouterLink, router_link_1.RouterLinkWithHref, router_link_active_1.RouterLinkActive];
+var ROUTER_DIRECTIVES = [RouterOutlet, RouterLink, RouterLinkWithHref, RouterLinkActive];
+/**
+ * @stable
+ */
+export var ROUTER_CONFIGURATION = new OpaqueToken('ROUTER_CONFIGURATION');
+export var ROUTER_FORROOT_GUARD = new OpaqueToken('ROUTER_FORROOT_GUARD');
 var pathLocationStrategy = {
-    provide: common_1.LocationStrategy,
-    useClass: common_1.PathLocationStrategy
+    provide: LocationStrategy,
+    useClass: PathLocationStrategy
 };
 var hashLocationStrategy = {
-    provide: common_1.LocationStrategy,
-    useClass: common_1.HashLocationStrategy
+    provide: LocationStrategy,
+    useClass: HashLocationStrategy
 };
-exports.ROUTER_PROVIDERS = [
-    common_1.Location, { provide: url_tree_1.UrlSerializer, useClass: url_tree_1.DefaultUrlSerializer }, {
-        provide: router_1.Router,
-        useFactory: common_router_providers_1.setupRouter,
+export var ROUTER_PROVIDERS = [
+    Location, { provide: UrlSerializer, useClass: DefaultUrlSerializer }, {
+        provide: Router,
+        useFactory: setupRouter,
         deps: [
-            core_1.ApplicationRef, core_1.ComponentResolver, url_tree_1.UrlSerializer, router_outlet_map_1.RouterOutletMap, common_1.Location, core_1.Injector,
-            core_1.NgModuleFactoryLoader, router_config_loader_1.ROUTES, common_router_providers_1.ROUTER_CONFIGURATION
+            ApplicationRef, UrlSerializer, RouterOutletMap, Location, Injector, NgModuleFactoryLoader,
+            Compiler, ROUTES, ROUTER_CONFIGURATION
         ]
     },
-    router_outlet_map_1.RouterOutletMap, { provide: router_state_1.ActivatedRoute, useFactory: common_router_providers_1.rootRoute, deps: [router_1.Router] },
-    { provide: core_1.NgModuleFactoryLoader, useClass: core_1.SystemJsNgModuleLoader },
-    { provide: common_router_providers_1.ROUTER_CONFIGURATION, useValue: { enableTracing: false } }
+    RouterOutletMap, { provide: ActivatedRoute, useFactory: rootRoute, deps: [Router] },
+    { provide: NgModuleFactoryLoader, useClass: SystemJsNgModuleLoader },
+    { provide: ROUTER_CONFIGURATION, useValue: { enableTracing: false } }
 ];
-var RouterModule = (function () {
-    function RouterModule() {
+/**
+ * Router module.
+ *
+ * When registered at the root, it should be used as follows:
+ *
+ * ### Example
+ *
+ * ```
+ * bootstrap(AppCmp, {imports: [RouterModule.forRoot(ROUTES)]});
+ * ```
+ *
+ * For submodules and lazy loaded submodules it should be used as follows:
+ *
+ * ### Example
+ *
+ * ```
+ * @NgModule({
+ *   imports: [RouterModule.forChild(CHILD_ROUTES)]
+ * })
+ * class Lazy {}
+ * ```
+ *
+ * @stable
+ */
+export var RouterModule = (function () {
+    function RouterModule(guard) {
     }
     RouterModule.forRoot = function (routes, config) {
         return {
             ngModule: RouterModule,
             providers: [
-                exports.ROUTER_PROVIDERS, common_router_providers_1.provideRoutes(routes),
-                { provide: common_router_providers_1.ROUTER_CONFIGURATION, useValue: config ? config : {} }, {
-                    provide: common_1.LocationStrategy,
+                ROUTER_PROVIDERS, provideRoutes(routes), {
+                    provide: ROUTER_FORROOT_GUARD,
+                    useFactory: provideForRootGuard,
+                    deps: [[Router, new Optional(), new SkipSelf()]]
+                },
+                { provide: ROUTER_CONFIGURATION, useValue: config ? config : {} }, {
+                    provide: LocationStrategy,
                     useFactory: provideLocationStrategy,
                     deps: [
-                        common_1.PlatformLocation, [new core_1.Inject(common_1.APP_BASE_HREF), new core_1.Optional()], common_router_providers_1.ROUTER_CONFIGURATION
+                        PlatformLocation, [new Inject(APP_BASE_HREF), new Optional()], ROUTER_CONFIGURATION
                     ]
                 },
-                common_router_providers_1.provideRouterInitializer()
+                provideRouterInitializer()
             ]
         };
     };
     RouterModule.forChild = function (routes) {
-        return { ngModule: RouterModule, providers: [common_router_providers_1.provideRoutes(routes)] };
+        return { ngModule: RouterModule, providers: [provideRoutes(routes)] };
     };
-    /** @nocollapse */
     RouterModule.decorators = [
-        { type: core_1.NgModule, args: [{ declarations: exports.ROUTER_DIRECTIVES, exports: exports.ROUTER_DIRECTIVES },] },
+        { type: NgModule, args: [{ declarations: ROUTER_DIRECTIVES, exports: ROUTER_DIRECTIVES },] },
+    ];
+    /** @nocollapse */
+    RouterModule.ctorParameters = [
+        { type: undefined, decorators: [{ type: Optional }, { type: Inject, args: [ROUTER_FORROOT_GUARD,] },] },
     ];
     return RouterModule;
 }());
-exports.RouterModule = RouterModule;
-function provideLocationStrategy(platformLocationStrategy, baseHref, options) {
+export function provideLocationStrategy(platformLocationStrategy, baseHref, options) {
     if (options === void 0) { options = {}; }
-    return options.useHash ? new common_1.HashLocationStrategy(platformLocationStrategy, baseHref) :
-        new common_1.PathLocationStrategy(platformLocationStrategy, baseHref);
+    return options.useHash ? new HashLocationStrategy(platformLocationStrategy, baseHref) :
+        new PathLocationStrategy(platformLocationStrategy, baseHref);
 }
-exports.provideLocationStrategy = provideLocationStrategy;
+export function provideForRootGuard(router) {
+    if (router) {
+        throw new Error("RouterModule.forRoot() called twice. Lazy loaded modules should use RouterModule.forChild() instead.");
+    }
+    return 'guarded';
+}
+/**
+ * @stable
+ */
+export function provideRoutes(routes) {
+    return [
+        { provide: ANALYZE_FOR_ENTRY_COMPONENTS, multi: true, useValue: routes },
+        { provide: ROUTES, multi: true, useValue: routes }
+    ];
+}
+export function setupRouter(ref, urlSerializer, outletMap, location, injector, loader, compiler, config, opts) {
+    if (opts === void 0) { opts = {}; }
+    if (ref.componentTypes.length == 0) {
+        throw new Error('Bootstrap at least one component before injecting Router.');
+    }
+    var componentType = ref.componentTypes[0];
+    var r = new Router(componentType, urlSerializer, outletMap, location, injector, loader, compiler, flatten(config));
+    if (opts.errorHandler) {
+        r.errorHandler = opts.errorHandler;
+    }
+    if (opts.enableTracing) {
+        r.events.subscribe(function (e) {
+            console.group("Router Event: " + e.constructor.name);
+            console.log(e.toString());
+            console.log(e);
+            console.groupEnd();
+        });
+    }
+    return r;
+}
+export function rootRoute(router) {
+    return router.routerState.root;
+}
+export function initialRouterNavigation(router, opts) {
+    return function () {
+        if (opts.initialNavigation === false) {
+            router.setUpLocationChangeListener();
+        }
+        else {
+            router.initialNavigation();
+        }
+    };
+}
+export function provideRouterInitializer() {
+    return {
+        provide: APP_BOOTSTRAP_LISTENER,
+        multi: true,
+        useFactory: initialRouterNavigation,
+        deps: [Router, ROUTER_CONFIGURATION]
+    };
+}
 //# sourceMappingURL=router_module.js.map

@@ -5,25 +5,21 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-"use strict";
-var core_1 = require('@angular/core');
-var ReplaySubject_1 = require('rxjs/ReplaySubject');
-var Subject_1 = require('rxjs/Subject');
-var take_1 = require('rxjs/operator/take');
-var enums_1 = require('../src/enums');
-var exceptions_1 = require('../src/facade/exceptions');
-var lang_1 = require('../src/facade/lang');
-var static_request_1 = require('../src/static_request');
+import { Injectable } from '@angular/core';
+import { ReadyState, Request } from '@angular/http';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { Subject } from 'rxjs/Subject';
+import { take } from 'rxjs/operator/take';
 /**
  *
  * Mock Connection to represent a {@link Connection} for tests.
  *
  * @experimental
  */
-var MockConnection = (function () {
+export var MockConnection = (function () {
     function MockConnection(req) {
-        this.response = take_1.take.call(new ReplaySubject_1.ReplaySubject(1), 1);
-        this.readyState = enums_1.ReadyState.Open;
+        this.response = take.call(new ReplaySubject(1), 1);
+        this.readyState = ReadyState.Open;
         this.request = req;
     }
     /**
@@ -42,10 +38,10 @@ var MockConnection = (function () {
      *
      */
     MockConnection.prototype.mockRespond = function (res) {
-        if (this.readyState === enums_1.ReadyState.Done || this.readyState === enums_1.ReadyState.Cancelled) {
-            throw new exceptions_1.BaseException('Connection has already been resolved');
+        if (this.readyState === ReadyState.Done || this.readyState === ReadyState.Cancelled) {
+            throw new Error('Connection has already been resolved');
         }
-        this.readyState = enums_1.ReadyState.Done;
+        this.readyState = ReadyState.Done;
         this.response.next(res);
         this.response.complete();
     };
@@ -78,20 +74,53 @@ var MockConnection = (function () {
      *
      */
     MockConnection.prototype.mockError = function (err) {
-        // Matches XHR semantics
-        this.readyState = enums_1.ReadyState.Done;
+        // Matches ResourceLoader semantics
+        this.readyState = ReadyState.Done;
         this.response.error(err);
     };
     return MockConnection;
 }());
-exports.MockConnection = MockConnection;
-var MockBackend = (function () {
+/**
+ * A mock backend for testing the {@link Http} service.
+ *
+ * This class can be injected in tests, and should be used to override providers
+ * to other backends, such as {@link XHRBackend}.
+ *
+ * ### Example
+ *
+ * ```
+ * import {BaseRequestOptions, Http} from '@angular/http';
+ * import {MockBackend} from '@angular/http/testing';
+ * it('should get some data', inject([AsyncTestCompleter], (async) => {
+ *   var connection;
+ *   var injector = Injector.resolveAndCreate([
+ *     MockBackend,
+ *     {provide: Http, useFactory: (backend, options) => {
+ *       return new Http(backend, options);
+ *     }, deps: [MockBackend, BaseRequestOptions]}]);
+ *   var http = injector.get(Http);
+ *   var backend = injector.get(MockBackend);
+ *   //Assign any newly-created connection to local variable
+ *   backend.connections.subscribe(c => connection = c);
+ *   http.request('data.json').subscribe((res) => {
+ *     expect(res.text()).toBe('awesome');
+ *     async.done();
+ *   });
+ *   connection.mockRespond(new Response('awesome'));
+ * }));
+ * ```
+ *
+ * This method only exists in the mock implementation, not in real Backends.
+ *
+ * @experimental
+ */
+export var MockBackend = (function () {
     function MockBackend() {
         var _this = this;
         this.connectionsArray = [];
-        this.connections = new Subject_1.Subject();
+        this.connections = new Subject();
         this.connections.subscribe(function (connection) { return _this.connectionsArray.push(connection); });
-        this.pendingConnections = new Subject_1.Subject();
+        this.pendingConnections = new Subject();
     }
     /**
      * Checks all connections, and raises an exception if any connection has not received a response.
@@ -102,7 +131,7 @@ var MockBackend = (function () {
         var pending = 0;
         this.pendingConnections.subscribe(function (c) { return pending++; });
         if (pending > 0)
-            throw new exceptions_1.BaseException(pending + " pending connections to be resolved");
+            throw new Error(pending + " pending connections to be resolved");
     };
     /**
      * Can be used in conjunction with `verifyNoPendingRequests` to resolve any not-yet-resolve
@@ -118,20 +147,18 @@ var MockBackend = (function () {
      * against the framework itself, not by end-users.
      */
     MockBackend.prototype.createConnection = function (req) {
-        if (!lang_1.isPresent(req) || !(req instanceof static_request_1.Request)) {
-            throw new exceptions_1.BaseException("createConnection requires an instance of Request, got " + req);
+        if (!req || !(req instanceof Request)) {
+            throw new Error("createConnection requires an instance of Request, got " + req);
         }
         var connection = new MockConnection(req);
         this.connections.next(connection);
         return connection;
     };
-    /** @nocollapse */
     MockBackend.decorators = [
-        { type: core_1.Injectable },
+        { type: Injectable },
     ];
     /** @nocollapse */
     MockBackend.ctorParameters = [];
     return MockBackend;
 }());
-exports.MockBackend = MockBackend;
 //# sourceMappingURL=mock_backend.js.map

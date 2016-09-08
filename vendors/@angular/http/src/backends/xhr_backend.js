@@ -5,18 +5,17 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-"use strict";
-var core_1 = require('@angular/core');
-var platform_browser_1 = require('@angular/platform-browser');
-var Observable_1 = require('rxjs/Observable');
-var base_response_options_1 = require('../base_response_options');
-var enums_1 = require('../enums');
-var lang_1 = require('../facade/lang');
-var headers_1 = require('../headers');
-var http_utils_1 = require('../http_utils');
-var interfaces_1 = require('../interfaces');
-var static_response_1 = require('../static_response');
-var browser_xhr_1 = require('./browser_xhr');
+import { Injectable } from '@angular/core';
+import { __platform_browser_private__ } from '@angular/platform-browser';
+import { Observable } from 'rxjs/Observable';
+import { ResponseOptions } from '../base_response_options';
+import { ContentType, RequestMethod, ResponseContentType, ResponseType } from '../enums';
+import { isPresent, isString } from '../facade/lang';
+import { Headers } from '../headers';
+import { getResponseURL, isSuccess } from '../http_utils';
+import { XSRFStrategy } from '../interfaces';
+import { Response } from '../static_response';
+import { BrowserXhr } from './browser_xhr';
 var XSSI_PREFIX = /^\)\]\}',?\n/;
 /**
  * Creates connections using `XMLHttpRequest`. Given a fully-qualified
@@ -28,27 +27,28 @@ var XSSI_PREFIX = /^\)\]\}',?\n/;
  *
  * @experimental
  */
-var XHRConnection = (function () {
+export var XHRConnection = (function () {
     function XHRConnection(req, browserXHR, baseResponseOptions) {
         var _this = this;
         this.request = req;
-        this.response = new Observable_1.Observable(function (responseObserver) {
+        this.response = new Observable(function (responseObserver) {
             var _xhr = browserXHR.build();
-            _xhr.open(enums_1.RequestMethod[req.method].toUpperCase(), req.url);
-            if (lang_1.isPresent(req.withCredentials)) {
+            _xhr.open(RequestMethod[req.method].toUpperCase(), req.url);
+            if (isPresent(req.withCredentials)) {
                 _xhr.withCredentials = req.withCredentials;
             }
             // load event handler
             var onLoad = function () {
                 // responseText is the old-school way of retrieving response (supported by IE8 & 9)
-                // response/responseType properties were introduced in XHR Level2 spec (supported by
+                // response/responseType properties were introduced in ResourceLoader Level2 spec (supported
+                // by
                 // IE10)
-                var body = lang_1.isPresent(_xhr.response) ? _xhr.response : _xhr.responseText;
+                var body = isPresent(_xhr.response) ? _xhr.response : _xhr.responseText;
                 // Implicitly strip a potential XSSI prefix.
-                if (lang_1.isString(body))
+                if (isString(body))
                     body = body.replace(XSSI_PREFIX, '');
-                var headers = headers_1.Headers.fromResponseHeaderString(_xhr.getAllResponseHeaders());
-                var url = http_utils_1.getResponseURL(_xhr);
+                var headers = Headers.fromResponseHeaderString(_xhr.getAllResponseHeaders());
+                var url = getResponseURL(_xhr);
                 // normalize IE9 bug (http://bugs.jquery.com/ticket/1450)
                 var status = _xhr.status === 1223 ? 204 : _xhr.status;
                 // fix status code when it is 0 (0 status is undocumented).
@@ -58,12 +58,12 @@ var XHRConnection = (function () {
                     status = body ? 200 : 0;
                 }
                 var statusText = _xhr.statusText || 'OK';
-                var responseOptions = new base_response_options_1.ResponseOptions({ body: body, status: status, headers: headers, statusText: statusText, url: url });
-                if (lang_1.isPresent(baseResponseOptions)) {
+                var responseOptions = new ResponseOptions({ body: body, status: status, headers: headers, statusText: statusText, url: url });
+                if (isPresent(baseResponseOptions)) {
                     responseOptions = baseResponseOptions.merge(responseOptions);
                 }
-                var response = new static_response_1.Response(responseOptions);
-                response.ok = http_utils_1.isSuccess(status);
+                var response = new Response(responseOptions);
+                response.ok = isSuccess(status);
                 if (response.ok) {
                     responseObserver.next(response);
                     // TODO(gdi2290): defer complete if array buffer until done
@@ -74,34 +74,34 @@ var XHRConnection = (function () {
             };
             // error event handler
             var onError = function (err) {
-                var responseOptions = new base_response_options_1.ResponseOptions({
+                var responseOptions = new ResponseOptions({
                     body: err,
-                    type: enums_1.ResponseType.Error,
+                    type: ResponseType.Error,
                     status: _xhr.status,
                     statusText: _xhr.statusText,
                 });
-                if (lang_1.isPresent(baseResponseOptions)) {
+                if (isPresent(baseResponseOptions)) {
                     responseOptions = baseResponseOptions.merge(responseOptions);
                 }
-                responseObserver.error(new static_response_1.Response(responseOptions));
+                responseObserver.error(new Response(responseOptions));
             };
             _this.setDetectedContentType(req, _xhr);
-            if (lang_1.isPresent(req.headers)) {
+            if (isPresent(req.headers)) {
                 req.headers.forEach(function (values, name) { return _xhr.setRequestHeader(name, values.join(',')); });
             }
             // Select the correct buffer type to store the response
-            if (lang_1.isPresent(req.responseType) && lang_1.isPresent(_xhr.responseType)) {
+            if (isPresent(req.responseType) && isPresent(_xhr.responseType)) {
                 switch (req.responseType) {
-                    case enums_1.ResponseContentType.ArrayBuffer:
+                    case ResponseContentType.ArrayBuffer:
                         _xhr.responseType = 'arraybuffer';
                         break;
-                    case enums_1.ResponseContentType.Json:
+                    case ResponseContentType.Json:
                         _xhr.responseType = 'json';
                         break;
-                    case enums_1.ResponseContentType.Text:
+                    case ResponseContentType.Text:
                         _xhr.responseType = 'text';
                         break;
-                    case enums_1.ResponseContentType.Blob:
+                    case ResponseContentType.Blob:
                         _xhr.responseType = 'blob';
                         break;
                     default:
@@ -120,23 +120,23 @@ var XHRConnection = (function () {
     }
     XHRConnection.prototype.setDetectedContentType = function (req /** TODO #9100 */, _xhr /** TODO #9100 */) {
         // Skip if a custom Content-Type header is provided
-        if (lang_1.isPresent(req.headers) && lang_1.isPresent(req.headers.get('Content-Type'))) {
+        if (isPresent(req.headers) && isPresent(req.headers.get('Content-Type'))) {
             return;
         }
         // Set the detected content type
         switch (req.contentType) {
-            case enums_1.ContentType.NONE:
+            case ContentType.NONE:
                 break;
-            case enums_1.ContentType.JSON:
+            case ContentType.JSON:
                 _xhr.setRequestHeader('content-type', 'application/json');
                 break;
-            case enums_1.ContentType.FORM:
+            case ContentType.FORM:
                 _xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
                 break;
-            case enums_1.ContentType.TEXT:
+            case ContentType.TEXT:
                 _xhr.setRequestHeader('content-type', 'text/plain');
                 break;
-            case enums_1.ContentType.BLOB:
+            case ContentType.BLOB:
                 var blob = req.blob();
                 if (blob.type) {
                     _xhr.setRequestHeader('content-type', blob.type);
@@ -146,7 +146,6 @@ var XHRConnection = (function () {
     };
     return XHRConnection;
 }());
-exports.XHRConnection = XHRConnection;
 /**
  * `XSRFConfiguration` sets up Cross Site Request Forgery (XSRF) protection for the application
  * using a cookie. See {@link https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)}
@@ -158,7 +157,7 @@ exports.XHRConnection = XHRConnection;
  *
  * @experimental
  */
-var CookieXSRFStrategy = (function () {
+export var CookieXSRFStrategy = (function () {
     function CookieXSRFStrategy(_cookieName, _headerName) {
         if (_cookieName === void 0) { _cookieName = 'XSRF-TOKEN'; }
         if (_headerName === void 0) { _headerName = 'X-XSRF-TOKEN'; }
@@ -166,15 +165,40 @@ var CookieXSRFStrategy = (function () {
         this._headerName = _headerName;
     }
     CookieXSRFStrategy.prototype.configureRequest = function (req) {
-        var xsrfToken = platform_browser_1.__platform_browser_private__.getDOM().getCookie(this._cookieName);
+        var xsrfToken = __platform_browser_private__.getDOM().getCookie(this._cookieName);
         if (xsrfToken && !req.headers.has(this._headerName)) {
             req.headers.set(this._headerName, xsrfToken);
         }
     };
     return CookieXSRFStrategy;
 }());
-exports.CookieXSRFStrategy = CookieXSRFStrategy;
-var XHRBackend = (function () {
+/**
+ * Creates {@link XHRConnection} instances.
+ *
+ * This class would typically not be used by end users, but could be
+ * overridden if a different backend implementation should be used,
+ * such as in a node backend.
+ *
+ * ### Example
+ *
+ * ```
+ * import {Http, MyNodeBackend, HTTP_PROVIDERS, BaseRequestOptions} from '@angular/http';
+ * @Component({
+ *   viewProviders: [
+ *     HTTP_PROVIDERS,
+ *     {provide: Http, useFactory: (backend, options) => {
+ *       return new Http(backend, options);
+ *     }, deps: [MyNodeBackend, BaseRequestOptions]}]
+ * })
+ * class MyComponent {
+ *   constructor(http:Http) {
+ *     http.request('people.json').subscribe(res => this.people = res.json());
+ *   }
+ * }
+ * ```
+ * @experimental
+ */
+export var XHRBackend = (function () {
     function XHRBackend(_browserXHR, _baseResponseOptions, _xsrfStrategy) {
         this._browserXHR = _browserXHR;
         this._baseResponseOptions = _baseResponseOptions;
@@ -184,17 +208,15 @@ var XHRBackend = (function () {
         this._xsrfStrategy.configureRequest(request);
         return new XHRConnection(request, this._browserXHR, this._baseResponseOptions);
     };
-    /** @nocollapse */
     XHRBackend.decorators = [
-        { type: core_1.Injectable },
+        { type: Injectable },
     ];
     /** @nocollapse */
     XHRBackend.ctorParameters = [
-        { type: browser_xhr_1.BrowserXhr, },
-        { type: base_response_options_1.ResponseOptions, },
-        { type: interfaces_1.XSRFStrategy, },
+        { type: BrowserXhr, },
+        { type: ResponseOptions, },
+        { type: XSRFStrategy, },
     ];
     return XHRBackend;
 }());
-exports.XHRBackend = XHRBackend;
 //# sourceMappingURL=xhr_backend.js.map

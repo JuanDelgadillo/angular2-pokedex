@@ -5,13 +5,12 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var body_1 = require('./body');
+import { Body } from './body';
 /**
  * Creates `Response` instances from provided values.
  *
@@ -32,7 +31,7 @@ var body_1 = require('./body');
  *
  * @experimental
  */
-var Response = (function (_super) {
+export var Response = (function (_super) {
     __extends(Response, _super);
     function Response(responseOptions) {
         _super.call(this);
@@ -48,6 +47,5 @@ var Response = (function (_super) {
         return "Response with status: " + this.status + " " + this.statusText + " for URL: " + this.url;
     };
     return Response;
-}(body_1.Body));
-exports.Response = Response;
+}(Body));
 //# sourceMappingURL=static_response.js.map

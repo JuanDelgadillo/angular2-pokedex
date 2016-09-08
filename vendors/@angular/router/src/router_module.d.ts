@@ -5,18 +5,19 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { HashLocationStrategy, PathLocationStrategy, PlatformLocation } from '@angular/common';
-import { ModuleWithProviders } from '@angular/core';
-import { ExtraOptions } from './common_router_providers';
-import { Routes } from './config';
-import { RouterLink, RouterLinkWithHref } from './directives/router_link';
-import { RouterLinkActive } from './directives/router_link_active';
-import { RouterOutlet } from './directives/router_outlet';
+import { HashLocationStrategy, Location, PathLocationStrategy, PlatformLocation } from '@angular/common';
+import { ApplicationRef, Compiler, Injector, ModuleWithProviders, NgModuleFactoryLoader, OpaqueToken, Provider } from '@angular/core';
+import { Route, Routes } from './config';
+import { ErrorHandler, Router } from './router';
+import { RouterOutletMap } from './router_outlet_map';
+import { ActivatedRoute } from './router_state';
+import { UrlSerializer } from './url_tree';
 /**
  * @stable
  */
-export declare const ROUTER_DIRECTIVES: (typeof RouterOutlet | typeof RouterLink | typeof RouterLinkWithHref | typeof RouterLinkActive)[];
-export declare const ROUTER_PROVIDERS: any[];
+export declare const ROUTER_CONFIGURATION: OpaqueToken;
+export declare const ROUTER_FORROOT_GUARD: OpaqueToken;
+export declare const ROUTER_PROVIDERS: Provider[];
 /**
  * Router module.
  *
@@ -28,7 +29,7 @@ export declare const ROUTER_PROVIDERS: any[];
  * bootstrap(AppCmp, {imports: [RouterModule.forRoot(ROUTES)]});
  * ```
  *
- * For lazy loaded modules it should be used as follows:
+ * For submodules and lazy loaded submodules it should be used as follows:
  *
  * ### Example
  *
@@ -39,10 +40,40 @@ export declare const ROUTER_PROVIDERS: any[];
  * class Lazy {}
  * ```
  *
- * @experimental
+ * @stable
  */
 export declare class RouterModule {
+    constructor(guard: any);
     static forRoot(routes: Routes, config?: ExtraOptions): ModuleWithProviders;
     static forChild(routes: Routes): ModuleWithProviders;
 }
 export declare function provideLocationStrategy(platformLocationStrategy: PlatformLocation, baseHref: string, options?: ExtraOptions): HashLocationStrategy | PathLocationStrategy;
+export declare function provideForRootGuard(router: Router): any;
+/**
+ * @stable
+ */
+export declare function provideRoutes(routes: Routes): any;
+/**
+ * Extra options used to configure the router.
+ *
+ * Set `enableTracing` to log router events to the console.
+ * Set 'useHash' to true to enable HashLocationStrategy.
+ * Set `errorHandler` to enable a custom ErrorHandler.
+ *
+ * @stable
+ */
+export interface ExtraOptions {
+    enableTracing?: boolean;
+    useHash?: boolean;
+    initialNavigation?: boolean;
+    errorHandler?: ErrorHandler;
+}
+export declare function setupRouter(ref: ApplicationRef, urlSerializer: UrlSerializer, outletMap: RouterOutletMap, location: Location, injector: Injector, loader: NgModuleFactoryLoader, compiler: Compiler, config: Route[][], opts?: ExtraOptions): Router;
+export declare function rootRoute(router: Router): ActivatedRoute;
+export declare function initialRouterNavigation(router: Router, opts: ExtraOptions): () => void;
+export declare function provideRouterInitializer(): {
+    provide: OpaqueToken;
+    multi: boolean;
+    useFactory: (router: Router, opts: ExtraOptions) => () => void;
+    deps: (OpaqueToken | typeof Router)[];
+};

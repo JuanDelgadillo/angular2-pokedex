@@ -5,13 +5,12 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-"use strict";
-var core_1 = require('@angular/core');
-var constants_1 = require('./constants');
+import { ReflectiveInjector } from '@angular/core';
+import { NG1_SCOPE } from './constants';
 var INITIAL_VALUE = {
     __UNINITIALIZED__: true
 };
-var DowngradeNg2ComponentAdapter = (function () {
+export var DowngradeNg2ComponentAdapter = (function () {
     function DowngradeNg2ComponentAdapter(id, info, element, attrs, scope, parentInjector, parse, componentFactory) {
         this.id = id;
         this.info = info;
@@ -32,7 +31,7 @@ var DowngradeNg2ComponentAdapter = (function () {
         this.childNodes = element.contents();
     }
     DowngradeNg2ComponentAdapter.prototype.bootstrapNg2 = function () {
-        var childInjector = core_1.ReflectiveInjector.resolveAndCreate([{ provide: constants_1.NG1_SCOPE, useValue: this.componentScope }], this.parentInjector);
+        var childInjector = ReflectiveInjector.resolveAndCreate([{ provide: NG1_SCOPE, useValue: this.componentScope }], this.parentInjector);
         this.contentInsertionPoint = document.createComment('ng1 insertion point');
         this.componentRef = this.componentFactory.create(childInjector, [[this.contentInsertionPoint]], this.element[0]);
         this.changeDetector = this.componentRef.changeDetectorRef;
@@ -163,7 +162,6 @@ var DowngradeNg2ComponentAdapter = (function () {
     };
     return DowngradeNg2ComponentAdapter;
 }());
-exports.DowngradeNg2ComponentAdapter = DowngradeNg2ComponentAdapter;
 var Ng1Change = (function () {
     function Ng1Change(previousValue, currentValue) {
         this.previousValue = previousValue;

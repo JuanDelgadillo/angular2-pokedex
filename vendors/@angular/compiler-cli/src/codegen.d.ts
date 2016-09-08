@@ -10,7 +10,7 @@
  * Intended to be used in a build step.
  */
 import * as compiler from '@angular/compiler';
-import { AngularCompilerOptions } from '@angular/tsc-wrapped';
+import { AngularCompilerOptions, NgcCliOptions } from '@angular/tsc-wrapped';
 import * as ts from 'typescript';
 import { ReflectorHost, ReflectorHostContext } from './reflector_host';
 import { StaticReflector } from './static_reflector';
@@ -25,5 +25,5 @@ export declare class CodeGenerator {
     private readFileMetadata(absSourcePath);
     private calculateEmitPath(filePath);
     codegen(): Promise<any>;
-    static create(options: AngularCompilerOptions, program: ts.Program, compilerHost: ts.CompilerHost, reflectorHostContext?: ReflectorHostContext): CodeGenerator;
+    static create(options: AngularCompilerOptions, cliOptions: NgcCliOptions, program: ts.Program, compilerHost: ts.CompilerHost, reflectorHostContext?: ReflectorHostContext, resourceLoader?: compiler.ResourceLoader): CodeGenerator;
 }

@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import { MetadataError, MetadataValue } from './schema';
+import { MetadataEntry, MetadataError, MetadataValue } from './schema';
 import { Symbols } from './symbols';
 export declare function isPrimitive(value: any): boolean;
 export interface ImportSpecifierMetadata {
@@ -21,7 +21,8 @@ export declare function errorSymbol(message: string, node?: ts.Node, context?: {
  */
 export declare class Evaluator {
     private symbols;
-    constructor(symbols: Symbols);
+    private nodeMap;
+    constructor(symbols: Symbols, nodeMap: Map<MetadataEntry, ts.Node>);
     nameOf(node: ts.Node): string | MetadataError;
     /**
      * Returns true if the expression represented by `node` can be folded into a literal expression.

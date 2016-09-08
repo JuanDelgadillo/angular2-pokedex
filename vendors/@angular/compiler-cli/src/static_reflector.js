@@ -19,9 +19,10 @@ var SUPPORTED_SCHEMA_VERSION = 1;
  * This token is unique for a filePath and name and can be used as a hash table key.
  */
 var StaticSymbol = (function () {
-    function StaticSymbol(filePath, name) {
+    function StaticSymbol(filePath, name, members) {
         this.filePath = filePath;
         this.name = name;
+        this.members = members;
     }
     return StaticSymbol;
 }());
@@ -43,6 +44,14 @@ var StaticReflector = (function () {
     StaticReflector.prototype.importUri = function (typeOrFunc) {
         var staticSymbol = this.host.findDeclaration(typeOrFunc.filePath, typeOrFunc.name, '');
         return staticSymbol ? staticSymbol.filePath : null;
+    };
+    StaticReflector.prototype.resolveIdentifier = function (name, moduleUrl, runtime) {
+        var result = this.host.findDeclaration(moduleUrl, name, '');
+        return result;
+    };
+    StaticReflector.prototype.resolveEnum = function (enumIdentifier, name) {
+        var staticSymbol = enumIdentifier;
+        return this.host.getStaticSymbol(staticSymbol.filePath, staticSymbol.name, [name]);
     };
     StaticReflector.prototype.annotations = function (type) {
         var annotations = this.annotationCache.get(type);
@@ -139,7 +148,6 @@ var StaticReflector = (function () {
     StaticReflector.prototype.initializeConversionMap = function () {
         var _a = this.host.angularImportLocations(), coreDecorators = _a.coreDecorators, diDecorators = _a.diDecorators, diMetadata = _a.diMetadata, diOpaqueToken = _a.diOpaqueToken, animationMetadata = _a.animationMetadata, provider = _a.provider;
         this.opaqueToken = this.host.findDeclaration(diOpaqueToken, 'OpaqueToken');
-        this.registerDecoratorOrConstructor(this.host.findDeclaration(provider, 'Provider'), core_1.Provider);
         this.registerDecoratorOrConstructor(this.host.findDeclaration(diDecorators, 'Host'), core_1.HostMetadata);
         this.registerDecoratorOrConstructor(this.host.findDeclaration(diDecorators, 'Injectable'), core_1.InjectableMetadata);
         this.registerDecoratorOrConstructor(this.host.findDeclaration(diDecorators, 'Self'), core_1.SelfMetadata);
@@ -147,8 +155,6 @@ var StaticReflector = (function () {
         this.registerDecoratorOrConstructor(this.host.findDeclaration(diDecorators, 'Inject'), core_1.InjectMetadata);
         this.registerDecoratorOrConstructor(this.host.findDeclaration(diDecorators, 'Optional'), core_1.OptionalMetadata);
         this.registerDecoratorOrConstructor(this.host.findDeclaration(coreDecorators, 'Attribute'), core_1.AttributeMetadata);
-        this.registerDecoratorOrConstructor(this.host.findDeclaration(coreDecorators, 'Query'), core_1.QueryMetadata);
-        this.registerDecoratorOrConstructor(this.host.findDeclaration(coreDecorators, 'ViewQuery'), core_1.ViewQueryMetadata);
         this.registerDecoratorOrConstructor(this.host.findDeclaration(coreDecorators, 'ContentChild'), core_1.ContentChildMetadata);
         this.registerDecoratorOrConstructor(this.host.findDeclaration(coreDecorators, 'ContentChildren'), core_1.ContentChildrenMetadata);
         this.registerDecoratorOrConstructor(this.host.findDeclaration(coreDecorators, 'ViewChild'), core_1.ViewChildMetadata);
@@ -391,7 +397,11 @@ var StaticReflector = (function () {
                                         selectTarget = declarationValue_1.statics;
                                     }
                                     else {
-                                        return null;
+                                        var member_1 = expression['member'];
+                                        var members = selectTarget.members ?
+                                            selectTarget.members.concat(member_1) :
+                                            [member_1];
+                                        return _this.host.getStaticSymbol(selectTarget.filePath, selectTarget.name, members);
                                     }
                                 }
                                 var member = simplify(expression['member']);
@@ -507,13 +517,13 @@ function expandedMessage(error) {
     switch (error.message) {
         case 'Reference to non-exported class':
             if (error.context && error.context.className) {
-                return "Reference to a non-exported class " + error.context.className;
+                return "Reference to a non-exported class " + error.context.className + ". Consider exporting the class";
             }
             break;
         case 'Variable not initialized':
-            return 'Only initialized variables and constants can be referenced';
+            return 'Only initialized variables and constants can be referenced because the value of this variable is needed by the template compiler';
         case 'Destructuring not supported':
-            return 'Referencing an exported destructured variable or constant is not supported';
+            return 'Referencing an exported destructured variable or constant is not supported by the template compiler. Consider simplifying this to avoid destructuring';
         case 'Could not resolve type':
             if (error.context && error.context.typeName) {
                 return "Could not resolve type " + error.context.typeName;

@@ -77,20 +77,20 @@ function isMetadataSymbolicIfExpression(value) {
 }
 exports.isMetadataSymbolicIfExpression = isMetadataSymbolicIfExpression;
 function isMetadataGlobalReferenceExpression(value) {
-    return isMetadataSymbolicReferenceExpression(value) && value.name && !value.module;
+    return value && value.name && !value.module && isMetadataSymbolicReferenceExpression(value);
 }
 exports.isMetadataGlobalReferenceExpression = isMetadataGlobalReferenceExpression;
 function isMetadataModuleReferenceExpression(value) {
-    return isMetadataSymbolicReferenceExpression(value) && value.module && !value.name &&
-        !value.default;
+    return value && value.module && !value.name && !value.default &&
+        isMetadataSymbolicReferenceExpression(value);
 }
 exports.isMetadataModuleReferenceExpression = isMetadataModuleReferenceExpression;
 function isMetadataImportedSymbolReferenceExpression(value) {
-    return isMetadataSymbolicReferenceExpression(value) && value.module && !!value.name;
+    return value && value.module && !!value.name && isMetadataSymbolicReferenceExpression(value);
 }
 exports.isMetadataImportedSymbolReferenceExpression = isMetadataImportedSymbolReferenceExpression;
 function isMetadataImportDefaultReference(value) {
-    return isMetadataSymbolicReferenceExpression(value) && value.module && value.default;
+    return value.module && value.default && isMetadataSymbolicReferenceExpression(value);
 }
 exports.isMetadataImportDefaultReference = isMetadataImportDefaultReference;
 function isMetadataSymbolicReferenceExpression(value) {

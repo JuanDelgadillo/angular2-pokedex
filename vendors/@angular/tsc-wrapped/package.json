@@ -3,24 +3,24 @@
     [
       {
         "name": "@angular/tsc-wrapped",
-        "raw": "@angular/tsc-wrapped@^0.2.0",
-        "rawSpec": "^0.2.0",
+        "raw": "@angular/tsc-wrapped@^0.3.0",
+        "rawSpec": "^0.3.0",
         "scope": "@angular",
-        "spec": ">=0.2.0 <0.3.0",
+        "spec": ">=0.3.0 <0.4.0",
         "type": "range"
       },
       "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex/node_modules/@angular/compiler-cli"
     ]
   ],
-  "_from": "@angular/tsc-wrapped@>=0.2.0 <0.3.0",
-  "_id": "@angular/tsc-wrapped@0.2.2",
+  "_from": "@angular/tsc-wrapped@>=0.3.0 <0.4.0",
+  "_id": "@angular/tsc-wrapped@0.3.0",
   "_inCache": true,
   "_installable": true,
   "_location": "/@angular/tsc-wrapped",
   "_nodeVersion": "5.4.1",
   "_npmOperationalInternal": {
-    "host": "packages-16-east.internal.npmjs.com",
-    "tmp": "tmp/tsc-wrapped-0.2.2.tgz_1470758464049_0.17854319931939244"
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/tsc-wrapped-0.3.0.tgz_1472686648031_0.606687813764438"
   },
   "_npmUser": {
     "email": "angular-core+npm@google.com",
@@ -30,19 +30,19 @@
   "_phantomChildren": {},
   "_requested": {
     "name": "@angular/tsc-wrapped",
-    "raw": "@angular/tsc-wrapped@^0.2.0",
-    "rawSpec": "^0.2.0",
+    "raw": "@angular/tsc-wrapped@^0.3.0",
+    "rawSpec": "^0.3.0",
     "scope": "@angular",
-    "spec": ">=0.2.0 <0.3.0",
+    "spec": ">=0.3.0 <0.4.0",
     "type": "range"
   },
   "_requiredBy": [
     "/@angular/compiler-cli"
   ],
-  "_resolved": "https://registry.npmjs.org/@angular/tsc-wrapped/-/tsc-wrapped-0.2.2.tgz",
-  "_shasum": "6ecc9ac7deffe24a994505a25a35da3dbfb71220",
+  "_resolved": "https://registry.npmjs.org/@angular/tsc-wrapped/-/tsc-wrapped-0.3.0.tgz",
+  "_shasum": "98cdeb5c38d145b187c0ad0397a8d98b217f33f2",
   "_shrinkwrap": null,
-  "_spec": "@angular/tsc-wrapped@^0.2.0",
+  "_spec": "@angular/tsc-wrapped@^0.3.0",
   "_where": "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex/node_modules/@angular/compiler-cli",
   "bugs": {
     "url": "https://github.com/angular/angular/issues"
@@ -58,14 +58,14 @@
     }
   ],
   "dependencies": {
-    "tsickle": "0.1.6"
+    "tsickle": "^0.1.7"
   },
   "description": "Wraps the tsc CLI, allowing extensions.",
   "devDependencies": {},
   "directories": {},
   "dist": {
-    "shasum": "6ecc9ac7deffe24a994505a25a35da3dbfb71220",
-    "tarball": "https://registry.npmjs.org/@angular/tsc-wrapped/-/tsc-wrapped-0.2.2.tgz"
+    "shasum": "98cdeb5c38d145b187c0ad0397a8d98b217f33f2",
+    "tarball": "https://registry.npmjs.org/@angular/tsc-wrapped/-/tsc-wrapped-0.3.0.tgz"
   },
   "homepage": "https://github.com/angular/angular/tree/master/tools/tsc-wrapped",
   "license": "MIT",
@@ -78,7 +78,7 @@
   "name": "@angular/tsc-wrapped",
   "optionalDependencies": {},
   "peerDependencies": {
-    "typescript": "^1.9.0-dev"
+    "typescript": "^2.0.2"
   },
   "readme": "ERROR: No README data found!",
   "repository": {
@@ -86,5 +86,5 @@
     "url": "git+https://github.com/angular/angular.git"
   },
   "scripts": {},
-  "version": "0.2.2"
+  "version": "0.3.0"
 }

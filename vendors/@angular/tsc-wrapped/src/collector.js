@@ -13,13 +13,19 @@ var MetadataCollector = (function () {
      * Returns a JSON.stringify friendly form describing the decorators of the exported classes from
      * the source file that is expected to correspond to a module.
      */
-    MetadataCollector.prototype.getMetadata = function (sourceFile) {
+    MetadataCollector.prototype.getMetadata = function (sourceFile, strict) {
+        if (strict === void 0) { strict = false; }
         var locals = new symbols_1.Symbols(sourceFile);
-        var evaluator = new evaluator_1.Evaluator(locals);
+        var nodeMap = new Map();
+        var evaluator = new evaluator_1.Evaluator(locals, nodeMap);
         var metadata;
         var exports;
         function objFromDecorator(decoratorNode) {
             return evaluator.evaluateNode(decoratorNode.expression);
+        }
+        function recordEntry(entry, node) {
+            nodeMap.set(entry, node);
+            return entry;
         }
         function errorSym(message, node, context) {
             return evaluator_1.errorSymbol(message, node, context, sourceFile);
@@ -43,7 +49,7 @@ var MetadataCollector = (function () {
                                 var defaults = [];
                                 func.defaults = functionDeclaration.parameters.map(function (p) { return p.initializer && evaluator.evaluateNode(p.initializer); });
                             }
-                            return { func: func, name: functionName };
+                            return recordEntry({ func: func, name: functionName }, functionDeclaration);
                         }
                     }
                 }
@@ -169,9 +175,10 @@ var MetadataCollector = (function () {
             if (statics) {
                 result.statics = statics;
             }
-            return result.decorators || members || statics ? result : undefined;
+            return result.decorators || members || statics ? recordEntry(result, classDeclaration) :
+                undefined;
         }
-        // Predeclare classes
+        // Predeclare classes and functions
         ts.forEachChild(sourceFile, function (node) {
             switch (node.kind) {
                 case ts.SyntaxKind.ClassDeclaration:
@@ -182,6 +189,14 @@ var MetadataCollector = (function () {
                     }
                     else {
                         locals.define(className, errorSym('Reference to non-exported class', node, { className: className }));
+                    }
+                    break;
+                case ts.SyntaxKind.FunctionDeclaration:
+                    if (!(node.flags & ts.NodeFlags.Export)) {
+                        // Report references to this function as an error.
+                        var functionDeclaration = node;
+                        var nameNode = functionDeclaration.name;
+                        locals.define(nameNode.text, errorSym('Reference to a non-exported function', nameNode, { name: nameNode.text }));
                     }
                     break;
             }
@@ -222,61 +237,63 @@ var MetadataCollector = (function () {
                 case ts.SyntaxKind.FunctionDeclaration:
                     // Record functions that return a single value. Record the parameter
                     // names substitution will be performed by the StaticReflector.
+                    var functionDeclaration = node;
                     if (node.flags & ts.NodeFlags.Export) {
-                        var functionDeclaration = node;
                         var maybeFunc = maybeGetSimpleFunction(functionDeclaration);
                         if (maybeFunc) {
                             if (!metadata)
                                 metadata = {};
-                            metadata[maybeFunc.name] = maybeFunc.func;
+                            metadata[maybeFunc.name] = recordEntry(maybeFunc.func, node);
                         }
                     }
-                    // Otherwise don't record the function.
                     break;
                 case ts.SyntaxKind.EnumDeclaration:
-                    var enumDeclaration = node;
-                    var enumValueHolder = {};
-                    var enumName = enumDeclaration.name.text;
-                    var nextDefaultValue = 0;
-                    var writtenMembers = 0;
-                    for (var _i = 0, _a = enumDeclaration.members; _i < _a.length; _i++) {
-                        var member = _a[_i];
-                        var enumValue = void 0;
-                        if (!member.initializer) {
-                            enumValue = nextDefaultValue;
+                    if (node.flags & ts.NodeFlags.Export) {
+                        var enumDeclaration = node;
+                        var enumValueHolder = {};
+                        var enumName = enumDeclaration.name.text;
+                        var nextDefaultValue = 0;
+                        var writtenMembers = 0;
+                        for (var _i = 0, _a = enumDeclaration.members; _i < _a.length; _i++) {
+                            var member = _a[_i];
+                            var enumValue = void 0;
+                            if (!member.initializer) {
+                                enumValue = nextDefaultValue;
+                            }
+                            else {
+                                enumValue = evaluator.evaluateNode(member.initializer);
+                            }
+                            var name_4 = undefined;
+                            if (member.name.kind == ts.SyntaxKind.Identifier) {
+                                var identifier = member.name;
+                                name_4 = identifier.text;
+                                enumValueHolder[name_4] = enumValue;
+                                writtenMembers++;
+                            }
+                            if (typeof enumValue === 'number') {
+                                nextDefaultValue = enumValue + 1;
+                            }
+                            else if (name_4) {
+                                nextDefaultValue = {
+                                    __symbolic: 'binary',
+                                    operator: '+',
+                                    left: {
+                                        __symbolic: 'select',
+                                        expression: recordEntry({ __symbolic: 'reference', name: enumName }, node), name: name_4
+                                    }
+                                };
+                            }
+                            else {
+                                nextDefaultValue =
+                                    recordEntry(errorSym('Unsuppported enum member name', member.name), node);
+                            }
+                            ;
                         }
-                        else {
-                            enumValue = evaluator.evaluateNode(member.initializer);
+                        if (writtenMembers) {
+                            if (!metadata)
+                                metadata = {};
+                            metadata[enumName] = recordEntry(enumValueHolder, node);
                         }
-                        var name_4 = undefined;
-                        if (member.name.kind == ts.SyntaxKind.Identifier) {
-                            var identifier = member.name;
-                            name_4 = identifier.text;
-                            enumValueHolder[name_4] = enumValue;
-                            writtenMembers++;
-                        }
-                        if (typeof enumValue === 'number') {
-                            nextDefaultValue = enumValue + 1;
-                        }
-                        else if (name_4) {
-                            nextDefaultValue = {
-                                __symbolic: 'binary',
-                                operator: '+',
-                                left: {
-                                    __symbolic: 'select',
-                                    expression: { __symbolic: 'reference', name: enumName }, name: name_4
-                                }
-                            };
-                        }
-                        else {
-                            nextDefaultValue = errorSym('Unsuppported enum member name', member.name);
-                        }
-                        ;
-                    }
-                    if (writtenMembers) {
-                        if (!metadata)
-                            metadata = {};
-                        metadata[enumName] = enumValueHolder;
                     }
                     break;
                 case ts.SyntaxKind.VariableStatement:
@@ -289,21 +306,26 @@ var MetadataCollector = (function () {
                                 varValue = evaluator.evaluateNode(variableDeclaration.initializer);
                             }
                             else {
-                                varValue = errorSym('Variable not initialized', nameNode);
+                                varValue = recordEntry(errorSym('Variable not initialized', nameNode), nameNode);
                             }
                             var exported = false;
                             if (variableStatement.flags & ts.NodeFlags.Export ||
                                 variableDeclaration.flags & ts.NodeFlags.Export) {
                                 if (!metadata)
                                     metadata = {};
-                                metadata[nameNode.text] = varValue;
+                                metadata[nameNode.text] = recordEntry(varValue, node);
                                 exported = true;
                             }
                             if (evaluator_1.isPrimitive(varValue)) {
                                 locals.define(nameNode.text, varValue);
                             }
                             else if (!exported) {
-                                locals.define(nameNode.text, errorSym('Reference to a local symbol', nameNode, { name: nameNode.text }));
+                                if (varValue && !schema_1.isMetadataError(varValue)) {
+                                    locals.define(nameNode.text, recordEntry(varValue, node));
+                                }
+                                else {
+                                    locals.define(nameNode.text, recordEntry(errorSym('Reference to a local symbol', nameNode, { name: nameNode.text }), node));
+                                }
                             }
                         }
                         else {
@@ -348,6 +370,9 @@ var MetadataCollector = (function () {
         if (metadata || exports) {
             if (!metadata)
                 metadata = {};
+            else if (strict) {
+                validateMetadata(sourceFile, nodeMap, metadata);
+            }
             var result = { __symbolic: 'module', version: schema_1.VERSION, metadata: metadata };
             if (exports)
                 result.exports = exports;
@@ -357,6 +382,142 @@ var MetadataCollector = (function () {
     return MetadataCollector;
 }());
 exports.MetadataCollector = MetadataCollector;
+// This will throw if the metadata entry given contains an error node.
+function validateMetadata(sourceFile, nodeMap, metadata) {
+    var locals = new Set(['Array', 'Object', 'Set', 'Map', 'string', 'number', 'any']);
+    function validateExpression(expression) {
+        if (!expression) {
+            return;
+        }
+        else if (Array.isArray(expression)) {
+            expression.forEach(validateExpression);
+        }
+        else if (typeof expression === 'object' && !expression.hasOwnProperty('__symbolic')) {
+            Object.getOwnPropertyNames(expression).forEach(function (v) { return validateExpression(expression[v]); });
+        }
+        else if (schema_1.isMetadataError(expression)) {
+            reportError(expression);
+        }
+        else if (schema_1.isMetadataGlobalReferenceExpression(expression)) {
+            if (!locals.has(expression.name)) {
+                var reference = metadata[expression.name];
+                if (reference) {
+                    validateExpression(reference);
+                }
+            }
+        }
+        else if (schema_1.isFunctionMetadata(expression)) {
+            validateFunction(expression);
+        }
+        else if (schema_1.isMetadataSymbolicExpression(expression)) {
+            switch (expression.__symbolic) {
+                case 'binary':
+                    var binaryExpression = expression;
+                    validateExpression(binaryExpression.left);
+                    validateExpression(binaryExpression.right);
+                    break;
+                case 'call':
+                case 'new':
+                    var callExpression = expression;
+                    validateExpression(callExpression.expression);
+                    if (callExpression.arguments)
+                        callExpression.arguments.forEach(validateExpression);
+                    break;
+                case 'index':
+                    var indexExpression = expression;
+                    validateExpression(indexExpression.expression);
+                    validateExpression(indexExpression.index);
+                    break;
+                case 'pre':
+                    var prefixExpression = expression;
+                    validateExpression(prefixExpression.operand);
+                    break;
+                case 'select':
+                    var selectExpression = expression;
+                    validateExpression(selectExpression.expression);
+                    break;
+                case 'spread':
+                    var spreadExpression = expression;
+                    validateExpression(spreadExpression.expression);
+                    break;
+                case 'if':
+                    var ifExpression = expression;
+                    validateExpression(ifExpression.condition);
+                    validateExpression(ifExpression.elseExpression);
+                    validateExpression(ifExpression.thenExpression);
+                    break;
+            }
+        }
+    }
+    function validateMember(member) {
+        if (member.decorators) {
+            member.decorators.forEach(validateExpression);
+        }
+        if (schema_1.isMethodMetadata(member) && member.parameterDecorators) {
+            member.parameterDecorators.forEach(validateExpression);
+        }
+        if (schema_1.isConstructorMetadata(member) && member.parameters) {
+            member.parameters.forEach(validateExpression);
+        }
+    }
+    function validateClass(classData) {
+        if (classData.decorators) {
+            classData.decorators.forEach(validateExpression);
+        }
+        if (classData.members) {
+            Object.getOwnPropertyNames(classData.members)
+                .forEach(function (name) { return classData.members[name].forEach(validateMember); });
+        }
+    }
+    function validateFunction(functionDeclaration) {
+        if (functionDeclaration.value) {
+            var oldLocals = locals;
+            if (functionDeclaration.parameters) {
+                locals = new Set(oldLocals.values());
+                if (functionDeclaration.parameters)
+                    functionDeclaration.parameters.forEach(function (n) { return locals.add(n); });
+            }
+            validateExpression(functionDeclaration.value);
+            locals = oldLocals;
+        }
+    }
+    function shouldReportNode(node) {
+        if (node) {
+            var nodeStart = node.getStart();
+            return !(node.pos != nodeStart &&
+                sourceFile.text.substring(node.pos, nodeStart).indexOf('@dynamic') >= 0);
+        }
+        return true;
+    }
+    function reportError(error) {
+        var node = nodeMap.get(error);
+        if (shouldReportNode(node)) {
+            var lineInfo = error.line != undefined ?
+                error.character != undefined ? ":" + (error.line + 1) + ":" + (error.character + 1) :
+                    ":" + (error.line + 1) :
+                '';
+            throw new Error("" + sourceFile.fileName + lineInfo + ": Metadata collected contains an error that will be reported at runtime: " + expandedMessage(error) + ".\n  " + JSON.stringify(error));
+        }
+    }
+    Object.getOwnPropertyNames(metadata).forEach(function (name) {
+        var entry = metadata[name];
+        try {
+            if (schema_1.isClassMetadata(entry)) {
+                validateClass(entry);
+            }
+        }
+        catch (e) {
+            var node = nodeMap.get(entry);
+            if (shouldReportNode(node)) {
+                if (node) {
+                    var _a = sourceFile.getLineAndCharacterOfPosition(node.getStart()), line = _a.line, character = _a.character;
+                    throw new Error(sourceFile.fileName + ":" + (line + 1) + ":" + (character + 1) + ": Error encountered in metadata generated for exported symbol '" + name + "': \n " + e.message);
+                }
+                throw new Error("Error encountered in metadata generated for exported symbol " + name + ": \n " + e.message);
+            }
+        }
+    });
+}
 // Collect parameter names from a function.
 function namesOf(parameters) {
     var result = [];
@@ -378,5 +539,32 @@ function namesOf(parameters) {
         addNamesOf(parameter.name);
     }
     return result;
+}
+function expandedMessage(error) {
+    switch (error.message) {
+        case 'Reference to non-exported class':
+            if (error.context && error.context.className) {
+                return "Reference to a non-exported class " + error.context.className + ". Consider exporting the class";
+            }
+            break;
+        case 'Variable not initialized':
+            return 'Only initialized variables and constants can be referenced because the value of this variable is needed by the template compiler';
+        case 'Destructuring not supported':
+            return 'Referencing an exported destructured variable or constant is not supported by the template compiler. Consider simplifying this to avoid destructuring';
+        case 'Could not resolve type':
+            if (error.context && error.context.typeName) {
+                return "Could not resolve type " + error.context.typeName;
+            }
+            break;
+        case 'Function call not supported':
+            var prefix = error.context && error.context.name ? "Calling function '" + error.context.name + "', f" : 'F';
+            return prefix +
+                'unction calls are not supported. Consider replacing the function or lambda with a reference to an exported function';
+        case 'Reference to a local symbol':
+            if (error.context && error.context.name) {
+                return "Reference to a local (non-exported) symbol '" + error.context.name + "'. Consider exporting the symbol";
+            }
+    }
+    return error.message;
 }
 //# sourceMappingURL=collector.js.map

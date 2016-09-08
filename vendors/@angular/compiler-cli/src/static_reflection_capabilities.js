@@ -6,14 +6,14 @@
  * found in the LICENSE file at https://angular.io/license
  */
 "use strict";
-var core_private_1 = require('./core_private');
+var private_import_core_1 = require('./private_import_core');
 var StaticAndDynamicReflectionCapabilities = (function () {
     function StaticAndDynamicReflectionCapabilities(staticDelegate) {
         this.staticDelegate = staticDelegate;
-        this.dynamicDelegate = new core_private_1.ReflectionCapabilities();
+        this.dynamicDelegate = new private_import_core_1.ReflectionCapabilities();
     }
     StaticAndDynamicReflectionCapabilities.install = function (staticDelegate) {
-        core_private_1.reflector.updateCapabilities(new StaticAndDynamicReflectionCapabilities(staticDelegate));
+        private_import_core_1.reflector.updateCapabilities(new StaticAndDynamicReflectionCapabilities(staticDelegate));
     };
     StaticAndDynamicReflectionCapabilities.prototype.isReflectionEnabled = function () { return true; };
     StaticAndDynamicReflectionCapabilities.prototype.factory = function (type) { return this.dynamicDelegate.factory(type); };
@@ -39,6 +39,17 @@ var StaticAndDynamicReflectionCapabilities = (function () {
     StaticAndDynamicReflectionCapabilities.prototype.setter = function (name) { return this.dynamicDelegate.setter(name); };
     StaticAndDynamicReflectionCapabilities.prototype.method = function (name) { return this.dynamicDelegate.method(name); };
     StaticAndDynamicReflectionCapabilities.prototype.importUri = function (type) { return this.staticDelegate.importUri(type); };
+    StaticAndDynamicReflectionCapabilities.prototype.resolveIdentifier = function (name, moduleUrl, runtime) {
+        return this.staticDelegate.resolveIdentifier(name, moduleUrl, runtime);
+    };
+    StaticAndDynamicReflectionCapabilities.prototype.resolveEnum = function (enumIdentifier, name) {
+        if (isStaticType(enumIdentifier)) {
+            return this.staticDelegate.resolveEnum(enumIdentifier, name);
+        }
+        else {
+            return null;
+        }
+    };
     return StaticAndDynamicReflectionCapabilities;
 }());
 exports.StaticAndDynamicReflectionCapabilities = StaticAndDynamicReflectionCapabilities;

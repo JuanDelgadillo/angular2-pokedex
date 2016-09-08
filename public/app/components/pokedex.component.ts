@@ -1,16 +1,10 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
-import { ImageifyPipe } from '../pipes/imageify.pipe'
 import { PokemonService } from '../services/pokemon.service'
-import { PokemonNameComponent } from './pokemon-name.component'
-import { PokemonImageComponent } from './pokemon-image.component'
-import { PokemonTypeComponent } from './pokemon-type.component'
 import * as _ from '_'
 
 @Component({
 	selector: 'pokedex',
-	pipes: [ImageifyPipe],
-	directives: [PokemonNameComponent, PokemonImageComponent, PokemonTypeComponent],
 	providers: [PokemonService],
 	template: `
 		<div>

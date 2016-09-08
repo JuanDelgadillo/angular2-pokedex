@@ -5,8 +5,7 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-"use strict";
-var Tree = (function () {
+export var Tree = (function () {
     function Tree(root) {
         this._root = root;
     }
@@ -16,28 +15,28 @@ var Tree = (function () {
         configurable: true
     });
     /**
-     * @deprecated (use ActivatedRoute.parent instead)
+     * @internal
      */
     Tree.prototype.parent = function (t) {
         var p = this.pathFromRoot(t);
         return p.length > 1 ? p[p.length - 2] : null;
     };
     /**
-     * @deprecated (use ActivatedRoute.children instead)
+     * @internal
      */
     Tree.prototype.children = function (t) {
         var n = findNode(t, this._root);
         return n ? n.children.map(function (t) { return t.value; }) : [];
     };
     /**
-     * @deprecated (use ActivatedRoute.firstChild instead)
+     * @internal
      */
     Tree.prototype.firstChild = function (t) {
         var n = findNode(t, this._root);
         return n && n.children.length > 0 ? n.children[0].value : null;
     };
     /**
-     * @deprecated
+     * @internal
      */
     Tree.prototype.siblings = function (t) {
         var p = findPath(t, this._root, []);
@@ -47,12 +46,11 @@ var Tree = (function () {
         return c.filter(function (cc) { return cc !== t; });
     };
     /**
-     * @deprecated (use ActivatedRoute.pathFromRoot instead)
+     * @internal
      */
     Tree.prototype.pathFromRoot = function (t) { return findPath(t, this._root, []).map(function (s) { return s.value; }); };
     return Tree;
 }());
-exports.Tree = Tree;
 function findNode(expected, c) {
     if (expected === c.value)
         return c;
@@ -77,7 +75,7 @@ function findPath(expected, c, collected) {
     }
     return [];
 }
-var TreeNode = (function () {
+export var TreeNode = (function () {
     function TreeNode(value, children) {
         this.value = value;
         this.children = children;
@@ -85,5 +83,4 @@ var TreeNode = (function () {
     TreeNode.prototype.toString = function () { return "TreeNode(" + this.value + ")"; };
     return TreeNode;
 }());
-exports.TreeNode = TreeNode;
 //# sourceMappingURL=tree.js.map

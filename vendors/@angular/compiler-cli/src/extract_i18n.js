@@ -5,17 +5,32 @@ var compiler = require('@angular/compiler');
 var core_1 = require('@angular/core');
 var path = require('path');
 var tsc = require('@angular/tsc-wrapped');
-var compiler_private_1 = require('./compiler_private');
-var core_private_1 = require('./core_private');
+var private_import_compiler_1 = require('./private_import_compiler');
+var private_import_core_1 = require('./private_import_core');
 var reflector_host_1 = require('./reflector_host');
 var static_reflection_capabilities_1 = require('./static_reflection_capabilities');
 var static_reflector_1 = require('./static_reflector');
-function extract(ngOptions, program, host) {
-    var extractor = Extractor.create(ngOptions, program, host);
+function extract(ngOptions, cliOptions, program, host) {
+    var htmlParser = new compiler.I18NHtmlParser(new private_import_compiler_1.HtmlParser());
+    var extractor = Extractor.create(ngOptions, cliOptions.i18nFormat, program, host, htmlParser);
     var bundlePromise = extractor.extract();
     return (bundlePromise).then(function (messageBundle) {
-        var serializer = new compiler.i18n.Xmb();
-        var dstPath = path.join(ngOptions.genDir, 'messages.xmb');
+        var ext;
+        var serializer;
+        var format = (cliOptions.i18nFormat || 'xlf').toLowerCase();
+        switch (format) {
+            case 'xmb':
+                ext = 'xmb';
+                serializer = new compiler.Xmb();
+                break;
+            case 'xliff':
+            case 'xlf':
+            default:
+                ext = 'xlf';
+                serializer = new compiler.Xliff(htmlParser, compiler.DEFAULT_INTERPOLATION_CONFIG);
+                break;
+        }
+        var dstPath = path.join(ngOptions.genDir, "messages." + ext);
         host.writeFile(dstPath, messageBundle.write(serializer), false);
     });
 }
@@ -104,8 +119,8 @@ var Extractor = (function () {
         }
         return bundlePromise;
     };
-    Extractor.create = function (options, program, compilerHost, reflectorHostContext) {
-        var xhr = {
+    Extractor.create = function (options, translationsFormat, program, compilerHost, htmlParser, reflectorHostContext) {
+        var resourceLoader = {
             get: function (s) {
                 if (!compilerHost.fileExists(s)) {
                     // TODO: We should really have a test for error cases like this!
@@ -118,22 +133,21 @@ var Extractor = (function () {
         var reflectorHost = new reflector_host_1.ReflectorHost(program, compilerHost, options, reflectorHostContext);
         var staticReflector = new static_reflector_1.StaticReflector(reflectorHost);
         static_reflection_capabilities_1.StaticAndDynamicReflectionCapabilities.install(staticReflector);
-        var htmlParser = new compiler_private_1.HtmlParser();
         var config = new compiler.CompilerConfig({
             genDebugInfo: options.debug === true,
             defaultEncapsulation: core_1.ViewEncapsulation.Emulated,
             logBindingUpdate: false,
             useJit: false
         });
-        var normalizer = new compiler_private_1.DirectiveNormalizer(xhr, urlResolver, htmlParser, config);
-        var expressionParser = new compiler_private_1.Parser(new compiler_private_1.Lexer());
-        var elementSchemaRegistry = new compiler_private_1.DomElementSchemaRegistry();
-        var console = new core_private_1.Console();
-        var tmplParser = new compiler_private_1.TemplateParser(expressionParser, elementSchemaRegistry, htmlParser, console, []);
-        var resolver = new compiler_private_1.CompileMetadataResolver(new compiler.NgModuleResolver(staticReflector), new compiler.DirectiveResolver(staticReflector), new compiler.PipeResolver(staticReflector), config, console, elementSchemaRegistry, staticReflector);
-        var offlineCompiler = new compiler.OfflineCompiler(resolver, normalizer, tmplParser, new compiler_private_1.StyleCompiler(urlResolver), new compiler_private_1.ViewCompiler(config), new compiler_private_1.NgModuleCompiler(), new compiler_private_1.TypeScriptEmitter(reflectorHost));
+        var normalizer = new private_import_compiler_1.DirectiveNormalizer(resourceLoader, urlResolver, htmlParser, config);
+        var expressionParser = new private_import_compiler_1.Parser(new private_import_compiler_1.Lexer());
+        var elementSchemaRegistry = new private_import_compiler_1.DomElementSchemaRegistry();
+        var console = new private_import_core_1.Console();
+        var tmplParser = new private_import_compiler_1.TemplateParser(expressionParser, elementSchemaRegistry, htmlParser, console, []);
+        var resolver = new private_import_compiler_1.CompileMetadataResolver(new compiler.NgModuleResolver(staticReflector), new compiler.DirectiveResolver(staticReflector), new compiler.PipeResolver(staticReflector), elementSchemaRegistry, staticReflector);
+        var offlineCompiler = new compiler.OfflineCompiler(resolver, normalizer, tmplParser, new private_import_compiler_1.StyleCompiler(urlResolver), new private_import_compiler_1.ViewCompiler(config), new private_import_compiler_1.NgModuleCompiler(), new private_import_compiler_1.TypeScriptEmitter(reflectorHost), null, null);
         // TODO(vicb): implicit tags & attributes
-        var messageBundle = new compiler.i18n.MessageBundle(htmlParser, [], {});
+        var messageBundle = new compiler.MessageBundle(htmlParser, [], {});
         return new Extractor(program, compilerHost, staticReflector, messageBundle, reflectorHost, resolver, normalizer, offlineCompiler);
     };
     return Extractor;
@@ -142,7 +156,9 @@ exports.Extractor = Extractor;
 // Entry point
 if (require.main === module) {
     var args = require('minimist')(process.argv.slice(2));
-    tsc.main(args.p || args.project || '.', args.basePath, extract)
+    var project = args.p || args.project || '.';
+    var cliOptions = new tsc.I18nExtractionCliOptions(args);
+    tsc.main(project, cliOptions, extract)
         .then(function (exitCode) { return process.exit(exitCode); })
         .catch(function (e) {
         console.error(e.stack);

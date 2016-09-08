@@ -3,24 +3,24 @@
     [
       {
         "name": "@angular/compiler-cli",
-        "raw": "@angular/compiler-cli@0.5.0",
-        "rawSpec": "0.5.0",
+        "raw": "@angular/compiler-cli@0.6.0",
+        "rawSpec": "0.6.0",
         "scope": "@angular",
-        "spec": "0.5.0",
+        "spec": "0.6.0",
         "type": "version"
       },
       "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex"
     ]
   ],
-  "_from": "@angular/compiler-cli@0.5.0",
-  "_id": "@angular/compiler-cli@0.5.0",
+  "_from": "@angular/compiler-cli@0.6.0",
+  "_id": "@angular/compiler-cli@0.6.0",
   "_inCache": true,
   "_installable": true,
   "_location": "/@angular/compiler-cli",
   "_nodeVersion": "5.4.1",
   "_npmOperationalInternal": {
     "host": "packages-12-west.internal.npmjs.com",
-    "tmp": "tmp/compiler-cli-0.5.0.tgz_1470759626957_0.07993507012724876"
+    "tmp": "tmp/compiler-cli-0.6.0.tgz_1472686605259_0.30673623457551"
   },
   "_npmUser": {
     "email": "angular-core+npm@google.com",
@@ -30,19 +30,19 @@
   "_phantomChildren": {},
   "_requested": {
     "name": "@angular/compiler-cli",
-    "raw": "@angular/compiler-cli@0.5.0",
-    "rawSpec": "0.5.0",
+    "raw": "@angular/compiler-cli@0.6.0",
+    "rawSpec": "0.6.0",
     "scope": "@angular",
-    "spec": "0.5.0",
+    "spec": "0.6.0",
     "type": "version"
   },
   "_requiredBy": [
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/@angular/compiler-cli/-/compiler-cli-0.5.0.tgz",
-  "_shasum": "7faade1a0084a8a58e5e03690557b8009bea3db8",
+  "_resolved": "https://registry.npmjs.org/@angular/compiler-cli/-/compiler-cli-0.6.0.tgz",
+  "_shasum": "f28e89aa5f9b055768ac74963f46cb139b0063c7",
   "_shrinkwrap": null,
-  "_spec": "@angular/compiler-cli@0.5.0",
+  "_spec": "@angular/compiler-cli@0.6.0",
   "_where": "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex",
   "bin": {
     "ng-xi18n": "./src/extract_i18n.js",
@@ -64,7 +64,7 @@
     }
   ],
   "dependencies": {
-    "@angular/tsc-wrapped": "^0.2.0",
+    "@angular/tsc-wrapped": "^0.3.0",
     "minimist": "^1.2.0",
     "parse5": "1.3.2",
     "reflect-metadata": "^0.1.2"
@@ -73,8 +73,8 @@
   "devDependencies": {},
   "directories": {},
   "dist": {
-    "shasum": "7faade1a0084a8a58e5e03690557b8009bea3db8",
-    "tarball": "https://registry.npmjs.org/@angular/compiler-cli/-/compiler-cli-0.5.0.tgz"
+    "shasum": "f28e89aa5f9b055768ac74963f46cb139b0063c7",
+    "tarball": "https://registry.npmjs.org/@angular/compiler-cli/-/compiler-cli-0.6.0.tgz"
   },
   "homepage": "https://github.com/angular/angular/tree/master/modules/@angular/compiler-cli",
   "keywords": [
@@ -92,10 +92,10 @@
   "name": "@angular/compiler-cli",
   "optionalDependencies": {},
   "peerDependencies": {
-    "@angular/compiler": "^2.0.0-rc.5",
-    "@angular/core": "^2.0.0-rc.5",
-    "@angular/platform-server": "^2.0.0-rc.5",
-    "typescript": "^1.9.0-dev"
+    "@angular/compiler": "^2.0.0-rc.6",
+    "@angular/core": "^2.0.0-rc.6",
+    "@angular/platform-server": "^2.0.0-rc.6",
+    "typescript": "^2.0.2"
   },
   "readme": "ERROR: No README data found!",
   "repository": {
@@ -104,5 +104,5 @@
   },
   "scripts": {},
   "typings": "index.d.ts",
-  "version": "0.5.0"
+  "version": "0.6.0"
 }

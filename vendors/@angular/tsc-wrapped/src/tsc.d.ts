@@ -22,7 +22,7 @@ export declare class Tsc implements CompilerInterface {
     ngOptions: AngularCompilerOptions;
     parsed: ts.ParsedCommandLine;
     private basePath;
-    constructor(readFile?: (path: string, encoding?: string) => string, readDirectory?: (path: string, extension?: string, exclude?: string[]) => string[]);
+    constructor(readFile?: (path: string, encoding?: string) => string, readDirectory?: (path: string, extensions?: string[], exclude?: string[], include?: string[]) => string[]);
     readConfiguration(project: string, basePath: string): {
         parsed: ts.ParsedCommandLine;
         ngOptions: AngularCompilerOptions;

@@ -1,5 +1,4 @@
 import { Component } from '@angular/core'
-import { PokedexNavbarComponent } from './components/pokedex-navbar.component'
 
 @Component({
     selector: 'pokeapp',
@@ -8,8 +7,7 @@ import { PokedexNavbarComponent } from './components/pokedex-navbar.component'
           <div class="container-fluid">
             <router-outlet></router-outlet>
           </div>
-          `,
-    directives: [PokedexNavbarComponent]
+          `
 })
 export class AppComponent {
 }

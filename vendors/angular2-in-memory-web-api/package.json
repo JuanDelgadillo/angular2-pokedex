@@ -3,24 +3,24 @@
     [
       {
         "name": "angular2-in-memory-web-api",
-        "raw": "angular2-in-memory-web-api@0.0.17",
-        "rawSpec": "0.0.17",
+        "raw": "angular2-in-memory-web-api@0.0.18",
+        "rawSpec": "0.0.18",
         "scope": null,
-        "spec": "0.0.17",
+        "spec": "0.0.18",
         "type": "version"
       },
       "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex"
     ]
   ],
-  "_from": "angular2-in-memory-web-api@0.0.17",
-  "_id": "angular2-in-memory-web-api@0.0.17",
+  "_from": "angular2-in-memory-web-api@0.0.18",
+  "_id": "angular2-in-memory-web-api@0.0.18",
   "_inCache": true,
   "_installable": true,
   "_location": "/angular2-in-memory-web-api",
   "_nodeVersion": "5.11.1",
   "_npmOperationalInternal": {
     "host": "packages-16-east.internal.npmjs.com",
-    "tmp": "tmp/angular2-in-memory-web-api-0.0.17.tgz_1471600291261_0.4308353222440928"
+    "tmp": "tmp/angular2-in-memory-web-api-0.0.18.tgz_1472688945480_0.8444763217121363"
   },
   "_npmUser": {
     "email": "wardbell@hotmail.com",
@@ -30,19 +30,19 @@
   "_phantomChildren": {},
   "_requested": {
     "name": "angular2-in-memory-web-api",
-    "raw": "angular2-in-memory-web-api@0.0.17",
-    "rawSpec": "0.0.17",
+    "raw": "angular2-in-memory-web-api@0.0.18",
+    "rawSpec": "0.0.18",
     "scope": null,
-    "spec": "0.0.17",
+    "spec": "0.0.18",
     "type": "version"
   },
   "_requiredBy": [
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/angular2-in-memory-web-api/-/angular2-in-memory-web-api-0.0.17.tgz",
-  "_shasum": "1f76744d645f0c013e9a7742acb724eb6125ac94",
+  "_resolved": "https://registry.npmjs.org/angular2-in-memory-web-api/-/angular2-in-memory-web-api-0.0.18.tgz",
+  "_shasum": "8ca83aa6735e6dd8092e06d742e0234965f581da",
   "_shrinkwrap": null,
-  "_spec": "angular2-in-memory-web-api@0.0.17",
+  "_spec": "angular2-in-memory-web-api@0.0.18",
   "_where": "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex",
   "author": "",
   "bugs": {
@@ -51,14 +51,14 @@
   "dependencies": {},
   "description": "An in-memory web api for demos and tests",
   "devDependencies": {
-    "@angular/common": "2.0.0-rc.5",
-    "@angular/compiler": "2.0.0-rc.5",
-    "@angular/core": "2.0.0-rc.5",
-    "@angular/http": "2.0.0-rc.5",
-    "@angular/platform-browser": "2.0.0-rc.5",
+    "@angular/common": "2.0.0-rc.6",
+    "@angular/compiler": "2.0.0-rc.6",
+    "@angular/core": "2.0.0-rc.6",
+    "@angular/http": "2.0.0-rc.6",
+    "@angular/platform-browser": "2.0.0-rc.6",
     "canonical-path": "0.0.2",
     "concurrently": "^2.1.0",
-    "core-js": "^2.4.0",
+    "core-js": "^2.4.1",
     "del": "^2.2.0",
     "gulp": "^3.9.1",
     "gulp-bump": "^2.0.1",
@@ -76,18 +76,18 @@
     "lodash": "^4.13.1",
     "reflect-metadata": "^0.1.3",
     "rimraf": "^2.5.2",
-    "rxjs": "5.0.0-beta.6",
+    "rxjs": "5.0.0-beta.11",
     "typescript": "^1.8.10",
     "typings": "^1.2.0",
     "yargs": "^4.7.1",
-    "zone.js": "^0.6.12"
+    "zone.js": "^0.6.17"
   },
   "directories": {},
   "dist": {
-    "shasum": "1f76744d645f0c013e9a7742acb724eb6125ac94",
-    "tarball": "https://registry.npmjs.org/angular2-in-memory-web-api/-/angular2-in-memory-web-api-0.0.17.tgz"
+    "shasum": "8ca83aa6735e6dd8092e06d742e0234965f581da",
+    "tarball": "https://registry.npmjs.org/angular2-in-memory-web-api/-/angular2-in-memory-web-api-0.0.18.tgz"
   },
-  "gitHead": "5c72977fe0856312d561727b84f48444eb0f0bc1",
+  "gitHead": "79d450c7126a8372cdd8f1972583e9f0a76586f3",
   "homepage": "https://github.com/angular/in-memory-web-api#readme",
   "jsnext:main": "esm/index.js",
   "keywords": [],
@@ -106,11 +106,11 @@
   "name": "angular2-in-memory-web-api",
   "optionalDependencies": {},
   "peerDependencies": {
-    "@angular/core": "2.0.0-rc.5",
-    "@angular/http": "2.0.0-rc.5",
+    "@angular/core": "2.0.0-rc.6",
+    "@angular/http": "2.0.0-rc.6",
     "reflect-metadata": "^0.1.3",
-    "rxjs": "5.0.0-beta.6",
-    "zone.js": "^0.6.12"
+    "rxjs": "5.0.0-beta.11",
+    "zone.js": "^0.6.17"
   },
   "readme": "ERROR: No README data found!",
   "repository": {
@@ -129,5 +129,5 @@
     "tsc:w": "tsc -w",
     "typings": "typings"
   },
-  "version": "0.0.17"
+  "version": "0.0.18"
 }

@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import * as compiler from '@angular/compiler';
 import * as ts from 'typescript';
 import * as tsc from '@angular/tsc-wrapped';
-import { CompileMetadataResolver, DirectiveNormalizer } from './compiler_private';
+import { CompileMetadataResolver, DirectiveNormalizer } from './private_import_compiler';
 import { ReflectorHost, ReflectorHostContext } from './reflector_host';
 import { StaticReflector } from './static_reflector';
 export declare class Extractor {
@@ -14,8 +14,8 @@ export declare class Extractor {
     private metadataResolver;
     private directiveNormalizer;
     private compiler;
-    constructor(program: ts.Program, host: ts.CompilerHost, staticReflector: StaticReflector, messageBundle: compiler.i18n.MessageBundle, reflectorHost: ReflectorHost, metadataResolver: CompileMetadataResolver, directiveNormalizer: DirectiveNormalizer, compiler: compiler.OfflineCompiler);
+    constructor(program: ts.Program, host: ts.CompilerHost, staticReflector: StaticReflector, messageBundle: compiler.MessageBundle, reflectorHost: ReflectorHost, metadataResolver: CompileMetadataResolver, directiveNormalizer: DirectiveNormalizer, compiler: compiler.OfflineCompiler);
     private readFileMetadata(absSourcePath);
-    extract(): Promise<compiler.i18n.MessageBundle>;
-    static create(options: tsc.AngularCompilerOptions, program: ts.Program, compilerHost: ts.CompilerHost, reflectorHostContext?: ReflectorHostContext): Extractor;
+    extract(): Promise<compiler.MessageBundle>;
+    static create(options: tsc.AngularCompilerOptions, translationsFormat: string, program: ts.Program, compilerHost: ts.CompilerHost, htmlParser: compiler.I18NHtmlParser, reflectorHostContext?: ReflectorHostContext): Extractor;
 }

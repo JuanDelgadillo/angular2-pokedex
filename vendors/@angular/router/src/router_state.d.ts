@@ -17,11 +17,12 @@ import { Tree } from './utils/tree';
  * ### Usage
  *
  * ```
+ * @Component({template:''})
  * class MyComponent {
  *   constructor(router: Router) {
  *     const state = router.routerState;
- *     const id: Observable<string> = state.firstChild(state.root).params.map(p => p.id);
- *     const isDebug: Observable<string> = state.queryParams.map(q => q.debug);
+ *     const id: Observable<string> = state.root.firstChild.params.map(p => p.id);
+ *     const isDebug: Observable<string> = state.root.queryParams.map(q => q.debug);
  *   }
  * }
  * ```
@@ -30,17 +31,10 @@ import { Tree } from './utils/tree';
  */
 export declare class RouterState extends Tree<ActivatedRoute> {
     snapshot: RouterStateSnapshot;
-    /**
-      * @deprecated (Use root.queryParams)
-      */
-    queryParams: Observable<Params>;
-    /**
-     * @deprecated (Use root.fragment)
-     */
-    fragment: Observable<string>;
     toString(): string;
 }
-export declare function createEmptyState(urlTree: UrlTree, rootComponent: Type): RouterState;
+export declare function createEmptyState(urlTree: UrlTree, rootComponent: Type<any>): RouterState;
+export declare function createEmptyStateSnapshot(urlTree: UrlTree, rootComponent: Type<any>): RouterStateSnapshot;
 /**
  * Contains the information about a component loaded in an outlet. The information is provided
  * through the params, urlSegments, and data observables.
@@ -48,6 +42,7 @@ export declare function createEmptyState(urlTree: UrlTree, rootComponent: Type):
  * ### Usage
  *
  * ```
+ * @Component({template:''})
  * class MyComponent {
  *   constructor(route: ActivatedRoute) {
  *     const id: Observable<string> = route.params.map(p => p.id);
@@ -65,7 +60,7 @@ export declare class ActivatedRoute {
     fragment: Observable<string>;
     data: Observable<Data>;
     outlet: string;
-    component: Type | string;
+    component: Type<any> | string;
     snapshot: ActivatedRouteSnapshot;
     routeConfig: Route;
     root: ActivatedRoute;
@@ -81,6 +76,7 @@ export declare class ActivatedRoute {
  * ### Usage
  *
  * ```
+ * @Component({template:''})
  * class MyComponent {
  *   constructor(route: ActivatedRoute) {
  *     const id: string = route.snapshot.params.id;
@@ -98,7 +94,7 @@ export declare class ActivatedRouteSnapshot {
     fragment: string;
     data: Data;
     outlet: string;
-    component: Type | string;
+    component: Type<any> | string;
     routeConfig: Route;
     root: ActivatedRouteSnapshot;
     parent: ActivatedRouteSnapshot;
@@ -113,6 +109,7 @@ export declare class ActivatedRouteSnapshot {
  * ### Usage
  *
  * ```
+ * @Component({template:''})
  * class MyComponent {
  *   constructor(router: Router) {
  *     const snapshot = router.routerState.snapshot;
@@ -124,14 +121,6 @@ export declare class ActivatedRouteSnapshot {
  */
 export declare class RouterStateSnapshot extends Tree<ActivatedRouteSnapshot> {
     url: string;
-    /**
-     * @deprecated (Use root.queryParams)
-     */
-    queryParams: Params;
-    /**
-     * @deprecated (Use root.fragment)
-     */
-    fragment: string;
     toString(): string;
 }
 /**

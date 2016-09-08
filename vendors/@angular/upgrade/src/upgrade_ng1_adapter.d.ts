@@ -9,7 +9,7 @@ import { Type } from '@angular/core';
 import * as angular from './angular_js';
 export declare class UpgradeNg1ComponentAdapterBuilder {
     name: string;
-    type: Type;
+    type: Type<any>;
     inputs: string[];
     inputsRename: string[];
     outputs: string[];

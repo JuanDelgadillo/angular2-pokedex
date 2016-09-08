@@ -1,4 +1,5 @@
 "use strict";
+var fs_1 = require('fs');
 var path = require('path');
 var ts = require('typescript');
 var DEBUG = false;
@@ -51,8 +52,17 @@ var Tsc = (function () {
         }
         var _a = ts.readConfigFile(project, this.readFile), config = _a.config, error = _a.error;
         check([error]);
-        this.parsed =
-            ts.parseJsonConfigFileContent(config, { readDirectory: this.readDirectory }, basePath);
+        // Do not inline `host` into `parseJsonConfigFileContent` until after
+        // g3 is updated to the latest TypeScript.
+        // The issue is that old typescript only has `readDirectory` while
+        // the newer TypeScript has additional `useCaseSensitiveFileNames` and
+        // `fileExists`. Inlining will trigger an error of extra parameters.
+        var host = {
+            useCaseSensitiveFileNames: true,
+            fileExists: fs_1.existsSync,
+            readDirectory: this.readDirectory
+        };
+        this.parsed = ts.parseJsonConfigFileContent(config, host, basePath);
         check(this.parsed.errors);
         // Default codegen goes to the current directory
         // Parsed options are already converted to absolute paths

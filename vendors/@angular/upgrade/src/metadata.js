@@ -5,12 +5,11 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-"use strict";
-var compiler_1 = require('@angular/compiler');
+import { DirectiveResolver } from '@angular/compiler';
 var COMPONENT_SELECTOR = /^[\w|-]*$/;
 var SKEWER_CASE = /-(\w)/g;
-var directiveResolver = new compiler_1.DirectiveResolver();
-function getComponentInfo(type) {
+var directiveResolver = new DirectiveResolver();
+export function getComponentInfo(type) {
     var resolvedMetadata = directiveResolver.resolve(type);
     var selector = resolvedMetadata.selector;
     if (!selector.match(COMPONENT_SELECTOR)) {
@@ -24,8 +23,7 @@ function getComponentInfo(type) {
         outputs: parseFields(resolvedMetadata.outputs)
     };
 }
-exports.getComponentInfo = getComponentInfo;
-function parseFields(names) {
+export function parseFields(names) {
     var attrProps = [];
     if (names) {
         for (var i = 0; i < names.length; i++) {
@@ -47,5 +45,4 @@ function parseFields(names) {
     }
     return attrProps;
 }
-exports.parseFields = parseFields;
 //# sourceMappingURL=metadata.js.map

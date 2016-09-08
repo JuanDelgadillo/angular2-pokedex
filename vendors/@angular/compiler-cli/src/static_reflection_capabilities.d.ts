@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+import { GetterFn, MethodFn, SetterFn } from './private_import_core';
 import { StaticReflector } from './static_reflector';
 export declare class StaticAndDynamicReflectionCapabilities {
     private staticDelegate;
@@ -13,8 +21,10 @@ export declare class StaticAndDynamicReflectionCapabilities {
     propMetadata(typeOrFunc: any): {
         [key: string]: any[];
     };
-    getter(name: string): (obj: any) => any;
-    setter(name: string): (obj: any, value: any) => void;
-    method(name: string): (obj: any, args: any[]) => any;
+    getter(name: string): GetterFn;
+    setter(name: string): SetterFn;
+    method(name: string): MethodFn;
     importUri(type: any): string;
+    resolveIdentifier(name: string, moduleUrl: string, runtime: any): any;
+    resolveEnum(enumIdentifier: any, name: string): any;
 }

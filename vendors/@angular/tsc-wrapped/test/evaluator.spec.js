@@ -20,7 +20,7 @@ describe('Evaluator', function () {
         program = service.getProgram();
         typeChecker = program.getTypeChecker();
         symbols = new symbols_1.Symbols(null);
-        evaluator = new evaluator_1.Evaluator(symbols);
+        evaluator = new evaluator_1.Evaluator(symbols, new Map());
     });
     it('should not have typescript errors in test data', function () {
         typescript_mocks_1.expectNoDiagnostics(service.getCompilerOptionsDiagnostics());
@@ -123,7 +123,7 @@ describe('Evaluator', function () {
     });
     it('should return new expressions', function () {
         symbols.define('Value', { __symbolic: 'reference', module: './classes', name: 'Value' });
-        evaluator = new evaluator_1.Evaluator(symbols);
+        evaluator = new evaluator_1.Evaluator(symbols, new Map());
         var newExpression = program.getSourceFile('newExpression.ts');
         expect(evaluator.evaluateNode(typescript_mocks_1.findVar(newExpression, 'someValue').initializer)).toEqual({
             __symbolic: 'new',
@@ -149,13 +149,13 @@ describe('Evaluator', function () {
         var errors = program.getSourceFile('errors.ts');
         var fDecl = typescript_mocks_1.findVar(errors, 'f');
         expect(evaluator.evaluateNode(fDecl.initializer))
-            .toEqual({ __symbolic: 'error', message: 'Function call not supported', line: 1, character: 11 });
+            .toEqual({ __symbolic: 'error', message: 'Function call not supported', line: 1, character: 12 });
         var eDecl = typescript_mocks_1.findVar(errors, 'e');
         expect(evaluator.evaluateNode(eDecl.type)).toEqual({
             __symbolic: 'error',
             message: 'Could not resolve type',
             line: 2,
-            character: 10,
+            character: 11,
             context: { typeName: 'NotFound' }
         });
         var sDecl = typescript_mocks_1.findVar(errors, 's');
@@ -163,7 +163,7 @@ describe('Evaluator', function () {
             __symbolic: 'error',
             message: 'Name expected',
             line: 3,
-            character: 13,
+            character: 14,
             context: { received: '1' }
         });
         var tDecl = typescript_mocks_1.findVar(errors, 't');
@@ -171,7 +171,7 @@ describe('Evaluator', function () {
             __symbolic: 'error',
             message: 'Expression form not supported',
             line: 4,
-            character: 11
+            character: 12
         });
     });
     it('should be able to fold an array spread', function () {

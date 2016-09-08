@@ -1,3 +1,4 @@
+
 /**
  * @license
  * Copyright Google Inc. All Rights Reserved.
@@ -9,14 +10,20 @@
  * Name of the primary outlet.
  * @type {string}
  *
- * @experimental
+ * @stable
  */
 export declare const PRIMARY_OUTLET: string;
 /**
  * A collection of parameters.
  *
- * @experimental
+ * @stable
  */
 export declare type Params = {
     [key: string]: any;
 };
+export declare class NavigationCancelingError extends Error {
+    message: string;
+    stack: any;
+    constructor(message: string);
+    toString(): string;
+}

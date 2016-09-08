@@ -3,24 +3,24 @@
     [
       {
         "name": "@angular/http",
-        "raw": "@angular/http@2.0.0-rc.5",
-        "rawSpec": "2.0.0-rc.5",
+        "raw": "@angular/http@2.0.0-rc.6",
+        "rawSpec": "2.0.0-rc.6",
         "scope": "@angular",
-        "spec": "2.0.0-rc.5",
+        "spec": "2.0.0-rc.6",
         "type": "version"
       },
       "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex"
     ]
   ],
-  "_from": "@angular/http@2.0.0-rc.5",
-  "_id": "@angular/http@2.0.0-rc.5",
+  "_from": "@angular/http@2.0.0-rc.6",
+  "_id": "@angular/http@2.0.0-rc.6",
   "_inCache": true,
   "_installable": true,
   "_location": "/@angular/http",
   "_nodeVersion": "5.4.1",
   "_npmOperationalInternal": {
     "host": "packages-16-east.internal.npmjs.com",
-    "tmp": "tmp/http-2.0.0-rc.5.tgz_1470759643061_0.41714404337108135"
+    "tmp": "tmp/http-2.0.0-rc.6.tgz_1472686619438_0.29474336141720414"
   },
   "_npmUser": {
     "email": "angular-core+npm@google.com",
@@ -30,19 +30,19 @@
   "_phantomChildren": {},
   "_requested": {
     "name": "@angular/http",
-    "raw": "@angular/http@2.0.0-rc.5",
-    "rawSpec": "2.0.0-rc.5",
+    "raw": "@angular/http@2.0.0-rc.6",
+    "rawSpec": "2.0.0-rc.6",
     "scope": "@angular",
-    "spec": "2.0.0-rc.5",
+    "spec": "2.0.0-rc.6",
     "type": "version"
   },
   "_requiredBy": [
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/@angular/http/-/http-2.0.0-rc.5.tgz",
-  "_shasum": "3c5bc0552ea385e9b7fd6f9ddb09b3d9d30b2ca7",
+  "_resolved": "https://registry.npmjs.org/@angular/http/-/http-2.0.0-rc.6.tgz",
+  "_shasum": "6589012b0096aa8f65b83d7d52db6942374f31db",
   "_shrinkwrap": null,
-  "_spec": "@angular/http@2.0.0-rc.5",
+  "_spec": "@angular/http@2.0.0-rc.6",
   "_where": "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex",
   "author": {
     "name": "angular"
@@ -51,29 +51,29 @@
     "url": "https://github.com/angular/angular/issues"
   },
   "dependencies": {},
-  "description": "",
+  "description": "Angular 2 http",
   "devDependencies": {},
   "directories": {},
   "dist": {
-    "shasum": "3c5bc0552ea385e9b7fd6f9ddb09b3d9d30b2ca7",
-    "tarball": "https://registry.npmjs.org/@angular/http/-/http-2.0.0-rc.5.tgz"
+    "shasum": "6589012b0096aa8f65b83d7d52db6942374f31db",
+    "tarball": "https://registry.npmjs.org/@angular/http/-/http-2.0.0-rc.6.tgz"
   },
   "homepage": "https://github.com/angular/angular#readme",
-  "jsnext:main": "esm/index.js",
   "license": "MIT",
-  "main": "index.js",
+  "main": "bundles/http.umd.js",
   "maintainers": [
     {
       "email": "angular-core+npm@google.com",
       "name": "angular"
     }
   ],
+  "module": "index.js",
   "name": "@angular/http",
   "optionalDependencies": {},
   "peerDependencies": {
-    "@angular/core": "^2.0.0-rc.5",
-    "@angular/platform-browser": "^2.0.0-rc.5",
-    "rxjs": "5.0.0-beta.6"
+    "@angular/core": "^2.0.0-rc.6",
+    "@angular/platform-browser": "^2.0.0-rc.6",
+    "rxjs": "5.0.0-beta.11"
   },
   "readme": "ERROR: No README data found!",
   "repository": {
@@ -82,5 +82,5 @@
   },
   "scripts": {},
   "typings": "index.d.ts",
-  "version": "2.0.0-rc.5"
+  "version": "2.0.0-rc.6"
 }

@@ -5,7 +5,6 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var fs = require('fs');
-var path = require('path');
 var ts = require('typescript');
 var Host = (function () {
     function Host(directory, scripts) {
@@ -29,7 +28,7 @@ var Host = (function () {
     Host.prototype.getCurrentDirectory = function () { return '/'; };
     Host.prototype.getDefaultLibFileName = function (options) { return 'lib.d.ts'; };
     Host.prototype.getFileContent = function (fileName) {
-        var names = fileName.split(path.sep);
+        var names = fileName.split('/');
         if (names[names.length - 1] === 'lib.d.ts') {
             return fs.readFileSync(ts.getDefaultLibFilePath(this.getCompilationSettings()), 'utf8');
         }

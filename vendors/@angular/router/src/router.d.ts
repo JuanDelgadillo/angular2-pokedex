@@ -5,29 +5,109 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/mergeMap';
-import 'rxjs/add/operator/mergeAll';
-import 'rxjs/add/operator/reduce';
-import 'rxjs/add/operator/every';
 import { Location } from '@angular/common';
-import { ComponentResolver, Injector, NgModuleFactoryLoader, Type } from '@angular/core';
+import { Compiler, Injector, NgModuleFactoryLoader, Type } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Routes } from './config';
 import { RouterOutletMap } from './router_outlet_map';
-import { ActivatedRoute, RouterState, RouterStateSnapshot } from './router_state';
+import { ActivatedRoute, ActivatedRouteSnapshot, RouterState, RouterStateSnapshot } from './router_state';
 import { Params } from './shared';
 import { UrlSerializer, UrlTree } from './url_tree';
+import { TreeNode } from './utils/tree';
 /**
- * @experimental
+ * @stable
  */
 export interface NavigationExtras {
+    /**
+    * Enables relative navigation from the current ActivatedRoute
+    *
+    * Configuration
+    *
+    * ```
+    * [{
+    *   path: 'parent',
+    *   component: ParentComponent,
+    *   children: [
+    *     {
+    *       path: 'list',
+    *       component: ListComponent
+    *     },
+    *     {
+    *       path: 'child',
+    *       component: ChildComponent
+    *     }
+    *   ]
+    * }]
+    * ```
+    *
+    * Navigate to list route from child route
+    *
+    * ```
+    *  @Component({...})
+    *  class ChildComponent {
+    *    constructor(private router: Router, private route: ActivatedRoute) {}
+    *
+    *    go() {
+    *      this.router.navigate('../list', { relativeTo: this.route });
+    *    }
+    *  }
+    * ```
+    */
     relativeTo?: ActivatedRoute;
+    /**
+    * Sets query parameters to the URL
+    *
+    * ```
+    * // Navigate to /results?page=1
+    * this.router.navigate('/results', { queryParams: { page: 1 } });
+    * ```
+    */
     queryParams?: Params;
+    /**
+    * Sets the hash fragment for the URL
+    *
+    * ```
+    * // Navigate to /results#top
+    * this.router.navigate('/results', { fragment: 'top' });
+    * ```
+    */
     fragment?: string;
+    /**
+    * Preserves the query parameters for the next navigation
+    *
+    * ```
+    * // Preserve query params from /results?page=1 to /view?page=1
+    * this.router.navigate('/view', { preserveQueryParams: true });
+    * ```
+    */
     preserveQueryParams?: boolean;
+    /**
+    * Preserves the fragment for the next navigation
+    *
+    * ```
+    * // Preserve fragment from /results#top to /view#top
+    * this.router.navigate('/view', { preserveFragment: true });
+    * ```
+    */
     preserveFragment?: boolean;
+    /**
+    * Navigates without pushing a new state into history
+    *
+    * ```
+    * // Navigate silently to /view
+    * this.router.navigate('/view', { skipLocationChange: true });
+    * ```
+    */
     skipLocationChange?: boolean;
+    /**
+    * Navigates while replacing the current state in history
+    *
+    * ```
+    * // Navigate to /view
+    * this.router.navigate('/view', { replaceUrl: true });
+    * ```
+    */
+    replaceUrl?: boolean;
 }
 /**
  * An event triggered when a navigation starts
@@ -60,7 +140,8 @@ export declare class NavigationEnd {
 export declare class NavigationCancel {
     id: number;
     url: string;
-    constructor(id: number, url: string);
+    reason: string;
+    constructor(id: number, url: string, reason: string);
     toString(): string;
 }
 /**
@@ -93,6 +174,16 @@ export declare class RoutesRecognized {
  */
 export declare type Event = NavigationStart | NavigationEnd | NavigationCancel | NavigationError | RoutesRecognized;
 /**
+ * Error handler that is invoked when a navigation errors.
+ *
+ * If the handler retuns a value, the navigation promise will be resolved with this value.
+ * If the handler throws an exception, the navigation promise will be rejected with
+ * the exception.
+ *
+ * @stable
+ */
+export declare type ErrorHandler = (error: any) => any;
+/**
  * The `Router` is responsible for mapping URLs to components.
  *
  * See {@link Routes} for more details and examples.
@@ -101,32 +192,36 @@ export declare type Event = NavigationStart | NavigationEnd | NavigationCancel |
  */
 export declare class Router {
     private rootComponentType;
-    private resolver;
     private urlSerializer;
     private outletMap;
     private location;
     private injector;
+    config: Routes;
     private currentUrlTree;
     private currentRouterState;
     private locationSubscription;
     private routerEvents;
     private navigationId;
-    private config;
     private configLoader;
+    errorHandler: ErrorHandler;
     /**
      * Indicates if at least one navigation happened.
      *
-     * @experimental
+     * @stable
      */
     navigated: boolean;
     /**
      * Creates the router service.
      */
-    constructor(rootComponentType: Type, resolver: ComponentResolver, urlSerializer: UrlSerializer, outletMap: RouterOutletMap, location: Location, injector: Injector, loader: NgModuleFactoryLoader, config: Routes);
+    constructor(rootComponentType: Type<any>, urlSerializer: UrlSerializer, outletMap: RouterOutletMap, location: Location, injector: Injector, loader: NgModuleFactoryLoader, compiler: Compiler, config: Routes);
     /**
      * Sets up the location change listener and performs the inital navigation
      */
     initialNavigation(): void;
+    /**
+     * Sets up the location change listener
+     */
+    setUpLocationChangeListener(): void;
     /**
      * Returns the current route state.
      */
@@ -178,12 +273,12 @@ export declare class Router {
      * // you can collapse static segments like this (this works only with the first passed-in value):
      * router.createUrlTree(['/team/33/user', userId]);
      *
-     * If the first segment can contain slashes, and you do not want the router to split it, you
-     * can do the following:
+     * // If the first segment can contain slashes, and you do not want the router to split it, you
+     * // can do the following:
      *
      * router.createUrlTree([{segmentPath: '/one/two'}]);
      *
-     * // create /team/33/(user/11//aux:chat)
+     * // create /team/33/(user/11//right:chat)
      * router.createUrlTree(['/team', 33, {outlets: {primary: 'user/11', right: 'chat'}}]);
      *
      * // remove the right secondary node
@@ -258,6 +353,26 @@ export declare class Router {
      */
     isActive(url: string | UrlTree, exact: boolean): boolean;
     private scheduleNavigation(url, extras);
-    private setUpLocationChangeListener();
-    private runNavigate(url, preventPushState, id);
+    private runNavigate(url, shouldPreventPushState, shouldReplaceUrl, id);
+}
+export declare class PreActivation {
+    private future;
+    private curr;
+    private injector;
+    private checks;
+    constructor(future: RouterStateSnapshot, curr: RouterStateSnapshot, injector: Injector);
+    traverse(parentOutletMap: RouterOutletMap): void;
+    checkGuards(): Observable<boolean>;
+    resolveData(): Observable<any>;
+    private traverseChildRoutes(futureNode, currNode, outletMap, futurePath);
+    traverseRoutes(futureNode: TreeNode<ActivatedRouteSnapshot>, currNode: TreeNode<ActivatedRouteSnapshot>, parentOutletMap: RouterOutletMap, futurePath: ActivatedRouteSnapshot[]): void;
+    private deactivateOutletAndItChildren(route, outlet);
+    private deactivateOutletMap(outletMap);
+    private runCanActivate(future);
+    private runCanActivateChild(path);
+    private extractCanActivateChild(p);
+    private runCanDeactivate(component, curr);
+    private runResolve(future);
+    private resolveNode(resolve, future);
+    private getToken(token, snapshot);
 }

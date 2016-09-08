@@ -21,6 +21,10 @@ describe('Collector', function () {
             'exported-enum.ts',
             'exported-consts.ts',
             'local-symbol-ref.ts',
+            'local-function-ref.ts',
+            'local-symbol-ref-func.ts',
+            'local-symbol-ref-func-dynamic.ts',
+            'private-enum.ts',
             're-exports.ts',
             'static-field-reference.ts',
             'static-method.ts',
@@ -192,10 +196,10 @@ describe('Collector', function () {
             version: 1,
             metadata: {
                 a: { __symbolic: 'error', message: 'Destructuring not supported', line: 1, character: 16 },
-                b: { __symbolic: 'error', message: 'Destructuring not supported', line: 1, character: 18 },
+                b: { __symbolic: 'error', message: 'Destructuring not supported', line: 1, character: 19 },
                 c: { __symbolic: 'error', message: 'Destructuring not supported', line: 2, character: 16 },
-                d: { __symbolic: 'error', message: 'Destructuring not supported', line: 2, character: 18 },
-                e: { __symbolic: 'error', message: 'Variable not initialized', line: 3, character: 14 }
+                d: { __symbolic: 'error', message: 'Destructuring not supported', line: 2, character: 19 },
+                e: { __symbolic: 'error', message: 'Variable not initialized', line: 3, character: 15 }
             }
         });
     });
@@ -208,8 +212,8 @@ describe('Collector', function () {
         expect(parameter).toEqual({
             __symbolic: 'error',
             message: 'Reference to non-exported class',
-            line: 1,
-            character: 45,
+            line: 3,
+            character: 4,
             context: { className: 'Foo' }
         });
     });
@@ -296,6 +300,14 @@ describe('Collector', function () {
         var someEnum = metadata.metadata['SomeEnum'];
         expect(someEnum).toEqual({ A: 0, B: 1, C: 100, D: 101 });
     });
+    it('should ignore a non-export enum', function () {
+        var enumSource = program.getSourceFile('/private-enum.ts');
+        var metadata = collector.getMetadata(enumSource);
+        var publicEnum = metadata.metadata['PublicEnum'];
+        var privateEnum = metadata.metadata['PrivateEnum'];
+        expect(publicEnum).toEqual({ a: 0, b: 1, c: 2 });
+        expect(privateEnum).toBeUndefined();
+    });
     it('should be able to collect enums initialized from consts', function () {
         var enumSource = program.getSourceFile('/exported-enum.ts');
         var metadata = collector.getMetadata(enumSource);
@@ -339,7 +351,7 @@ describe('Collector', function () {
                             __symbolic: 'call',
                             expression: {
                                 __symbolic: 'select',
-                                expression: { __symbolic: 'reference', module: './static-method.ts', name: 'MyModule' },
+                                expression: { __symbolic: 'reference', module: './static-method', name: 'MyModule' },
                                 member: 'with'
                             },
                             arguments: ['a']
@@ -369,7 +381,7 @@ describe('Collector', function () {
                                 provide: 'a',
                                 useValue: {
                                     __symbolic: 'select',
-                                    expression: { __symbolic: 'reference', module: './static-field.ts', name: 'MyModule' },
+                                    expression: { __symbolic: 'reference', module: './static-field', name: 'MyModule' },
                                     member: 'VALUE'
                                 }
                             }]
@@ -433,7 +445,7 @@ describe('Collector', function () {
         var metadata = collector.getMetadata(source);
         expect(metadata.exports).toEqual([
             { from: './static-field', export: ['MyModule'] },
-            { from: './static-field-reference.ts', export: [{ name: 'Foo', as: 'OtherModule' }] },
+            { from: './static-field-reference', export: [{ name: 'Foo', as: 'OtherModule' }] },
             { from: 'angular2/core' }
         ]);
     });
@@ -445,7 +457,7 @@ describe('Collector', function () {
                 __symbolic: 'error',
                 message: 'Reference to a local symbol',
                 line: 3,
-                character: 9,
+                character: 8,
                 context: { name: 'REQUIRED' }
             },
             SomeComponent: {
@@ -456,6 +468,60 @@ describe('Collector', function () {
                         arguments: [{ providers: [{ __symbolic: 'reference', name: 'REQUIRED_VALIDATOR' }] }]
                     }]
             }
+        });
+    });
+    it('should collect an error symbol if collecting a reference to a non-exported function', function () {
+        var source = program.getSourceFile('/local-function-ref.ts');
+        var metadata = collector.getMetadata(source);
+        expect(metadata.metadata).toEqual({
+            REQUIRED_VALIDATOR: {
+                __symbolic: 'error',
+                message: 'Reference to a non-exported function',
+                line: 3,
+                character: 13,
+                context: { name: 'required' }
+            },
+            SomeComponent: {
+                __symbolic: 'class',
+                decorators: [{
+                        __symbolic: 'call',
+                        expression: { __symbolic: 'reference', module: 'angular2/core', name: 'Component' },
+                        arguments: [{ providers: [{ __symbolic: 'reference', name: 'REQUIRED_VALIDATOR' }] }]
+                    }]
+            }
+        });
+    });
+    it('should collect an error for a simple function that references a local variable', function () {
+        var source = program.getSourceFile('/local-symbol-ref-func.ts');
+        var metadata = collector.getMetadata(source);
+        expect(metadata.metadata).toEqual({
+            foo: {
+                __symbolic: 'function',
+                parameters: ['index'],
+                value: {
+                    __symbolic: 'error',
+                    message: 'Reference to a local symbol',
+                    line: 1,
+                    character: 8,
+                    context: { name: 'localSymbol' }
+                }
+            }
+        });
+    });
+    describe('in strict mode', function () {
+        it('should throw if an error symbol is collecting a reference to a non-exported symbol', function () {
+            var source = program.getSourceFile('/local-symbol-ref.ts');
+            expect(function () { return collector.getMetadata(source, true); }).toThrowError(/Reference to a local symbol/);
+        });
+        it('should throw if an error if collecting a reference to a non-exported function', function () {
+            var source = program.getSourceFile('/local-function-ref.ts');
+            expect(function () { return collector.getMetadata(source, true); })
+                .toThrowError(/Reference to a non-exported function/);
+        });
+        it('should throw for references to unexpected types', function () {
+            var unsupported1 = program.getSourceFile('/unsupported-2.ts');
+            expect(function () { return collector.getMetadata(unsupported1, true); })
+                .toThrowError(/Reference to non-exported class/);
         });
     });
 });
@@ -488,12 +554,15 @@ var FILES = {
     'exported-consts.ts': "\n    export const constValue = 100;\n  ",
     'static-method.ts': "\n    import {Injectable} from 'angular2/core';\n\n    @Injectable()\n    export class MyModule {\n      static with(comp: any): any[] {\n        return [\n          MyModule,\n          { provider: 'a', useValue: comp }\n        ];\n      }\n    }\n  ",
     'static-method-with-default.ts': "\n    import {Injectable} from 'angular2/core';\n\n    @Injectable()\n    export class MyModule {\n      static with(comp: any, foo: boolean = true, bar: boolean = false): any[] {\n        return [\n          MyModule,\n          foo ? { provider: 'a', useValue: comp } : {provider: 'b', useValue: comp},\n          bar ? { provider: 'c', useValue: comp } : {provider: 'd', useValue: comp}\n        ];\n      }\n    }\n  ",
-    'static-method-call.ts': "\n    import {Component} from 'angular2/core';\n    import {MyModule} from './static-method.ts';\n\n    @Component({\n      providers: MyModule.with('a')\n    })\n    export class Foo { }\n  ",
+    'static-method-call.ts': "\n    import {Component} from 'angular2/core';\n    import {MyModule} from './static-method';\n\n    @Component({\n      providers: MyModule.with('a')\n    })\n    export class Foo { }\n  ",
     'static-field.ts': "\n    import {Injectable} from 'angular2/core';\n\n    @Injectable()\n    export class MyModule {\n      static VALUE = 'Some string';\n    }\n  ",
-    'static-field-reference.ts': "\n    import {Component} from 'angular2/core';\n    import {MyModule} from './static-field.ts';\n\n    @Component({\n      providers: [ { provide: 'a', useValue: MyModule.VALUE } ]\n    })\n    export class Foo { }\n  ",
+    'static-field-reference.ts': "\n    import {Component} from 'angular2/core';\n    import {MyModule} from './static-field';\n\n    @Component({\n      providers: [ { provide: 'a', useValue: MyModule.VALUE } ]\n    })\n    export class Foo { }\n  ",
     'static-method-with-if.ts': "\n    import {Injectable} from 'angular2/core';\n\n    @Injectable()\n    export class MyModule {\n      static with(cond: boolean): any[] {\n        return [\n          MyModule,\n          { provider: 'a', useValue: cond ? '1' : '2' }\n        ];\n      }\n    }\n  ",
-    're-exports.ts': "\n    export {MyModule} from './static-field';\n    export {Foo as OtherModule} from './static-field-reference.ts';\n    export * from 'angular2/core';\n  ",
-    'local-symbol-ref.ts': "\n    import {Component, Validators} from 'angular2/core';\n\n    const REQUIRED = Validators.required;\n\n    export const REQUIRED_VALIDATOR: any = {\n      provide: 'SomeToken',\n      useValue: REQUIRED,\n      multi: true\n    };\n\n    @Component({\n      providers: [REQUIRED_VALIDATOR]\n    })\n    export class SomeComponent {}\n  ",
+    're-exports.ts': "\n    export {MyModule} from './static-field';\n    export {Foo as OtherModule} from './static-field-reference';\n    export * from 'angular2/core';\n  ",
+    'local-symbol-ref.ts': "\n    import {Component, Validators} from 'angular2/core';\n\n    var REQUIRED;\n\n    export const REQUIRED_VALIDATOR: any = {\n      provide: 'SomeToken',\n      useValue: REQUIRED,\n      multi: true\n    };\n\n    @Component({\n      providers: [REQUIRED_VALIDATOR]\n    })\n    export class SomeComponent {}\n  ",
+    'private-enum.ts': "\n    export enum PublicEnum { a, b, c }\n    enum PrivateEnum { e, f, g }\n  ",
+    'local-function-ref.ts': "\n    import {Component, Validators} from 'angular2/core';\n\n    function required() {}\n\n    export const REQUIRED_VALIDATOR: any = {\n      provide: 'SomeToken',\n      useValue: required,\n      multi: true\n    };\n\n    @Component({\n      providers: [REQUIRED_VALIDATOR]\n    })\n    export class SomeComponent {}\n  ",
+    'local-symbol-ref-func.ts': "\n    var localSymbol: any[];\n\n    export function foo(index: number): string {\n      return localSymbol[index];\n    }\n  ",
     'node_modules': {
         'angular2': {
             'core.d.ts': "\n          export interface Type extends Function { }\n          export interface TypeDecorator {\n              <T extends Type>(type: T): T;\n              (target: Object, propertyKey?: string | symbol, parameterIndex?: number): void;\n              annotations: any[];\n          }\n          export interface ComponentDecorator extends TypeDecorator { }\n          export interface ComponentFactory {\n              (obj: {\n                  selector?: string;\n                  inputs?: string[];\n                  outputs?: string[];\n                  properties?: string[];\n                  events?: string[];\n                  host?: {\n                      [key: string]: string;\n                  };\n                  bindings?: any[];\n                  providers?: any[];\n                  exportAs?: string;\n                  moduleId?: string;\n                  queries?: {\n                      [key: string]: any;\n                  };\n                  viewBindings?: any[];\n                  viewProviders?: any[];\n                  templateUrl?: string;\n                  template?: string;\n                  styleUrls?: string[];\n                  styles?: string[];\n                  directives?: Array<Type | any[]>;\n                  pipes?: Array<Type | any[]>;\n              }): ComponentDecorator;\n          }\n          export declare var Component: ComponentFactory;\n          export interface InputFactory {\n              (bindingPropertyName?: string): any;\n              new (bindingPropertyName?: string): any;\n          }\n          export declare var Input: InputFactory;\n          export interface InjectableFactory {\n              (): any;\n          }\n          export declare var Injectable: InjectableFactory;\n          export interface OnInit {\n              ngOnInit(): any;\n          }\n          export class Validators {\n            static required(): void;\n          }\n      ",

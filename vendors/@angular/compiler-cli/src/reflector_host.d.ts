@@ -5,9 +5,9 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { AngularCompilerOptions, ModuleMetadata } from '@angular/tsc-wrapped';
+import { AngularCompilerOptions, MetadataCollector, ModuleMetadata } from '@angular/tsc-wrapped';
 import * as ts from 'typescript';
-import { ImportGenerator } from './compiler_private';
+import { ImportGenerator } from './private_import_compiler';
 import { StaticReflectorHost, StaticSymbol } from './static_reflector';
 export interface ReflectorHostContext {
     fileExists(fileName: string): boolean;
@@ -16,13 +16,13 @@ export interface ReflectorHostContext {
     assumeFileExists(fileName: string): void;
 }
 export declare class ReflectorHost implements StaticReflectorHost, ImportGenerator {
-    private program;
-    private compilerHost;
-    private options;
-    private metadataCollector;
-    private context;
+    protected program: ts.Program;
+    protected compilerHost: ts.CompilerHost;
+    protected options: AngularCompilerOptions;
+    protected metadataCollector: MetadataCollector;
+    protected context: ReflectorHostContext;
     private isGenDirChildOfRootDir;
-    private basePath;
+    protected basePath: string;
     private genDir;
     constructor(program: ts.Program, compilerHost: ts.CompilerHost, options: AngularCompilerOptions, context?: ReflectorHostContext);
     angularImportLocations(): {
@@ -33,9 +33,10 @@ export declare class ReflectorHost implements StaticReflectorHost, ImportGenerat
         animationMetadata: string;
         provider: string;
     };
-    private resolve(m, containingFile);
-    private normalizeAssetUrl(url);
-    private resolveAssetUrl(url, containingFile);
+    getCanonicalFileName(fileName: string): string;
+    protected resolve(m: string, containingFile: string): string;
+    protected normalizeAssetUrl(url: string): string;
+    protected resolveAssetUrl(url: string, containingFile: string): string;
     /**
      * We want a moduleId that will appear in import statements in the generated code.
      * These need to be in a form that system.js can load, so absolute file paths don't work.
@@ -67,11 +68,11 @@ export declare class ReflectorHost implements StaticReflectorHost, ImportGenerat
      * @param declarationFile the absolute path of the file where the symbol is declared
      * @param name the name of the type.
      */
-    getStaticSymbol(declarationFile: string, name: string): StaticSymbol;
+    getStaticSymbol(declarationFile: string, name: string, members?: string[]): StaticSymbol;
     getMetadataFor(filePath: string): ModuleMetadata;
     readMetadata(filePath: string): any;
     private getResolverMetadata(filePath);
-    private resolveExportedSymbol(filePath, symbolName);
+    protected resolveExportedSymbol(filePath: string, symbolName: string): StaticSymbol;
 }
 export declare class NodeReflectorHostContext implements ReflectorHostContext {
     private assumedExists;

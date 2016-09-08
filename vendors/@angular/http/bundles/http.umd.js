@@ -1,19 +1,33 @@
 /**
- * @license Angular v2.0.0-rc.5
+ * @license Angular v2.0.0-rc.6
  * (c) 2010-2016 Google, Inc. https://angular.io/
  * License: MIT
  */
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('rxjs/Observable'), require('@angular/platform-browser')) :
-        typeof define === 'function' && define.amd ? define(['exports', '@angular/core', 'rxjs/Observable', '@angular/platform-browser'], factory) :
-            (factory((global.ng = global.ng || {}, global.ng.http = global.ng.http || {}), global.ng.core, global.Rx, global.ng.platformBrowser));
-}(this, function (exports, _angular_core, rxjs_Observable, _angular_platformBrowser) {
-    'use strict';
+    typeof define === 'function' && define.amd ? define(['exports', '@angular/core', 'rxjs/Observable', '@angular/platform-browser'], factory) :
+    (factory((global.ng = global.ng || {}, global.ng.http = global.ng.http || {}),global.ng.core,global.Rx,global.ng.platformBrowser));
+}(this, function (exports,_angular_core,rxjs_Observable,_angular_platformBrowser) { 'use strict';
+
+    /**
+     * A backend for http that uses the `XMLHttpRequest` browser API.
+     *
+     * Take care not to evaluate this in non-browser contexts.
+     *
+     * @experimental
+     */
+    var BrowserXhr = (function () {
+        function BrowserXhr() {
+        }
+        BrowserXhr.prototype.build = function () { return (new XMLHttpRequest()); };
+        BrowserXhr.decorators = [
+            { type: _angular_core.Injectable },
+        ];
+        /** @nocollapse */
+        BrowserXhr.ctorParameters = [];
+        return BrowserXhr;
+    }());
+
     /**
      * @license
      * Copyright Google Inc. All Rights Reserved.
@@ -123,6 +137,49 @@ var __extends = (this && this.__extends) || function (d, b) {
         };
         return StringWrapper;
     }());
+    var NumberWrapper = (function () {
+        function NumberWrapper() {
+        }
+        NumberWrapper.toFixed = function (n, fractionDigits) { return n.toFixed(fractionDigits); };
+        NumberWrapper.equal = function (a, b) { return a === b; };
+        NumberWrapper.parseIntAutoRadix = function (text) {
+            var result = parseInt(text);
+            if (isNaN(result)) {
+                throw new Error('Invalid integer literal when parsing ' + text);
+            }
+            return result;
+        };
+        NumberWrapper.parseInt = function (text, radix) {
+            if (radix == 10) {
+                if (/^(\-|\+)?[0-9]+$/.test(text)) {
+                    return parseInt(text, radix);
+                }
+            }
+            else if (radix == 16) {
+                if (/^(\-|\+)?[0-9ABCDEFabcdef]+$/.test(text)) {
+                    return parseInt(text, radix);
+                }
+            }
+            else {
+                var result = parseInt(text, radix);
+                if (!isNaN(result)) {
+                    return result;
+                }
+            }
+            throw new Error('Invalid integer literal when parsing ' + text + ' in base ' + radix);
+        };
+        // TODO: NaN is a valid literal but is returned by parseFloat to indicate an error.
+        NumberWrapper.parseFloat = function (text) { return parseFloat(text); };
+        Object.defineProperty(NumberWrapper, "NaN", {
+            get: function () { return NaN; },
+            enumerable: true,
+            configurable: true
+        });
+        NumberWrapper.isNumeric = function (value) { return !isNaN(value - parseFloat(value)); };
+        NumberWrapper.isNaN = function (value) { return isNaN(value); };
+        NumberWrapper.isInteger = function (value) { return Number.isInteger(value); };
+        return NumberWrapper;
+    }());
     function isJsObject(o) {
         return o !== null && (typeof o === 'function' || typeof o === 'object');
     }
@@ -157,60 +214,7 @@ var __extends = (this && this.__extends) || function (d, b) {
         }
         return _symbolIterator;
     }
-    var _nextRequestId = 0;
-    var JSONP_HOME = '__ng_jsonp__';
-    var _jsonpConnections = null;
-    function _getJsonpConnections() {
-        if (_jsonpConnections === null) {
-            _jsonpConnections = global$1[JSONP_HOME] = {};
-        }
-        return _jsonpConnections;
-    }
-    var BrowserJsonp = (function () {
-        function BrowserJsonp() {
-        }
-        // Construct a <script> element with the specified URL
-        BrowserJsonp.prototype.build = function (url) {
-            var node = document.createElement('script');
-            node.src = url;
-            return node;
-        };
-        BrowserJsonp.prototype.nextRequestID = function () { return "__req" + _nextRequestId++; };
-        BrowserJsonp.prototype.requestCallback = function (id) { return JSONP_HOME + "." + id + ".finished"; };
-        BrowserJsonp.prototype.exposeConnection = function (id, connection) {
-            var connections = _getJsonpConnections();
-            connections[id] = connection;
-        };
-        BrowserJsonp.prototype.removeConnection = function (id) {
-            var connections = _getJsonpConnections();
-            connections[id] = null;
-        };
-        // Attach the <script> element to the DOM
-        BrowserJsonp.prototype.send = function (node) { document.body.appendChild((node)); };
-        // Remove <script> element from the DOM
-        BrowserJsonp.prototype.cleanup = function (node) {
-            if (node.parentNode) {
-                node.parentNode.removeChild((node));
-            }
-        };
-        return BrowserJsonp;
-    }());
-    /** @nocollapse */
-    BrowserJsonp.decorators = [
-        { type: _angular_core.Injectable },
-    ];
-    var BrowserXhr = (function () {
-        function BrowserXhr() {
-        }
-        BrowserXhr.prototype.build = function () { return (new XMLHttpRequest()); };
-        return BrowserXhr;
-    }());
-    /** @nocollapse */
-    BrowserXhr.decorators = [
-        { type: _angular_core.Injectable },
-    ];
-    /** @nocollapse */
-    BrowserXhr.ctorParameters = [];
+
     /**
      * @license
      * Copyright Google Inc. All Rights Reserved.
@@ -285,6 +289,7 @@ var __extends = (this && this.__extends) || function (d, b) {
         ResponseContentType[ResponseContentType["ArrayBuffer"] = 2] = "ArrayBuffer";
         ResponseContentType[ResponseContentType["Blob"] = 3] = "Blob";
     })(exports.ResponseContentType || (exports.ResponseContentType = {}));
+
     var Map$1 = global$1.Map;
     var Set = global$1.Set;
     // Safari and Internet Explorer do not support the iterable parameter to the
@@ -615,23 +620,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             };
         }
     })();
-    /**
-     * @stable
-     */
-    var BaseException = (function (_super) {
-        __extends(BaseException, _super);
-        function BaseException(message) {
-            if (message === void 0) { message = '--'; }
-            _super.call(this, message);
-            this.message = message;
-            this.stack = (new Error(message)).stack;
-        }
-        BaseException.prototype.toString = function () { return this.message; };
-        return BaseException;
-    }(Error));
-    function makeTypeError(message) {
-        return new TypeError(message);
-    }
+
     /**
      * Polyfill for [Headers](https://developer.mozilla.org/en-US/docs/Web/API/Headers/Headers), as
      * specified in the [Fetch Spec](https://fetch.spec.whatwg.org/#headers-class).
@@ -664,7 +653,7 @@ var __extends = (this && this.__extends) || function (d, b) {
         function Headers(headers) {
             var _this = this;
             if (headers instanceof Headers) {
-                this._headersMap = headers._headersMap;
+                this._headersMap = new Map$1(headers._headersMap);
                 return;
             }
             this._headersMap = new Map$1();
@@ -760,7 +749,7 @@ var __extends = (this && this.__extends) || function (d, b) {
         /**
          * This method is not implemented.
          */
-        Headers.prototype.entries = function () { throw new BaseException('"entries" method is not implemented on Headers class'); };
+        Headers.prototype.entries = function () { throw new Error('"entries" method is not implemented on Headers class'); };
         return Headers;
     }());
     // "HTTP character sets are identified by case-insensitive tokens"
@@ -770,6 +759,19 @@ var __extends = (this && this.__extends) || function (d, b) {
     function normalize(name) {
         return name.toLowerCase();
     }
+
+    /**
+     * @license
+     * Copyright Google Inc. All Rights Reserved.
+     *
+     * Use of this source code is governed by an MIT-style license that can be
+     * found in the LICENSE file at https://angular.io/license
+     */
+    var __extends$1 = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
     /**
      * Creates a response options object to be optionally provided when instantiating a
      * {@link Response}.
@@ -846,19 +848,65 @@ var __extends = (this && this.__extends) || function (d, b) {
         };
         return ResponseOptions;
     }());
+    /**
+     * Subclass of {@link ResponseOptions}, with default values.
+     *
+     * Default values:
+     *  * status: 200
+     *  * headers: empty {@link Headers} object
+     *
+     * This class could be extended and bound to the {@link ResponseOptions} class
+     * when configuring an {@link Injector}, in order to override the default options
+     * used by {@link Http} to create {@link Response Responses}.
+     *
+     * ### Example ([live demo](http://plnkr.co/edit/qv8DLT?p=preview))
+     *
+     * ```typescript
+     * import {provide} from '@angular/core';
+     * import {bootstrap} from '@angular/platform-browser/browser';
+     * import {HTTP_PROVIDERS, Headers, Http, BaseResponseOptions, ResponseOptions} from
+     * '@angular/http';
+     * import {App} from './myapp';
+     *
+     * class MyOptions extends BaseResponseOptions {
+     *   headers:Headers = new Headers({network: 'github'});
+     * }
+     *
+     * bootstrap(App, [HTTP_PROVIDERS, {provide: ResponseOptions, useClass: MyOptions}]);
+     * ```
+     *
+     * The options could also be extended when manually creating a {@link Response}
+     * object.
+     *
+     * ### Example ([live demo](http://plnkr.co/edit/VngosOWiaExEtbstDoix?p=preview))
+     *
+     * ```
+     * import {BaseResponseOptions, Response} from '@angular/http';
+     *
+     * var options = new BaseResponseOptions();
+     * var res = new Response(options.merge({
+     *   body: 'Angular',
+     *   headers: new Headers({framework: 'angular'})
+     * }));
+     * console.log('res.headers.get("framework"):', res.headers.get('framework')); // angular
+     * console.log('res.text():', res.text()); // Angular;
+     * ```
+     *
+     * @experimental
+     */
     var BaseResponseOptions = (function (_super) {
-        __extends(BaseResponseOptions, _super);
+        __extends$1(BaseResponseOptions, _super);
         function BaseResponseOptions() {
             _super.call(this, { status: 200, statusText: 'Ok', type: exports.ResponseType.Default, headers: new Headers() });
         }
+        BaseResponseOptions.decorators = [
+            { type: _angular_core.Injectable },
+        ];
+        /** @nocollapse */
+        BaseResponseOptions.ctorParameters = [];
         return BaseResponseOptions;
     }(ResponseOptions));
-    /** @nocollapse */
-    BaseResponseOptions.decorators = [
-        { type: _angular_core.Injectable },
-    ];
-    /** @nocollapse */
-    BaseResponseOptions.ctorParameters = [];
+
     /**
      * @license
      * Copyright Google Inc. All Rights Reserved.
@@ -899,6 +947,7 @@ var __extends = (this && this.__extends) || function (d, b) {
         }
         return XSRFStrategy;
     }());
+
     function normalizeMethodName(method) {
         if (isString(method)) {
             var originalMethod = method;
@@ -906,7 +955,7 @@ var __extends = (this && this.__extends) || function (d, b) {
                 .replace(/(\w)(\w*)/g, function (g0, g1, g2) { return g1.toUpperCase() + g2.toLowerCase(); });
             method = exports.RequestMethod[method];
             if (typeof method !== 'number')
-                throw makeTypeError("Invalid request method. The method \"" + originalMethod + "\" is not supported.");
+                throw new Error("Invalid request method. The method \"" + originalMethod + "\" is not supported.");
         }
         return method;
     }
@@ -927,6 +976,7 @@ var __extends = (this && this.__extends) || function (d, b) {
         }
         return view.buffer;
     }
+
     function paramParser(rawParams) {
         if (rawParams === void 0) { rawParams = ''; }
         var map = new Map$1();
@@ -960,7 +1010,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             .replace(/%2C/gi, ',')
             .replace(/%3B/gi, ';')
             .replace(/%2B/gi, '+')
-            .replace(/%3D/gi, ';')
+            .replace(/%3D/gi, '=')
             .replace(/%3F/gi, '?')
             .replace(/%2F/gi, '/');
     }
@@ -1103,6 +1153,7 @@ var __extends = (this && this.__extends) || function (d, b) {
         URLSearchParams.prototype.delete = function (param) { this.paramsMap.delete(param); };
         return URLSearchParams;
     }());
+
     /**
      * HTTP request body used by both {@link Request} and {@link Response}
      * https://fetch.spec.whatwg.org/#body
@@ -1132,6 +1183,9 @@ var __extends = (this && this.__extends) || function (d, b) {
             if (this._body instanceof ArrayBuffer) {
                 return String.fromCharCode.apply(null, new Uint16Array(this._body));
             }
+            if (this._body === null) {
+                return '';
+            }
             if (isJsObject(this._body)) {
                 return Json.stringify(this._body);
             }
@@ -1160,6 +1214,19 @@ var __extends = (this && this.__extends) || function (d, b) {
         };
         return Body;
     }());
+
+    /**
+     * @license
+     * Copyright Google Inc. All Rights Reserved.
+     *
+     * Use of this source code is governed by an MIT-style license that can be
+     * found in the LICENSE file at https://angular.io/license
+     */
+    var __extends$2 = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
     /**
      * Creates `Response` instances from provided values.
      *
@@ -1181,7 +1248,7 @@ var __extends = (this && this.__extends) || function (d, b) {
      * @experimental
      */
     var Response = (function (_super) {
-        __extends(Response, _super);
+        __extends$2(Response, _super);
         function Response(responseOptions) {
             _super.call(this);
             this._body = responseOptions.body;
@@ -1197,6 +1264,64 @@ var __extends = (this && this.__extends) || function (d, b) {
         };
         return Response;
     }(Body));
+
+    var _nextRequestId = 0;
+    var JSONP_HOME = '__ng_jsonp__';
+    var _jsonpConnections = null;
+    function _getJsonpConnections() {
+        if (_jsonpConnections === null) {
+            _jsonpConnections = global$1[JSONP_HOME] = {};
+        }
+        return _jsonpConnections;
+    }
+    // Make sure not to evaluate this in a non-browser environment!
+    var BrowserJsonp = (function () {
+        function BrowserJsonp() {
+        }
+        // Construct a <script> element with the specified URL
+        BrowserJsonp.prototype.build = function (url) {
+            var node = document.createElement('script');
+            node.src = url;
+            return node;
+        };
+        BrowserJsonp.prototype.nextRequestID = function () { return "__req" + _nextRequestId++; };
+        BrowserJsonp.prototype.requestCallback = function (id) { return JSONP_HOME + "." + id + ".finished"; };
+        BrowserJsonp.prototype.exposeConnection = function (id, connection) {
+            var connections = _getJsonpConnections();
+            connections[id] = connection;
+        };
+        BrowserJsonp.prototype.removeConnection = function (id) {
+            var connections = _getJsonpConnections();
+            connections[id] = null;
+        };
+        // Attach the <script> element to the DOM
+        BrowserJsonp.prototype.send = function (node) { document.body.appendChild((node)); };
+        // Remove <script> element from the DOM
+        BrowserJsonp.prototype.cleanup = function (node) {
+            if (node.parentNode) {
+                node.parentNode.removeChild((node));
+            }
+        };
+        BrowserJsonp.decorators = [
+            { type: _angular_core.Injectable },
+        ];
+        /** @nocollapse */
+        BrowserJsonp.ctorParameters = [];
+        return BrowserJsonp;
+    }());
+
+    /**
+     * @license
+     * Copyright Google Inc. All Rights Reserved.
+     *
+     * Use of this source code is governed by an MIT-style license that can be
+     * found in the LICENSE file at https://angular.io/license
+     */
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
     var JSONP_ERR_NO_CALLBACK = 'JSONP injected script did not invoke callback.';
     var JSONP_ERR_WRONG_METHOD = 'JSONP requests must use GET request method.';
     /**
@@ -1218,7 +1343,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             this.baseResponseOptions = baseResponseOptions;
             this._finished = false;
             if (req.method !== exports.RequestMethod.Get) {
-                throw makeTypeError(JSONP_ERR_WRONG_METHOD);
+                throw new TypeError(JSONP_ERR_WRONG_METHOD);
             }
             this.request = req;
             this.response = new rxjs_Observable.Observable(function (responseObserver) {
@@ -1312,17 +1437,17 @@ var __extends = (this && this.__extends) || function (d, b) {
         JSONPBackend_.prototype.createConnection = function (request) {
             return new JSONPConnection_(request, this._browserJSONP, this._baseResponseOptions);
         };
+        JSONPBackend_.decorators = [
+            { type: _angular_core.Injectable },
+        ];
+        /** @nocollapse */
+        JSONPBackend_.ctorParameters = [
+            { type: BrowserJsonp, },
+            { type: ResponseOptions, },
+        ];
         return JSONPBackend_;
     }(JSONPBackend));
-    /** @nocollapse */
-    JSONPBackend_.decorators = [
-        { type: _angular_core.Injectable },
-    ];
-    /** @nocollapse */
-    JSONPBackend_.ctorParameters = [
-        { type: BrowserJsonp, },
-        { type: ResponseOptions, },
-    ];
+
     var XSSI_PREFIX = /^\)\]\}',?\n/;
     /**
      * Creates connections using `XMLHttpRequest`. Given a fully-qualified
@@ -1347,7 +1472,8 @@ var __extends = (this && this.__extends) || function (d, b) {
                 // load event handler
                 var onLoad = function () {
                     // responseText is the old-school way of retrieving response (supported by IE8 & 9)
-                    // response/responseType properties were introduced in XHR Level2 spec (supported by
+                    // response/responseType properties were introduced in ResourceLoader Level2 spec (supported
+                    // by
                     // IE10)
                     var body = isPresent(_xhr.response) ? _xhr.response : _xhr.responseText;
                     // Implicitly strip a potential XSSI prefix.
@@ -1478,6 +1604,32 @@ var __extends = (this && this.__extends) || function (d, b) {
         };
         return CookieXSRFStrategy;
     }());
+    /**
+     * Creates {@link XHRConnection} instances.
+     *
+     * This class would typically not be used by end users, but could be
+     * overridden if a different backend implementation should be used,
+     * such as in a node backend.
+     *
+     * ### Example
+     *
+     * ```
+     * import {Http, MyNodeBackend, HTTP_PROVIDERS, BaseRequestOptions} from '@angular/http';
+     * @Component({
+     *   viewProviders: [
+     *     HTTP_PROVIDERS,
+     *     {provide: Http, useFactory: (backend, options) => {
+     *       return new Http(backend, options);
+     *     }, deps: [MyNodeBackend, BaseRequestOptions]}]
+     * })
+     * class MyComponent {
+     *   constructor(http:Http) {
+     *     http.request('people.json').subscribe(res => this.people = res.json());
+     *   }
+     * }
+     * ```
+     * @experimental
+     */
     var XHRBackend = (function () {
         function XHRBackend(_browserXHR, _baseResponseOptions, _xsrfStrategy) {
             this._browserXHR = _browserXHR;
@@ -1488,18 +1640,30 @@ var __extends = (this && this.__extends) || function (d, b) {
             this._xsrfStrategy.configureRequest(request);
             return new XHRConnection(request, this._browserXHR, this._baseResponseOptions);
         };
+        XHRBackend.decorators = [
+            { type: _angular_core.Injectable },
+        ];
+        /** @nocollapse */
+        XHRBackend.ctorParameters = [
+            { type: BrowserXhr, },
+            { type: ResponseOptions, },
+            { type: XSRFStrategy, },
+        ];
         return XHRBackend;
     }());
-    /** @nocollapse */
-    XHRBackend.decorators = [
-        { type: _angular_core.Injectable },
-    ];
-    /** @nocollapse */
-    XHRBackend.ctorParameters = [
-        { type: BrowserXhr, },
-        { type: ResponseOptions, },
-        { type: XSRFStrategy, },
-    ];
+
+    /**
+     * @license
+     * Copyright Google Inc. All Rights Reserved.
+     *
+     * Use of this source code is governed by an MIT-style license that can be
+     * found in the LICENSE file at https://angular.io/license
+     */
+    var __extends$3 = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
     /**
      * Creates a request options object to be optionally provided when instantiating a
      * {@link Request}.
@@ -1583,19 +1747,77 @@ var __extends = (this && this.__extends) || function (d, b) {
         };
         return RequestOptions;
     }());
+    /**
+     * Subclass of {@link RequestOptions}, with default values.
+     *
+     * Default values:
+     *  * method: {@link RequestMethod RequestMethod.Get}
+     *  * headers: empty {@link Headers} object
+     *
+     * This class could be extended and bound to the {@link RequestOptions} class
+     * when configuring an {@link Injector}, in order to override the default options
+     * used by {@link Http} to create and send {@link Request Requests}.
+     *
+     * ### Example ([live demo](http://plnkr.co/edit/LEKVSx?p=preview))
+     *
+     * ```typescript
+     * import {provide} from '@angular/core';
+     * import {bootstrap} from '@angular/platform-browser/browser';
+     * import {HTTP_PROVIDERS, Http, BaseRequestOptions, RequestOptions} from '@angular/http';
+     * import {App} from './myapp';
+     *
+     * class MyOptions extends BaseRequestOptions {
+     *   search: string = 'coreTeam=true';
+     * }
+     *
+     * bootstrap(App, [HTTP_PROVIDERS, {provide: RequestOptions, useClass: MyOptions}]);
+     * ```
+     *
+     * The options could also be extended when manually creating a {@link Request}
+     * object.
+     *
+     * ### Example ([live demo](http://plnkr.co/edit/oyBoEvNtDhOSfi9YxaVb?p=preview))
+     *
+     * ```
+     * import {BaseRequestOptions, Request, RequestMethod} from '@angular/http';
+     *
+     * var options = new BaseRequestOptions();
+     * var req = new Request(options.merge({
+     *   method: RequestMethod.Post,
+     *   url: 'https://google.com'
+     * }));
+     * console.log('req.method:', RequestMethod[req.method]); // Post
+     * console.log('options.url:', options.url); // null
+     * console.log('req.url:', req.url); // https://google.com
+     * ```
+     *
+     * @experimental
+     */
     var BaseRequestOptions = (function (_super) {
-        __extends(BaseRequestOptions, _super);
+        __extends$3(BaseRequestOptions, _super);
         function BaseRequestOptions() {
             _super.call(this, { method: exports.RequestMethod.Get, headers: new Headers() });
         }
+        BaseRequestOptions.decorators = [
+            { type: _angular_core.Injectable },
+        ];
+        /** @nocollapse */
+        BaseRequestOptions.ctorParameters = [];
         return BaseRequestOptions;
     }(RequestOptions));
-    /** @nocollapse */
-    BaseRequestOptions.decorators = [
-        { type: _angular_core.Injectable },
-    ];
-    /** @nocollapse */
-    BaseRequestOptions.ctorParameters = [];
+
+    /**
+     * @license
+     * Copyright Google Inc. All Rights Reserved.
+     *
+     * Use of this source code is governed by an MIT-style license that can be
+     * found in the LICENSE file at https://angular.io/license
+     */
+    var __extends$5 = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
     // TODO(jeffbcross): properly implement body accessors
     /**
      * Creates `Request` instances from provided values.
@@ -1637,7 +1859,7 @@ var __extends = (this && this.__extends) || function (d, b) {
      * @experimental
      */
     var Request = (function (_super) {
-        __extends(Request, _super);
+        __extends$5(Request, _super);
         function Request(requestOptions) {
             _super.call(this);
             // TODO: assert that url is present
@@ -1739,6 +1961,19 @@ var __extends = (this && this.__extends) || function (d, b) {
     var FormData = w['FormData'] || noop$1;
     var Blob$1 = w['Blob'] || noop$1;
     var ArrayBuffer$1 = w['ArrayBuffer'] || noop$1;
+
+    /**
+     * @license
+     * Copyright Google Inc. All Rights Reserved.
+     *
+     * Use of this source code is governed by an MIT-style license that can be
+     * found in the LICENSE file at https://angular.io/license
+     */
+    var __extends$4 = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
     function httpRequest(backend, request) {
         return backend.createConnection(request).response;
     }
@@ -1763,6 +1998,66 @@ var __extends = (this && this.__extends) || function (d, b) {
             return newOptions.merge(new RequestOptions({ url: url }));
         }
     }
+    /**
+     * Performs http requests using `XMLHttpRequest` as the default backend.
+     *
+     * `Http` is available as an injectable class, with methods to perform http requests. Calling
+     * `request` returns an `Observable` which will emit a single {@link Response} when a
+     * response is received.
+     *
+     * ### Example
+     *
+     * ```typescript
+     * import {Http, HTTP_PROVIDERS} from '@angular/http';
+     * import 'rxjs/add/operator/map'
+     * @Component({
+     *   selector: 'http-app',
+     *   viewProviders: [HTTP_PROVIDERS],
+     *   templateUrl: 'people.html'
+     * })
+     * class PeopleComponent {
+     *   constructor(http: Http) {
+     *     http.get('people.json')
+     *       // Call map on the response observable to get the parsed people object
+     *       .map(res => res.json())
+     *       // Subscribe to the observable to get the parsed people object and attach it to the
+     *       // component
+     *       .subscribe(people => this.people = people);
+     *   }
+     * }
+     * ```
+     *
+     *
+     * ### Example
+     *
+     * ```
+     * http.get('people.json').subscribe((res:Response) => this.people = res.json());
+     * ```
+     *
+     * The default construct used to perform requests, `XMLHttpRequest`, is abstracted as a "Backend" (
+     * {@link XHRBackend} in this case), which could be mocked with dependency injection by replacing
+     * the {@link XHRBackend} provider, as in the following example:
+     *
+     * ### Example
+     *
+     * ```typescript
+     * import {BaseRequestOptions, Http} from '@angular/http';
+     * import {MockBackend} from '@angular/http/testing';
+     * var injector = Injector.resolveAndCreate([
+     *   BaseRequestOptions,
+     *   MockBackend,
+     *   {provide: Http, useFactory:
+     *       function(backend, defaultOptions) {
+     *         return new Http(backend, defaultOptions);
+     *       },
+     *       deps: [MockBackend, BaseRequestOptions]}
+     * ]);
+     * var http = injector.get(Http);
+     * http.get('request-from-mock-backend.json').subscribe((res:Response) => doSomething(res));
+     * ```
+     *
+     * @experimental
+     */
     var Http = (function () {
         function Http(_backend, _defaultOptions) {
             this._backend = _backend;
@@ -1783,7 +2078,7 @@ var __extends = (this && this.__extends) || function (d, b) {
                 responseObservable = httpRequest(this._backend, url);
             }
             else {
-                throw makeTypeError('First argument must be a url string or Request instance.');
+                throw new Error('First argument must be a url string or Request instance.');
             }
             return responseObservable;
         };
@@ -1829,19 +2124,21 @@ var __extends = (this && this.__extends) || function (d, b) {
         Http.prototype.options = function (url, options) {
             return httpRequest(this._backend, new Request(mergeOptions(this._defaultOptions, options, exports.RequestMethod.Options, url)));
         };
+        Http.decorators = [
+            { type: _angular_core.Injectable },
+        ];
+        /** @nocollapse */
+        Http.ctorParameters = [
+            { type: ConnectionBackend, },
+            { type: RequestOptions, },
+        ];
         return Http;
     }());
-    /** @nocollapse */
-    Http.decorators = [
-        { type: _angular_core.Injectable },
-    ];
-    /** @nocollapse */
-    Http.ctorParameters = [
-        { type: ConnectionBackend, },
-        { type: RequestOptions, },
-    ];
+    /**
+     * @experimental
+     */
     var Jsonp = (function (_super) {
-        __extends(Jsonp, _super);
+        __extends$4(Jsonp, _super);
         function Jsonp(backend, defaultOptions) {
             _super.call(this, backend, defaultOptions);
         }
@@ -1867,352 +2164,87 @@ var __extends = (this && this.__extends) || function (d, b) {
             }
             if (url instanceof Request) {
                 if (url.method !== exports.RequestMethod.Get) {
-                    makeTypeError('JSONP requests must use GET request method.');
+                    throw new Error('JSONP requests must use GET request method.');
                 }
                 responseObservable = httpRequest(this._backend, url);
             }
             else {
-                throw makeTypeError('First argument must be a url string or Request instance.');
+                throw new Error('First argument must be a url string or Request instance.');
             }
             return responseObservable;
         };
+        Jsonp.decorators = [
+            { type: _angular_core.Injectable },
+        ];
+        /** @nocollapse */
+        Jsonp.ctorParameters = [
+            { type: ConnectionBackend, },
+            { type: RequestOptions, },
+        ];
         return Jsonp;
     }(Http));
-    /** @nocollapse */
-    Jsonp.decorators = [
-        { type: _angular_core.Injectable },
-    ];
-    /** @nocollapse */
-    Jsonp.ctorParameters = [
-        { type: ConnectionBackend, },
-        { type: RequestOptions, },
-    ];
-    /**
-     * Provides a basic set of injectables to use the {@link Http} service in any application.
-     *
-     * The `HTTP_PROVIDERS` should be included either in a component's injector,
-     * or in the root injector when bootstrapping an application.
-     *
-     * ### Example ([live demo](http://plnkr.co/edit/snj7Nv?p=preview))
-     *
-     * ```
-     * import {Component} from '@angular/core';
-     * import {bootstrap} from '@angular/platform-browser/browser';
-     * import {NgFor} from '@angular/common';
-     * import {HTTP_PROVIDERS, Http} from '@angular/http';
-     *
-     * @Component({
-     *   selector: 'app',
-     *   providers: [HTTP_PROVIDERS],
-     *   template: `
-     *     <div>
-     *       <h1>People</h1>
-     *       <ul>
-     *         <li *ngFor="let person of people">
-     *           {{person.name}}
-     *         </li>
-     *       </ul>
-     *     </div>
-     *   `,
-     *   directives: [NgFor]
-     * })
-     * export class App {
-     *   people: Object[];
-     *   constructor(http:Http) {
-     *     http.get('people.json').subscribe(res => {
-     *       this.people = res.json();
-     *     });
-     *   }
-     *   active:boolean = false;
-     *   toggleActiveState() {
-     *     this.active = !this.active;
-     *   }
-     * }
-     *
-     * bootstrap(App)
-     *   .catch(err => console.error(err));
-     * ```
-     *
-     * The primary public API included in `HTTP_PROVIDERS` is the {@link Http} class.
-     * However, other providers required by `Http` are included,
-     * which may be beneficial to override in certain cases.
-     *
-     * The providers included in `HTTP_PROVIDERS` include:
-     *  * {@link Http}
-     *  * {@link XHRBackend}
-     *  * {@link XSRFStrategy} - Bound to {@link CookieXSRFStrategy} class (see below)
-     *  * `BrowserXHR` - Private factory to create `XMLHttpRequest` instances
-     *  * {@link RequestOptions} - Bound to {@link BaseRequestOptions} class
-     *  * {@link ResponseOptions} - Bound to {@link BaseResponseOptions} class
-     *
-     * There may be cases where it makes sense to extend the base request options,
-     * such as to add a search string to be appended to all URLs.
-     * To accomplish this, a new provider for {@link RequestOptions} should
-     * be added in the same injector as `HTTP_PROVIDERS`.
-     *
-     * ### Example ([live demo](http://plnkr.co/edit/aCMEXi?p=preview))
-     *
-     * ```
-     * import {provide} from '@angular/core';
-     * import {bootstrap} from '@angular/platform-browser/browser';
-     * import {HTTP_PROVIDERS, BaseRequestOptions, RequestOptions} from '@angular/http';
-     *
-     * class MyOptions extends BaseRequestOptions {
-     *   search: string = 'coreTeam=true';
-     * }
-     *
-     * bootstrap(App, [HTTP_PROVIDERS, {provide: RequestOptions, useClass: MyOptions}])
-     *   .catch(err => console.error(err));
-     * ```
-     *
-     * Likewise, to use a mock backend for unit tests, the {@link XHRBackend}
-     * provider should be bound to {@link MockBackend}.
-     *
-     * ### Example ([live demo](http://plnkr.co/edit/7LWALD?p=preview))
-     *
-     * ```
-     * import {provide} from '@angular/core';
-     * import {bootstrap} from '@angular/platform-browser/browser';
-     * import {HTTP_PROVIDERS, Http, Response, XHRBackend} from '@angular/http';
-     * import {MockBackend} from '@angular/http/testing';
-     *
-     * var people = [{name: 'Jeff'}, {name: 'Tobias'}];
-     *
-     * var injector = Injector.resolveAndCreate([
-     *   HTTP_PROVIDERS,
-     *   MockBackend,
-     *   {provide: XHRBackend, useExisting: MockBackend}
-     * ]);
-     * var http = injector.get(Http);
-     * var backend = injector.get(MockBackend);
-     *
-     * // Listen for any new requests
-     * backend.connections.observer({
-     *   next: connection => {
-     *     var response = new Response({body: people});
-     *     setTimeout(() => {
-     *       // Send a response to the request
-     *       connection.mockRespond(response);
-     *     });
-     *   }
-     * });
-     *
-     * http.get('people.json').observer({
-     *   next: res => {
-     *     // Response came from mock backend
-     *     console.log('first person', res.json()[0].name);
-     *   }
-     * });
-     * ```
-     *
-     * `XSRFStrategy` allows customizing how the application protects itself against Cross Site Request
-     * Forgery (XSRF) attacks. By default, Angular will look for a cookie called `'XSRF-TOKEN'`, and set
-     * an HTTP request header called `'X-XSRF-TOKEN'` with the value of the cookie on each request,
-     * allowing the server side to validate that the request comes from its own front end.
-     *
-     * Applications can override the names used by configuring a different `XSRFStrategy` instance. Most
-     * commonly, applications will configure a `CookieXSRFStrategy` with different cookie or header
-     * names, but if needed, they can supply a completely custom implementation.
-     *
-     * See the security documentation for more information.
-     *
-     * ### Example
-     *
-     * ```
-     * import {provide} from '@angular/core';
-     * import {bootstrap} from '@angular/platform-browser/browser';
-     * import {HTTP_PROVIDERS, XSRFStrategy, CookieXSRFStrategy} from '@angular/http';
-     *
-     * bootstrap(
-     *     App,
-     *     [HTTP_PROVIDERS, {provide: XSRFStrategy,
-     *         useValue: new CookieXSRFStrategy('MY-XSRF-COOKIE-NAME', 'X-MY-XSRF-HEADER-NAME')}])
-     *   .catch(err => console.error(err));
-     * ```
-     *
-     * @deprecated
-     */
-    var HTTP_PROVIDERS = [
-        // TODO(pascal): use factory type annotations once supported in DI
-        // issue: https://github.com/angular/angular/issues/3183
-        { provide: Http, useFactory: httpFactory, deps: [XHRBackend, RequestOptions] },
-        BrowserXhr,
-        { provide: RequestOptions, useClass: BaseRequestOptions },
-        { provide: ResponseOptions, useClass: BaseResponseOptions },
-        XHRBackend,
-        { provide: XSRFStrategy, useFactory: _createDefaultCookieXSRFStrategy },
-    ];
-    /**
-     * @experimental
-     */
+
     function _createDefaultCookieXSRFStrategy() {
         return new CookieXSRFStrategy();
     }
-    /**
-     * @experimental
-     */
     function httpFactory(xhrBackend, requestOptions) {
         return new Http(xhrBackend, requestOptions);
     }
-    /**
-     * See {@link HTTP_PROVIDERS} instead.
-     *
-     * @deprecated
-     */
-    var HTTP_BINDINGS = HTTP_PROVIDERS;
-    /**
-     * Provides a basic set of providers to use the {@link Jsonp} service in any application.
-     *
-     * The `JSONP_PROVIDERS` should be included either in a component's injector,
-     * or in the root injector when bootstrapping an application.
-     *
-     * ### Example ([live demo](http://plnkr.co/edit/vmeN4F?p=preview))
-     *
-     * ```
-     * import {Component} from '@angular/core';
-     * import {NgFor} from '@angular/common';
-     * import {JSONP_PROVIDERS, Jsonp} from '@angular/http';
-     *
-     * @Component({
-     *   selector: 'app',
-     *   providers: [JSONP_PROVIDERS],
-     *   template: `
-     *     <div>
-     *       <h1>People</h1>
-     *       <ul>
-     *         <li *ngFor="let person of people">
-     *           {{person.name}}
-     *         </li>
-     *       </ul>
-     *     </div>
-     *   `,
-     *   directives: [NgFor]
-     * })
-     * export class App {
-     *   people: Array<Object>;
-     *   constructor(jsonp:Jsonp) {
-     *     jsonp.request('people.json').subscribe(res => {
-     *       this.people = res.json();
-     *     })
-     *   }
-     * }
-     * ```
-     *
-     * The primary public API included in `JSONP_PROVIDERS` is the {@link Jsonp} class.
-     * However, other providers required by `Jsonp` are included,
-     * which may be beneficial to override in certain cases.
-     *
-     * The providers included in `JSONP_PROVIDERS` include:
-     *  * {@link Jsonp}
-     *  * {@link JSONPBackend}
-     *  * `BrowserJsonp` - Private factory
-     *  * {@link RequestOptions} - Bound to {@link BaseRequestOptions} class
-     *  * {@link ResponseOptions} - Bound to {@link BaseResponseOptions} class
-     *
-     * There may be cases where it makes sense to extend the base request options,
-     * such as to add a search string to be appended to all URLs.
-     * To accomplish this, a new provider for {@link RequestOptions} should
-     * be added in the same injector as `JSONP_PROVIDERS`.
-     *
-     * ### Example ([live demo](http://plnkr.co/edit/TFug7x?p=preview))
-     *
-     * ```
-     * import {provide} from '@angular/core';
-     * import {bootstrap} from '@angular/platform-browser/browser';
-     * import {JSONP_PROVIDERS, BaseRequestOptions, RequestOptions} from '@angular/http';
-     *
-     * class MyOptions extends BaseRequestOptions {
-     *   search: string = 'coreTeam=true';
-     * }
-     *
-     * bootstrap(App, [JSONP_PROVIDERS, {provide: RequestOptions, useClass: MyOptions}])
-     *   .catch(err => console.error(err));
-     * ```
-     *
-     * Likewise, to use a mock backend for unit tests, the {@link JSONPBackend}
-     * provider should be bound to {@link MockBackend}.
-     *
-     * ### Example ([live demo](http://plnkr.co/edit/HDqZWL?p=preview))
-     *
-     * ```
-     * import {provide, Injector} from '@angular/core';
-     * import {JSONP_PROVIDERS, Jsonp, Response, JSONPBackend} from '@angular/http';
-     * import {MockBackend} from '@angular/http/testing';
-     *
-     * var people = [{name: 'Jeff'}, {name: 'Tobias'}];
-     * var injector = Injector.resolveAndCreate([
-     *   JSONP_PROVIDERS,
-     *   MockBackend,
-     *   {provide: JSONPBackend, useExisting: MockBackend}
-     * ]);
-     * var jsonp = injector.get(Jsonp);
-     * var backend = injector.get(MockBackend);
-     *
-     * // Listen for any new requests
-     * backend.connections.observer({
-     *   next: connection => {
-     *     var response = new Response({body: people});
-     *     setTimeout(() => {
-     *       // Send a response to the request
-     *       connection.mockRespond(response);
-     *     });
-     *   }
-     * });
-
-     * jsonp.get('people.json').observer({
-     *   next: res => {
-     *     // Response came from mock backend
-     *     console.log('first person', res.json()[0].name);
-     *   }
-     * });
-     * ```
-     *
-     * @experimental
-     */
-    var JSONP_PROVIDERS = [
-        // TODO(pascal): use factory type annotations once supported in DI
-        // issue: https://github.com/angular/angular/issues/3183
-        { provide: Jsonp, useFactory: jsonpFactory, deps: [JSONPBackend, RequestOptions] },
-        BrowserJsonp,
-        { provide: RequestOptions, useClass: BaseRequestOptions },
-        { provide: ResponseOptions, useClass: BaseResponseOptions },
-        { provide: JSONPBackend, useClass: JSONPBackend_ },
-    ];
     function jsonpFactory(jsonpBackend, requestOptions) {
         return new Jsonp(jsonpBackend, requestOptions);
     }
     /**
-     * See {@link JSONP_PROVIDERS} instead.
+     * The module that includes http's providers
      *
-     * @deprecated
+     * @experimental
      */
-    var JSON_BINDINGS = JSONP_PROVIDERS;
     var HttpModule = (function () {
         function HttpModule() {
         }
+        HttpModule.decorators = [
+            { type: _angular_core.NgModule, args: [{
+                        providers: [
+                            // TODO(pascal): use factory type annotations once supported in DI
+                            // issue: https://github.com/angular/angular/issues/3183
+                            { provide: Http, useFactory: httpFactory, deps: [XHRBackend, RequestOptions] },
+                            BrowserXhr,
+                            { provide: RequestOptions, useClass: BaseRequestOptions },
+                            { provide: ResponseOptions, useClass: BaseResponseOptions },
+                            XHRBackend,
+                            { provide: XSRFStrategy, useFactory: _createDefaultCookieXSRFStrategy },
+                        ],
+                    },] },
+        ];
+        /** @nocollapse */
+        HttpModule.ctorParameters = [];
         return HttpModule;
     }());
-    /** @nocollapse */
-    HttpModule.decorators = [
-        { type: _angular_core.NgModule, args: [{ providers: HTTP_PROVIDERS },] },
-    ];
+    /**
+     * The module that includes jsonp's providers
+     *
+     * @experimental
+     */
     var JsonpModule = (function () {
         function JsonpModule() {
         }
+        JsonpModule.decorators = [
+            { type: _angular_core.NgModule, args: [{
+                        providers: [
+                            // TODO(pascal): use factory type annotations once supported in DI
+                            // issue: https://github.com/angular/angular/issues/3183
+                            { provide: Jsonp, useFactory: jsonpFactory, deps: [JSONPBackend, RequestOptions] },
+                            BrowserJsonp,
+                            { provide: RequestOptions, useClass: BaseRequestOptions },
+                            { provide: ResponseOptions, useClass: BaseResponseOptions },
+                            { provide: JSONPBackend, useClass: JSONPBackend_ },
+                        ],
+                    },] },
+        ];
+        /** @nocollapse */
+        JsonpModule.ctorParameters = [];
         return JsonpModule;
     }());
-    /** @nocollapse */
-    JsonpModule.decorators = [
-        { type: _angular_core.NgModule, args: [{ providers: JSONP_PROVIDERS },] },
-    ];
-    exports.HTTP_PROVIDERS = HTTP_PROVIDERS;
-    exports._createDefaultCookieXSRFStrategy = _createDefaultCookieXSRFStrategy;
-    exports.httpFactory = httpFactory;
-    exports.HTTP_BINDINGS = HTTP_BINDINGS;
-    exports.JSONP_PROVIDERS = JSONP_PROVIDERS;
-    exports.JSON_BINDINGS = JSON_BINDINGS;
-    exports.HttpModule = HttpModule;
-    exports.JsonpModule = JsonpModule;
+
     exports.BrowserXhr = BrowserXhr;
     exports.JSONPBackend = JSONPBackend;
     exports.JSONPConnection = JSONPConnection;
@@ -2226,6 +2258,8 @@ var __extends = (this && this.__extends) || function (d, b) {
     exports.Headers = Headers;
     exports.Http = Http;
     exports.Jsonp = Jsonp;
+    exports.HttpModule = HttpModule;
+    exports.JsonpModule = JsonpModule;
     exports.Connection = Connection;
     exports.ConnectionBackend = ConnectionBackend;
     exports.XSRFStrategy = XSRFStrategy;
@@ -2233,4 +2267,5 @@ var __extends = (this && this.__extends) || function (d, b) {
     exports.Response = Response;
     exports.QueryEncoder = QueryEncoder;
     exports.URLSearchParams = URLSearchParams;
+
 }));

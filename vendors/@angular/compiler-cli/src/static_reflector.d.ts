@@ -1,4 +1,4 @@
-import { ReflectorReader } from './core_private';
+import { ReflectorReader } from './private_import_core';
 /**
  * The host of the static resolver is expected to be able to provide module metadata in the form of
  * ModuleMetadata. Angular 2 CLI will produce this metadata for a module whenever a .d.ts files is
@@ -21,7 +21,7 @@ export interface StaticReflectorHost {
      * @param containingFile for relative imports, the path of the file containing the import
      */
     findDeclaration(modulePath: string, symbolName: string, containingFile?: string): StaticSymbol;
-    getStaticSymbol(declarationFile: string, name: string): StaticSymbol;
+    getStaticSymbol(declarationFile: string, name: string, members?: string[]): StaticSymbol;
     angularImportLocations(): {
         coreDecorators: string;
         diDecorators: string;
@@ -39,7 +39,8 @@ export interface StaticReflectorHost {
 export declare class StaticSymbol {
     filePath: string;
     name: string;
-    constructor(filePath: string, name: string);
+    members: string[];
+    constructor(filePath: string, name: string, members?: string[]);
 }
 /**
  * A static reflector implements enough of the Reflector API that is necessary to compile
@@ -55,6 +56,8 @@ export declare class StaticReflector implements ReflectorReader {
     private opaqueToken;
     constructor(host: StaticReflectorHost);
     importUri(typeOrFunc: StaticSymbol): string;
+    resolveIdentifier(name: string, moduleUrl: string, runtime: any): any;
+    resolveEnum(enumIdentifier: any, name: string): any;
     annotations(type: StaticSymbol): any[];
     propMetadata(type: StaticSymbol): {
         [key: string]: any;
