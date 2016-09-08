@@ -9,7 +9,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
-var imageify_pipe_1 = require('../pipes/imageify.pipe');
 var PokemonEvolutionComponent = (function () {
     function PokemonEvolutionComponent() {
         this.pokemon = {};
@@ -21,7 +20,6 @@ var PokemonEvolutionComponent = (function () {
     PokemonEvolutionComponent = __decorate([
         core_1.Component({
             selector: 'pokemon-evolution',
-            pipes: [imageify_pipe_1.ImageifyPipe],
             template: "\n\t\t<div class=\"text-center\" *ngFor=\"let evolution of pokemon.evolution, let last = last\">\n                  <a [routerLink]=\"['/pokemon', evolution ]\">\n                    <img src=\"{{evolution | imageify}}\" width=\"160\">\n                    <p>\n                      <strong>{{evolution}}</strong>\n                    </p>\n                  </a>\n                  <span *ngIf=\"!last\" class=\"glyphicon glyphicon-arrow-down\"></span>\n                </div>\n\t"
         }), 
         __metadata('design:paramtypes', [])

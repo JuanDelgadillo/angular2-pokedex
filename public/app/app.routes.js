@@ -21,5 +21,5 @@ var routes = [
         pathMatch: 'full'
     },
 ];
-exports.appRouting = router_1.RouterModule.forRoot(routes);
+exports.AppRouting = router_1.RouterModule.forRoot(routes, { useHash: true });
 //# sourceMappingURL=app.routes.js.map

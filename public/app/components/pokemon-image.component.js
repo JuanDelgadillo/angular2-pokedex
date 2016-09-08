@@ -9,7 +9,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
-var imageify_pipe_1 = require('../pipes/imageify.pipe');
 var PokemonImageComponent = (function () {
     function PokemonImageComponent() {
         this.pokemon = {};
@@ -21,7 +20,6 @@ var PokemonImageComponent = (function () {
     PokemonImageComponent = __decorate([
         core_1.Component({
             selector: 'pokemon-image',
-            pipes: [imageify_pipe_1.ImageifyPipe],
             template: "\n\t\t<img class=\"avatar center-block\" src=\"{{pokemon.name | imageify}}\">\n\t"
         }), 
         __metadata('design:paramtypes', [])

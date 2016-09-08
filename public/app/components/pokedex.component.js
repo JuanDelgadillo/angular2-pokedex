@@ -10,11 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var router_1 = require('@angular/router');
-var imageify_pipe_1 = require('../pipes/imageify.pipe');
 var pokemon_service_1 = require('../services/pokemon.service');
-var pokemon_name_component_1 = require('./pokemon-name.component');
-var pokemon_image_component_1 = require('./pokemon-image.component');
-var pokemon_type_component_1 = require('./pokemon-type.component');
 var _ = require('_');
 var PokedexComponent = (function () {
     function PokedexComponent(_pokemonService, _routeParams) {
@@ -47,8 +43,6 @@ var PokedexComponent = (function () {
     PokedexComponent = __decorate([
         core_1.Component({
             selector: 'pokedex',
-            pipes: [imageify_pipe_1.ImageifyPipe],
-            directives: [pokemon_name_component_1.PokemonNameComponent, pokemon_image_component_1.PokemonImageComponent, pokemon_type_component_1.PokemonTypeComponent],
             providers: [pokemon_service_1.PokemonService],
             template: "\n\t\t<div>\n  \t\t\t<div class=\"page-header\">\n    \t\t\t<h1>Pok\u00E9dex <small class=\"pull-right\" [style.marginTop]=\"'20px'\">Showing <span class=\"badge\">{{pokemons.length}}</span> Pok\u00E9mons</small></h1>\n\t\t\t\t<h2 *ngIf=\"pokemonType\"><span class=\"label type-{{pokemonType | lowercase}}\">{{pokemonType}}</span></h2>\n  \t\t\t</div>\n\t\t\t<div class=\"row\" *ngFor=\"let group of groupped\">\n\t\t\t\t<div class=\"col-lg-3\" *ngFor=\"let pokemon of group\">\n\t\t\t\t\t<div class=\"pokemon panel panel-primary\">\n\t\t\t\t\t\t<div class=\"panel-heading\">\n          \t\t\t\t\t<pokemon-name [pokemon]=\"pokemon\" ></pokemon-name>\n        \t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"panel-body\">\n\t\t\t\t\t\t\t<a [routerLink]=\"['/pokemon', pokemon.name ]\">\n\t\t\t\t\t\t\t\t<pokemon-image [pokemon]=\"pokemon\" ></pokemon-image>\n\t\t\t\t\t\t\t</a>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"panel-footer\">\n\t\t\t\t\t\t\t<div class=\"text-center\">\n\t\t\t\t\t\t\t\t<pokemon-type [pokemon]=\"pokemon\"></pokemon-type>\n\t\t\t\t\t\t\t</div>\n        \t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t"
         }), 

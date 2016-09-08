@@ -9,15 +9,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
-var pokedex_navbar_component_1 = require('./components/pokedex-navbar.component');
 var AppComponent = (function () {
     function AppComponent() {
     }
     AppComponent = __decorate([
         core_1.Component({
             selector: 'pokeapp',
-            template: "\n          <pokedex-navbar></pokedex-navbar>\n          <div class=\"container-fluid\">\n            <router-outlet></router-outlet>\n          </div>\n          ",
-            directives: [pokedex_navbar_component_1.PokedexNavbarComponent]
+            template: "\n          <pokedex-navbar></pokedex-navbar>\n          <div class=\"container-fluid\">\n            <router-outlet></router-outlet>\n          </div>\n          "
         }), 
         __metadata('design:paramtypes', [])
     ], AppComponent);

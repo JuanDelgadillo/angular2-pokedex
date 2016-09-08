@@ -10,13 +10,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var router_1 = require('@angular/router');
-var imageify_pipe_1 = require('../pipes/imageify.pipe');
-var comments_component_1 = require('./comments.component');
-var pokemon_data_component_1 = require('./pokemon-data.component');
-var pokemon_name_component_1 = require('./pokemon-name.component');
-var pokemon_image_component_1 = require('./pokemon-image.component');
-var pokemon_stats_component_1 = require('./pokemon-stats.component');
-var pokemon_evolution_component_1 = require('./pokemon-evolution.component');
 var pokemon_service_1 = require('../services/pokemon.service');
 var PokemonComponent = (function () {
     function PokemonComponent(_pokemonService, _routeParams) {
@@ -37,9 +30,7 @@ var PokemonComponent = (function () {
     PokemonComponent = __decorate([
         core_1.Component({
             selector: 'pokemon',
-            pipes: [imageify_pipe_1.ImageifyPipe],
             providers: [pokemon_service_1.PokemonService],
-            directives: [comments_component_1.CommentsComponent, pokemon_data_component_1.PokemonDataComponent, pokemon_name_component_1.PokemonNameComponent, pokemon_image_component_1.PokemonImageComponent, pokemon_stats_component_1.PokemonStatsComponent, pokemon_evolution_component_1.PokemonEvolutionComponent],
             template: "\n      <!-- pokemon -->\n        <div class=\"page-header\">\n          <pokemon-name [pokemon]=\"pokemon\"></pokemon-name>\n        </div>\n        <div class=\"row\">\n          <div class=\"col-md-6\">\n            <pokemon-image [pokemon]=\"pokemon\"></pokemon-image>\n          </div>\n          <div class=\"col-md-6\">\n            <ul class=\"nav nav-tabs nav-justified\">\n              <li [ngClass]=\"{ 'active': tab === 1 }\"><a (click)=\"selectTab(1)\">Pok\u00E9dex</a></li>\n              <li [ngClass]=\"{ 'active': tab === 2 }\"><a (click)=\"selectTab(2)\">Stats</a></li>\n              <li [ngClass]=\"{ 'active': tab === 3 }\"><a (click)=\"selectTab(3)\">Evolution</a></li>\n            </ul>\n            <div class=\"tab-content\">\n              <div *ngIf=\"tab === 1\">\n                <pokemon-data [pokemon]=\"pokemon\"></pokemon-data>\n              </div>\n\n              <!-- Stats -->\n              <div *ngIf=\"tab === 2\">\n                <pokemon-stats [pokemon]=\"pokemon\"></pokemon-stats>\n              </div>\n\n              <!-- Evolution -->\n              <div *ngIf=\"tab === 3\">\n                <pokemon-evolution [pokemon]=\"pokemon\"></pokemon-evolution>\n              </div>\n\n            </div>\n          </div>\n        </div>\n      <!-- /pokemon -->\n      <comments [pokemon]=\"pokemon\"></comments>\n  "
         }), 
         __metadata('design:paramtypes', [pokemon_service_1.PokemonService, router_1.ActivatedRoute])
