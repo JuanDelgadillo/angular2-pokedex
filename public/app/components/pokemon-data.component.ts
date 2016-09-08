@@ -1,9 +1,7 @@
 import { Component, Input } from '@angular/core'
-import { PokemonTypeComponent } from './pokemon-type.component'
 
 @Component({
 	selector: 'pokemon-data',
-  directives: [PokemonTypeComponent],
 	template: `
 		<ul class="list-group">
                   <li class="list-group-item">
