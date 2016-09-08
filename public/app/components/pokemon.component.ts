@@ -1,19 +1,11 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { ImageifyPipe } from '../pipes/imageify.pipe'
-import { CommentsComponent } from './comments.component'
-import { PokemonDataComponent } from './pokemon-data.component'
-import { PokemonNameComponent } from './pokemon-name.component'
-import { PokemonImageComponent } from './pokemon-image.component'
-import { PokemonStatsComponent } from './pokemon-stats.component'
-import { PokemonEvolutionComponent } from './pokemon-evolution.component'
 import { PokemonService } from '../services/pokemon.service'
 
 @Component({
   selector: 'pokemon',
-  pipes: [ImageifyPipe],
   providers: [PokemonService],
-  directives:[CommentsComponent, PokemonDataComponent, PokemonNameComponent, PokemonImageComponent, PokemonStatsComponent, PokemonEvolutionComponent],
   template: `
       <!-- pokemon -->
         <div class="page-header">
