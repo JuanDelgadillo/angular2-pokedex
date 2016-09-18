@@ -3,6 +3,8 @@ var compiler_1 = require('angular2/compiler');
 var core_1 = require('angular2/core');
 var router_link_transform_1 = require('angular2/src/router/router_link_transform');
 var lang_1 = require('angular2/src/facade/lang');
+var router_link_transform_2 = require('angular2/src/router/router_link_transform');
+exports.RouterLinkTransform = router_link_transform_2.RouterLinkTransform;
 /**
  * Enables the router link DSL.
  *

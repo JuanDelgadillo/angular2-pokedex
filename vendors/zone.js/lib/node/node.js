@@ -1,9 +1,11 @@
 "use strict";
 require('../zone');
 var timers_1 = require('../common/timers');
+require('./events');
+require('./fs');
 var set = 'set';
 var clear = 'clear';
-var _global = typeof window === 'undefined' ? global : window;
+var _global = typeof window === 'object' && window || typeof self === 'object' && self || global;
 // Timers
 var timers = require('timers');
 timers_1.patchTimer(timers, set, clear, 'Timeout');
@@ -51,5 +53,23 @@ if (crypto) {
             return nativePbkdf2_1.apply(void 0, args);
         }
     }.bind(crypto);
+}
+// HTTP Client
+var httpClient;
+try {
+    httpClient = require('_http_client');
+}
+catch (err) { }
+if (httpClient && httpClient.ClientRequest) {
+    var ClientRequest_1 = httpClient.ClientRequest.bind(httpClient);
+    httpClient.ClientRequest = function (options, callback) {
+        if (!callback) {
+            return new ClientRequest_1(options);
+        }
+        else {
+            var zone = Zone.current;
+            return new ClientRequest_1(options, zone.wrap(callback, 'http.ClientRequest'));
+        }
+    };
 }
 //# sourceMappingURL=node.js.map

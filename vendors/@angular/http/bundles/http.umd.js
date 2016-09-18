@@ -1,5 +1,5 @@
 /**
- * @license Angular v2.0.0-rc.6
+ * @license Angular v2.0.0
  * (c) 2010-2016 Google, Inc. https://angular.io/
  * License: MIT
  */
@@ -168,8 +168,6 @@
             }
             throw new Error('Invalid integer literal when parsing ' + text + ' in base ' + radix);
         };
-        // TODO: NaN is a valid literal but is returned by parseFloat to indicate an error.
-        NumberWrapper.parseFloat = function (text) { return parseFloat(text); };
         Object.defineProperty(NumberWrapper, "NaN", {
             get: function () { return NaN; },
             enumerable: true,
@@ -439,9 +437,8 @@
             if (k1.length != k2.length) {
                 return false;
             }
-            var key;
             for (var i = 0; i < k1.length; i++) {
-                key = k1[i];
+                var key = k1[i];
                 if (m1[key] !== m2[key]) {
                     return false;
                 }

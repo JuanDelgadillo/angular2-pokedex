@@ -5,6 +5,9 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var lang_1 = require('angular2/src/facade/lang');
+var promise_1 = require('angular2/src/facade/promise');
+exports.PromiseWrapper = promise_1.PromiseWrapper;
+exports.PromiseCompleter = promise_1.PromiseCompleter;
 var Subject_1 = require('rxjs/Subject');
 var PromiseObservable_1 = require('rxjs/observable/PromiseObservable');
 var toPromise_1 = require('rxjs/operator/toPromise');

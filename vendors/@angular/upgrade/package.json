@@ -3,24 +3,24 @@
     [
       {
         "name": "@angular/upgrade",
-        "raw": "@angular/upgrade@2.0.0-rc.6",
-        "rawSpec": "2.0.0-rc.6",
+        "raw": "@angular/upgrade@2.0.0",
+        "rawSpec": "2.0.0",
         "scope": "@angular",
-        "spec": "2.0.0-rc.6",
+        "spec": "2.0.0",
         "type": "version"
       },
       "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex"
     ]
   ],
-  "_from": "@angular/upgrade@2.0.0-rc.6",
-  "_id": "@angular/upgrade@2.0.0-rc.6",
+  "_from": "@angular/upgrade@2.0.0",
+  "_id": "@angular/upgrade@2.0.0",
   "_inCache": true,
   "_installable": true,
   "_location": "/@angular/upgrade",
   "_nodeVersion": "5.4.1",
   "_npmOperationalInternal": {
     "host": "packages-12-west.internal.npmjs.com",
-    "tmp": "tmp/upgrade-2.0.0-rc.6.tgz_1472686652636_0.8626930271275342"
+    "tmp": "tmp/upgrade-2.0.0.tgz_1473906776175_0.38377839396707714"
   },
   "_npmUser": {
     "email": "angular-core+npm@google.com",
@@ -30,19 +30,19 @@
   "_phantomChildren": {},
   "_requested": {
     "name": "@angular/upgrade",
-    "raw": "@angular/upgrade@2.0.0-rc.6",
-    "rawSpec": "2.0.0-rc.6",
+    "raw": "@angular/upgrade@2.0.0",
+    "rawSpec": "2.0.0",
     "scope": "@angular",
-    "spec": "2.0.0-rc.6",
+    "spec": "2.0.0",
     "type": "version"
   },
   "_requiredBy": [
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/@angular/upgrade/-/upgrade-2.0.0-rc.6.tgz",
-  "_shasum": "3757ab3607cf5b09ef47d98ea4bb5bf5cffeab53",
+  "_resolved": "https://registry.npmjs.org/@angular/upgrade/-/upgrade-2.0.0.tgz",
+  "_shasum": "6d2c0071e55f57ca1eff683758626d7ef6cdbee0",
   "_shrinkwrap": null,
-  "_spec": "@angular/upgrade@2.0.0-rc.6",
+  "_spec": "@angular/upgrade@2.0.0",
   "_where": "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex",
   "author": {
     "name": "angular"
@@ -51,16 +51,16 @@
     "url": "https://github.com/angular/angular/issues"
   },
   "dependencies": {},
-  "description": "",
+  "description": "Angular - the library for easing update from v1 to v2",
   "devDependencies": {},
   "directories": {},
   "dist": {
-    "shasum": "3757ab3607cf5b09ef47d98ea4bb5bf5cffeab53",
-    "tarball": "https://registry.npmjs.org/@angular/upgrade/-/upgrade-2.0.0-rc.6.tgz"
+    "shasum": "6d2c0071e55f57ca1eff683758626d7ef6cdbee0",
+    "tarball": "https://registry.npmjs.org/@angular/upgrade/-/upgrade-2.0.0.tgz"
   },
   "homepage": "https://github.com/angular/angular#readme",
   "license": "MIT",
-  "main": "bundles/core.umd.js",
+  "main": "bundles/upgrade.umd.js",
   "maintainers": [
     {
       "email": "angular-core+npm@google.com",
@@ -71,10 +71,10 @@
   "name": "@angular/upgrade",
   "optionalDependencies": {},
   "peerDependencies": {
-    "@angular/compiler": "^2.0.0-rc.6",
-    "@angular/core": "^2.0.0-rc.6",
-    "@angular/platform-browser": "^2.0.0-rc.6",
-    "@angular/platform-browser-dynamic": "^2.0.0-rc.6"
+    "@angular/compiler": "^2.0.0",
+    "@angular/core": "^2.0.0",
+    "@angular/platform-browser": "^2.0.0",
+    "@angular/platform-browser-dynamic": "^2.0.0"
   },
   "readme": "ERROR: No README data found!",
   "repository": {
@@ -83,5 +83,5 @@
   },
   "scripts": {},
   "typings": "index.d.ts",
-  "version": "2.0.0-rc.6"
+  "version": "2.0.0"
 }

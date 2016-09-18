@@ -12,6 +12,15 @@ var Zone = (function (global) {
             this._properties = zoneSpec && zoneSpec.properties || {};
             this._zoneDelegate = new ZoneDelegate(this, this._parent && this._parent._zoneDelegate, zoneSpec);
         }
+        Zone.assertZonePatched = function () {
+            if (global.Promise !== ZoneAwarePromise) {
+                throw new Error("Zone.js has detected that ZoneAwarePromise `(window|global).Promise` " +
+                    "has been overwritten.\n" +
+                    "Most likely cause is that a Promise polyfill has been loaded " +
+                    "after Zone.js (Polyfilling Promise api is not necessary when zone.js is loaded. " +
+                    "If you must load one, do so before loading zone.js.)");
+            }
+        };
         Object.defineProperty(Zone, "current", {
             get: function () { return _currentZone; },
             enumerable: true,
@@ -488,7 +497,6 @@ var Zone = (function (global) {
             var promise = new this(function (res, rej) { resolve = res; reject = rej; });
             var count = 0;
             var resolvedValues = [];
-            function onReject(error) { promise && reject(error); promise = null; }
             for (var _i = 0, values_2 = values; _i < values_2.length; _i++) {
                 var value = values_2[_i];
                 if (!isThenable(value)) {
@@ -497,11 +505,10 @@ var Zone = (function (global) {
                 value.then((function (index) { return function (value) {
                     resolvedValues[index] = value;
                     count--;
-                    if (promise && !count) {
+                    if (!count) {
                         resolve(resolvedValues);
                     }
-                    promise == null;
-                }; })(count), onReject);
+                }; })(count), reject);
                 count++;
             }
             if (!count)
@@ -524,21 +531,46 @@ var Zone = (function (global) {
         };
         return ZoneAwarePromise;
     }());
+    // Protect against aggressive optimizers dropping seemingly unused properties.
+    // E.g. Closure Compiler in advanced mode.
+    ZoneAwarePromise['resolve'] = ZoneAwarePromise.resolve;
+    ZoneAwarePromise['reject'] = ZoneAwarePromise.reject;
+    ZoneAwarePromise['race'] = ZoneAwarePromise.race;
+    ZoneAwarePromise['all'] = ZoneAwarePromise.all;
     var NativePromise = global[__symbol__('Promise')] = global.Promise;
     global.Promise = ZoneAwarePromise;
-    if (NativePromise) {
+    function patchThen(NativePromise) {
         var NativePromiseProtototype = NativePromise.prototype;
-        var NativePromiseThen_1 = NativePromiseProtototype[__symbol__('then')]
+        var NativePromiseThen = NativePromiseProtototype[__symbol__('then')]
             = NativePromiseProtototype.then;
         NativePromiseProtototype.then = function (onResolve, onReject) {
             var nativePromise = this;
             return new ZoneAwarePromise(function (resolve, reject) {
-                NativePromiseThen_1.call(nativePromise, resolve, reject);
+                NativePromiseThen.call(nativePromise, resolve, reject);
             }).then(onResolve, onReject);
         };
+    }
+    if (NativePromise) {
+        patchThen(NativePromise);
+        if (typeof global['fetch'] !== 'undefined') {
+            var fetchPromise = void 0;
+            try {
+                // In MS Edge this throws
+                fetchPromise = global['fetch']();
+            }
+            catch (e) {
+                // In Chrome this throws instead.
+                fetchPromise = global['fetch']('about:blank');
+            }
+            // ignore output to prevent error;
+            fetchPromise.then(function () { return null; }, function () { return null; });
+            if (fetchPromise.constructor != NativePromise) {
+                patchThen(fetchPromise.constructor);
+            }
+        }
     }
     // This is not part of public API, but it is usefull for tests, so we expose it.
     Promise[Zone.__symbol__('uncaughtPromiseErrors')] = _uncaughtPromiseErrors;
     return global.Zone = Zone;
-})(typeof window === 'undefined' ? global : window);
+})(typeof window === 'object' && window || typeof self === 'object' && self || global);
 //# sourceMappingURL=zone.js.map

@@ -3,24 +3,24 @@
     [
       {
         "name": "@angular/router",
-        "raw": "@angular/router@3.0.0-rc.2",
-        "rawSpec": "3.0.0-rc.2",
+        "raw": "@angular/router@3.0.0",
+        "rawSpec": "3.0.0",
         "scope": "@angular",
-        "spec": "3.0.0-rc.2",
+        "spec": "3.0.0",
         "type": "version"
       },
       "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex"
     ]
   ],
-  "_from": "@angular/router@3.0.0-rc.2",
-  "_id": "@angular/router@3.0.0-rc.2",
+  "_from": "@angular/router@3.0.0",
+  "_id": "@angular/router@3.0.0",
   "_inCache": true,
   "_installable": true,
   "_location": "/@angular/router",
   "_nodeVersion": "5.4.1",
   "_npmOperationalInternal": {
-    "host": "packages-12-west.internal.npmjs.com",
-    "tmp": "tmp/router-3.0.0-rc.2.tgz_1472686643384_0.8680153554305434"
+    "host": "packages-16-east.internal.npmjs.com",
+    "tmp": "tmp/router-3.0.0.tgz_1473906772743_0.2897986536845565"
   },
   "_npmUser": {
     "email": "angular-core+npm@google.com",
@@ -30,19 +30,19 @@
   "_phantomChildren": {},
   "_requested": {
     "name": "@angular/router",
-    "raw": "@angular/router@3.0.0-rc.2",
-    "rawSpec": "3.0.0-rc.2",
+    "raw": "@angular/router@3.0.0",
+    "rawSpec": "3.0.0",
     "scope": "@angular",
-    "spec": "3.0.0-rc.2",
+    "spec": "3.0.0",
     "type": "version"
   },
   "_requiredBy": [
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/@angular/router/-/router-3.0.0-rc.2.tgz",
-  "_shasum": "8ddbd557e121517619fbdd2b723c80b9050b2c78",
+  "_resolved": "https://registry.npmjs.org/@angular/router/-/router-3.0.0.tgz",
+  "_shasum": "cdf91b3a5d85ad39aff4fd882455c9b8c3129cd9",
   "_shrinkwrap": null,
-  "_spec": "@angular/router@3.0.0-rc.2",
+  "_spec": "@angular/router@3.0.0",
   "_where": "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex",
   "author": {
     "name": "angular"
@@ -51,12 +51,12 @@
     "url": "https://github.com/angular/angular/issues"
   },
   "dependencies": {},
-  "description": "Angular 2 router",
+  "description": "Angular - the routing library",
   "devDependencies": {},
   "directories": {},
   "dist": {
-    "shasum": "8ddbd557e121517619fbdd2b723c80b9050b2c78",
-    "tarball": "https://registry.npmjs.org/@angular/router/-/router-3.0.0-rc.2.tgz"
+    "shasum": "cdf91b3a5d85ad39aff4fd882455c9b8c3129cd9",
+    "tarball": "https://registry.npmjs.org/@angular/router/-/router-3.0.0.tgz"
   },
   "homepage": "https://github.com/angular/angular/blob/master/modules/%40angular/router/README.md",
   "keywords": [
@@ -76,10 +76,10 @@
   "name": "@angular/router",
   "optionalDependencies": {},
   "peerDependencies": {
-    "@angular/common": "^2.0.0-rc.6",
-    "@angular/core": "^2.0.0-rc.6",
-    "@angular/platform-browser": "^2.0.0-rc.6",
-    "rxjs": "5.0.0-beta.11"
+    "@angular/common": "^2.0.0",
+    "@angular/core": "^2.0.0",
+    "@angular/platform-browser": "^2.0.0",
+    "rxjs": "5.0.0-beta.12"
   },
   "readme": "ERROR: No README data found!",
   "repository": {
@@ -88,5 +88,5 @@
   },
   "scripts": {},
   "typings": "index.d.ts",
-  "version": "3.0.0-rc.2"
+  "version": "3.0.0"
 }

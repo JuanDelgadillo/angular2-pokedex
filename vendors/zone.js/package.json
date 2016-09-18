@@ -3,24 +3,24 @@
     [
       {
         "name": "zone.js",
-        "raw": "zone.js@^0.6.12",
-        "rawSpec": "^0.6.12",
+        "raw": "zone.js@^0.6.23",
+        "rawSpec": "^0.6.23",
         "scope": null,
-        "spec": ">=0.6.12 <0.7.0",
+        "spec": ">=0.6.23 <0.7.0",
         "type": "range"
       },
       "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex"
     ]
   ],
-  "_from": "zone.js@>=0.6.12 <0.7.0",
-  "_id": "zone.js@0.6.17",
+  "_from": "zone.js@>=0.6.23 <0.7.0",
+  "_id": "zone.js@0.6.23",
   "_inCache": true,
   "_installable": true,
   "_location": "/zone.js",
   "_nodeVersion": "5.5.0",
   "_npmOperationalInternal": {
     "host": "packages-16-east.internal.npmjs.com",
-    "tmp": "tmp/zone.js-0.6.17.tgz_1471905710093_0.10680312826298177"
+    "tmp": "tmp/zone.js-0.6.23.tgz_1473889747894_0.8097059819847345"
   },
   "_npmUser": {
     "email": "angular-core+npm@google.com",
@@ -30,19 +30,19 @@
   "_phantomChildren": {},
   "_requested": {
     "name": "zone.js",
-    "raw": "zone.js@^0.6.12",
-    "rawSpec": "^0.6.12",
+    "raw": "zone.js@^0.6.23",
+    "rawSpec": "^0.6.23",
     "scope": null,
-    "spec": ">=0.6.12 <0.7.0",
+    "spec": ">=0.6.23 <0.7.0",
     "type": "range"
   },
   "_requiredBy": [
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/zone.js/-/zone.js-0.6.17.tgz",
-  "_shasum": "65ecd9b4330026911416250cb1b716472e3cbd62",
+  "_resolved": "https://registry.npmjs.org/zone.js/-/zone.js-0.6.23.tgz",
+  "_shasum": "78fff1e27425e5f82fb875c8da435681850b7018",
   "_shrinkwrap": null,
-  "_spec": "zone.js@^0.6.12",
+  "_spec": "zone.js@^0.6.23",
   "_where": "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex",
   "author": {
     "name": "Brian Ford"
@@ -54,9 +54,14 @@
   "dependencies": {},
   "description": "Zones for JavaScript",
   "devDependencies": {
+    "@types/jasmine": "^2.2.33",
+    "@types/node": "^6.0.38",
+    "@types/systemjs": "^0.19.30",
+    "concurrently": "^2.2.0",
     "es6-promise": "^3.0.2",
     "gulp": "^3.8.11",
     "gulp-rename": "^1.2.2",
+    "gulp-rollup": "^2.3.0",
     "gulp-tsc": "^1.1.4",
     "gulp-uglify": "^1.2.0",
     "gulp-util": "^3.0.7",
@@ -71,24 +76,24 @@
     "karma-sourcemap-loader": "^0.3.6",
     "karma-webpack": "^1.7.0",
     "nodejs-websocket": "^1.2.0",
+    "pump": "^1.0.1",
+    "systemjs": "^0.19.37",
     "ts-loader": "^0.6.0",
-    "typescript": "^1.8.0",
-    "typings": "^0.7.12",
-    "webpack": "^1.12.2"
+    "typescript": "^2.0.2"
   },
   "directories": {
     "lib": "lib",
     "test": "test"
   },
   "dist": {
-    "shasum": "65ecd9b4330026911416250cb1b716472e3cbd62",
-    "tarball": "https://registry.npmjs.org/zone.js/-/zone.js-0.6.17.tgz"
+    "shasum": "78fff1e27425e5f82fb875c8da435681850b7018",
+    "tarball": "https://registry.npmjs.org/zone.js/-/zone.js-0.6.23.tgz"
   },
   "files": [
     "lib",
     "dist"
   ],
-  "gitHead": "f57fc1870bfbbe36566d2f6acfa435fea63617d4",
+  "gitHead": "473f01c83e753bf071e338443b6b4b418567dd0d",
   "homepage": "https://github.com/angular/zone.js#readme",
   "license": "MIT",
   "main": "dist/zone-node.js",
@@ -110,15 +115,14 @@
     "url": "git://github.com/angular/zone.js.git"
   },
   "scripts": {
-    "prepublish": "typings install && ./node_modules/.bin/tsc && gulp build",
+    "prepublish": "tsc && gulp build",
     "serve": "python -m SimpleHTTPServer 8000",
-    "test": "karma start karma.conf.js",
+    "test": "npm run tsc && concurrently \"npm run tsc:w\" \"npm run ws-server\" \"karma start karma.conf.js\"",
     "test-node": "gulp test/node",
     "tsc": "tsc",
     "tsc:w": "tsc -w",
-    "typings": "typings install",
     "ws-server": "node ./test/ws-server.js"
   },
   "typings": "dist/zone.js.d.ts",
-  "version": "0.6.17"
+  "version": "0.6.23"
 }

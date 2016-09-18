@@ -3,24 +3,24 @@
     [
       {
         "name": "@angular/platform-browser",
-        "raw": "@angular/platform-browser@2.0.0-rc.6",
-        "rawSpec": "2.0.0-rc.6",
+        "raw": "@angular/platform-browser@2.0.0",
+        "rawSpec": "2.0.0",
         "scope": "@angular",
-        "spec": "2.0.0-rc.6",
+        "spec": "2.0.0",
         "type": "version"
       },
       "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex"
     ]
   ],
-  "_from": "@angular/platform-browser@2.0.0-rc.6",
-  "_id": "@angular/platform-browser@2.0.0-rc.6",
+  "_from": "@angular/platform-browser@2.0.0",
+  "_id": "@angular/platform-browser@2.0.0",
   "_inCache": true,
   "_installable": true,
   "_location": "/@angular/platform-browser",
   "_nodeVersion": "5.4.1",
   "_npmOperationalInternal": {
-    "host": "packages-12-west.internal.npmjs.com",
-    "tmp": "tmp/platform-browser-2.0.0-rc.6.tgz_1472686624669_0.24030304024927318"
+    "host": "packages-16-east.internal.npmjs.com",
+    "tmp": "tmp/platform-browser-2.0.0.tgz_1473906755245_0.3851516761351377"
   },
   "_npmUser": {
     "email": "angular-core+npm@google.com",
@@ -30,19 +30,19 @@
   "_phantomChildren": {},
   "_requested": {
     "name": "@angular/platform-browser",
-    "raw": "@angular/platform-browser@2.0.0-rc.6",
-    "rawSpec": "2.0.0-rc.6",
+    "raw": "@angular/platform-browser@2.0.0",
+    "rawSpec": "2.0.0",
     "scope": "@angular",
-    "spec": "2.0.0-rc.6",
+    "spec": "2.0.0",
     "type": "version"
   },
   "_requiredBy": [
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/@angular/platform-browser/-/platform-browser-2.0.0-rc.6.tgz",
-  "_shasum": "5dc7b05be6c74655bbfd45f6afbe2c9ecaeaceff",
+  "_resolved": "https://registry.npmjs.org/@angular/platform-browser/-/platform-browser-2.0.0.tgz",
+  "_shasum": "7f8603be42511d3133e95888a1b5c5132fc89c46",
   "_shrinkwrap": null,
-  "_spec": "@angular/platform-browser@2.0.0-rc.6",
+  "_spec": "@angular/platform-browser@2.0.0",
   "_where": "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex",
   "author": {
     "name": "angular"
@@ -51,12 +51,12 @@
     "url": "https://github.com/angular/angular/issues"
   },
   "dependencies": {},
-  "description": "Angular 2 platform-browser",
+  "description": "Angular - library for using Angular in a web browser",
   "devDependencies": {},
   "directories": {},
   "dist": {
-    "shasum": "5dc7b05be6c74655bbfd45f6afbe2c9ecaeaceff",
-    "tarball": "https://registry.npmjs.org/@angular/platform-browser/-/platform-browser-2.0.0-rc.6.tgz"
+    "shasum": "7f8603be42511d3133e95888a1b5c5132fc89c46",
+    "tarball": "https://registry.npmjs.org/@angular/platform-browser/-/platform-browser-2.0.0.tgz"
   },
   "homepage": "https://github.com/angular/angular#readme",
   "license": "MIT",
@@ -71,8 +71,8 @@
   "name": "@angular/platform-browser",
   "optionalDependencies": {},
   "peerDependencies": {
-    "@angular/common": "^2.0.0-rc.6",
-    "@angular/core": "^2.0.0-rc.6"
+    "@angular/common": "^2.0.0",
+    "@angular/core": "^2.0.0"
   },
   "readme": "ERROR: No README data found!",
   "repository": {
@@ -81,5 +81,5 @@
   },
   "scripts": {},
   "typings": "index.d.ts",
-  "version": "2.0.0-rc.6"
+  "version": "2.0.0"
 }

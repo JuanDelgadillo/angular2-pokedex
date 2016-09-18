@@ -19,8 +19,20 @@ var testability_2 = require('angular2/src/platform/browser/testability');
 var wtf_init_1 = require('angular2/src/core/profile/wtf_init');
 var event_manager_1 = require("angular2/src/platform/dom/events/event_manager");
 var common_dom_1 = require('angular2/platform/common_dom');
+var dom_tokens_2 = require('angular2/src/platform/dom/dom_tokens');
+exports.DOCUMENT = dom_tokens_2.DOCUMENT;
+var title_1 = require('angular2/src/platform/browser/title');
+exports.Title = title_1.Title;
+var common_dom_2 = require('angular2/platform/common_dom');
+exports.ELEMENT_PROBE_PROVIDERS = common_dom_2.ELEMENT_PROBE_PROVIDERS;
+exports.ELEMENT_PROBE_PROVIDERS_PROD_MODE = common_dom_2.ELEMENT_PROBE_PROVIDERS_PROD_MODE;
+exports.inspectNativeElement = common_dom_2.inspectNativeElement;
+exports.By = common_dom_2.By;
 var browser_adapter_2 = require('./browser/browser_adapter');
 exports.BrowserDomAdapter = browser_adapter_2.BrowserDomAdapter;
+var tools_1 = require('angular2/src/platform/browser/tools/tools');
+exports.enableDebugTools = tools_1.enableDebugTools;
+exports.disableDebugTools = tools_1.disableDebugTools;
 /**
  * A set of providers to initialize the Angular platform in a web browser.
  *

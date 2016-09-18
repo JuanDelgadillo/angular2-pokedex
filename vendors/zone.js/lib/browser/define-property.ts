@@ -4,8 +4,8 @@ import {zoneSymbol} from "../common/utils";
  * things like redefining `createdCallback` on an element.
  */
 
-const _defineProperty = Object.defineProperty;
-const _getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+const _defineProperty = Object[zoneSymbol('defineProperty')] = Object.defineProperty;
+const _getOwnPropertyDescriptor = Object[zoneSymbol('getOwnPropertyDescriptor')] = Object.getOwnPropertyDescriptor;
 const _create = Object.create;
 const unconfigurablesKey = zoneSymbol('unconfigurables');
 
@@ -28,7 +28,7 @@ export function propertyPatch() {
     return obj;
   };
 
-  Object.create = function (obj, proto) {
+  Object.create = <any>function (obj, proto) {
     if (typeof proto === 'object' && !Object.isFrozen(proto)) {
       Object.keys(proto).forEach(function (prop) {
         proto[prop] = rewriteDescriptor(obj, prop, proto[prop]);
@@ -79,7 +79,13 @@ function _tryDefineProperty (obj, prop, desc, originalConfigurableFlag) {
       } else {
         desc.configurable = originalConfigurableFlag;
       }
-      return _defineProperty(obj, prop, desc);
+      try {
+        return _defineProperty(obj, prop, desc);
+      } catch (e) {
+        var descJson: string  = null;
+        try { descJson = JSON.stringify(desc); } catch (e) { descJson = descJson.toString(); }
+        console.log(`Attempting to configure '${prop}' with descriptor '${descJson}' on object '${obj}' and got error, giving up: ${e}`);
+      }
     } else {
       throw e;
     }

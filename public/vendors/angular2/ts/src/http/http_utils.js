@@ -27,4 +27,6 @@ function getResponseURL(xhr) {
     return;
 }
 exports.getResponseURL = getResponseURL;
+var lang_2 = require('angular2/src/facade/lang');
+exports.isJsObject = lang_2.isJsObject;
 //# sourceMappingURL=http_utils.js.map

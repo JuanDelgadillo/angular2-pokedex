@@ -9,7 +9,7 @@ var utils_1 = require("../common/utils");
 var set = 'set';
 var clear = 'clear';
 var blockingMethods = ['alert', 'prompt', 'confirm'];
-var _global = typeof window == 'undefined' ? global : window;
+var _global = typeof window === 'object' && window || typeof self === 'object' && self || global;
 timers_1.patchTimer(_global, set, clear, 'Timeout');
 timers_1.patchTimer(_global, set, clear, 'Interval');
 timers_1.patchTimer(_global, set, clear, 'Immediate');
@@ -34,6 +34,7 @@ register_element_1.registerElementPatch(_global);
 // Treat XMLHTTPRequest as a macrotask.
 patchXHR(_global);
 var XHR_TASK = utils_1.zoneSymbol('xhrTask');
+var XHR_SYNC = utils_1.zoneSymbol('xhrSync');
 function patchXHR(window) {
     function findPendingTask(target) {
         var pendingTask = target[XHR_TASK];
@@ -52,7 +53,7 @@ function patchXHR(window) {
         if (!storedTask) {
             data.target[XHR_TASK] = task;
         }
-        setNative.apply(data.target, data.args);
+        sendNative.apply(data.target, data.args);
         return task;
     }
     function placeholderCallback() {
@@ -62,20 +63,30 @@ function patchXHR(window) {
         // Note - ideally, we would call data.target.removeEventListener here, but it's too late
         // to prevent it from firing. So instead, we store info for the event listener.
         data.aborted = true;
-        return clearNative.apply(data.target, data.args);
+        return abortNative.apply(data.target, data.args);
     }
-    var setNative = utils_1.patchMethod(window.XMLHttpRequest.prototype, 'send', function () { return function (self, args) {
-        var zone = Zone.current;
-        var options = {
-            target: self,
-            isPeriodic: false,
-            delay: null,
-            args: args,
-            aborted: false
-        };
-        return zone.scheduleMacroTask('XMLHttpRequest.send', placeholderCallback, options, scheduleTask, clearTask);
+    var openNative = utils_1.patchMethod(window.XMLHttpRequest.prototype, 'open', function () { return function (self, args) {
+        self[XHR_SYNC] = args[2] == false;
+        return openNative.apply(self, args);
     }; });
-    var clearNative = utils_1.patchMethod(window.XMLHttpRequest.prototype, 'abort', function (delegate) { return function (self, args) {
+    var sendNative = utils_1.patchMethod(window.XMLHttpRequest.prototype, 'send', function () { return function (self, args) {
+        var zone = Zone.current;
+        if (self[XHR_SYNC]) {
+            // if the XHR is sync there is no task to schedule, just execute the code.
+            return sendNative.apply(self, args);
+        }
+        else {
+            var options = {
+                target: self,
+                isPeriodic: false,
+                delay: null,
+                args: args,
+                aborted: false
+            };
+            return zone.scheduleMacroTask('XMLHttpRequest.send', placeholderCallback, options, scheduleTask, clearTask);
+        }
+    }; });
+    var abortNative = utils_1.patchMethod(window.XMLHttpRequest.prototype, 'abort', function (delegate) { return function (self, args) {
         var task = findPendingTask(self);
         if (task && typeof task.type == 'string') {
             // If the XHR has already completed, do nothing.

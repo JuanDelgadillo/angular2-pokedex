@@ -15,13 +15,15 @@ import { Params } from './shared';
 import { UrlSerializer, UrlTree } from './url_tree';
 import { TreeNode } from './utils/tree';
 /**
+ * @whatItDoes Represents the extra options used during navigation.
+ *
  * @stable
  */
 export interface NavigationExtras {
     /**
-    * Enables relative navigation from the current ActivatedRoute
+    * Enables relative navigation from the current ActivatedRoute.
     *
-    * Configuration
+    * Configuration:
     *
     * ```
     * [{
@@ -40,7 +42,7 @@ export interface NavigationExtras {
     * }]
     * ```
     *
-    * Navigate to list route from child route
+    * Navigate to list route from child route:
     *
     * ```
     *  @Component({...})
@@ -48,36 +50,36 @@ export interface NavigationExtras {
     *    constructor(private router: Router, private route: ActivatedRoute) {}
     *
     *    go() {
-    *      this.router.navigate('../list', { relativeTo: this.route });
+    *      this.router.navigate(['../list'], { relativeTo: this.route });
     *    }
     *  }
     * ```
     */
     relativeTo?: ActivatedRoute;
     /**
-    * Sets query parameters to the URL
+    * Sets query parameters to the URL.
     *
     * ```
     * // Navigate to /results?page=1
-    * this.router.navigate('/results', { queryParams: { page: 1 } });
+    * this.router.navigate(['/results'], { queryParams: { page: 1 } });
     * ```
     */
     queryParams?: Params;
     /**
-    * Sets the hash fragment for the URL
+    * Sets the hash fragment for the URL.
     *
     * ```
     * // Navigate to /results#top
-    * this.router.navigate('/results', { fragment: 'top' });
+    * this.router.navigate(['/results'], { fragment: 'top' });
     * ```
     */
     fragment?: string;
     /**
-    * Preserves the query parameters for the next navigation
+    * Preserves the query parameters for the next navigation.
     *
     * ```
     * // Preserve query params from /results?page=1 to /view?page=1
-    * this.router.navigate('/view', { preserveQueryParams: true });
+    * this.router.navigate(['/view'], { preserveQueryParams: true });
     * ```
     */
     preserveQueryParams?: boolean;
@@ -86,97 +88,154 @@ export interface NavigationExtras {
     *
     * ```
     * // Preserve fragment from /results#top to /view#top
-    * this.router.navigate('/view', { preserveFragment: true });
+    * this.router.navigate(['/view'], { preserveFragment: true });
     * ```
     */
     preserveFragment?: boolean;
     /**
-    * Navigates without pushing a new state into history
+    * Navigates without pushing a new state into history.
     *
     * ```
     * // Navigate silently to /view
-    * this.router.navigate('/view', { skipLocationChange: true });
+    * this.router.navigate(['/view'], { skipLocationChange: true });
     * ```
     */
     skipLocationChange?: boolean;
     /**
-    * Navigates while replacing the current state in history
+    * Navigates while replacing the current state in history.
     *
     * ```
     * // Navigate to /view
-    * this.router.navigate('/view', { replaceUrl: true });
+    * this.router.navigate(['/view'], { replaceUrl: true });
     * ```
     */
     replaceUrl?: boolean;
 }
 /**
- * An event triggered when a navigation starts
+ * @whatItDoes Represents an event triggered when a navigation starts.
  *
  * @stable
  */
 export declare class NavigationStart {
+    /** @docsNotRequired */
     id: number;
+    /** @docsNotRequired */
     url: string;
-    constructor(id: number, url: string);
+    constructor(
+        /** @docsNotRequired */
+        id: number, 
+        /** @docsNotRequired */
+        url: string);
+    /** @docsNotRequired */
     toString(): string;
 }
 /**
- * An event triggered when a navigation ends successfully
+ * @whatItDoes Represents an event triggered when a navigation ends successfully.
  *
  * @stable
  */
 export declare class NavigationEnd {
+    /** @docsNotRequired */
     id: number;
+    /** @docsNotRequired */
     url: string;
+    /** @docsNotRequired */
     urlAfterRedirects: string;
-    constructor(id: number, url: string, urlAfterRedirects: string);
+    constructor(
+        /** @docsNotRequired */
+        id: number, 
+        /** @docsNotRequired */
+        url: string, 
+        /** @docsNotRequired */
+        urlAfterRedirects: string);
+    /** @docsNotRequired */
     toString(): string;
 }
 /**
- * An event triggered when a navigation is canceled
+ * @whatItDoes Represents an event triggered when a navigation is canceled.
  *
  * @stable
  */
 export declare class NavigationCancel {
+    /** @docsNotRequired */
     id: number;
+    /** @docsNotRequired */
     url: string;
+    /** @docsNotRequired */
     reason: string;
-    constructor(id: number, url: string, reason: string);
+    constructor(
+        /** @docsNotRequired */
+        id: number, 
+        /** @docsNotRequired */
+        url: string, 
+        /** @docsNotRequired */
+        reason: string);
+    /** @docsNotRequired */
     toString(): string;
 }
 /**
- * An event triggered when a navigation fails due to unexpected error
+ * @whatItDoes Represents an event triggered when a navigation fails due to an unexpected error.
  *
  * @stable
  */
 export declare class NavigationError {
+    /** @docsNotRequired */
     id: number;
+    /** @docsNotRequired */
     url: string;
+    /** @docsNotRequired */
     error: any;
-    constructor(id: number, url: string, error: any);
+    constructor(
+        /** @docsNotRequired */
+        id: number, 
+        /** @docsNotRequired */
+        url: string, 
+        /** @docsNotRequired */
+        error: any);
+    /** @docsNotRequired */
     toString(): string;
 }
 /**
- * An event triggered when routes are recognized
+ * @whatItDoes Represents an event triggered when routes are recognized.
  *
  * @stable
  */
 export declare class RoutesRecognized {
+    /** @docsNotRequired */
     id: number;
+    /** @docsNotRequired */
     url: string;
+    /** @docsNotRequired */
     urlAfterRedirects: string;
+    /** @docsNotRequired */
     state: RouterStateSnapshot;
-    constructor(id: number, url: string, urlAfterRedirects: string, state: RouterStateSnapshot);
+    constructor(
+        /** @docsNotRequired */
+        id: number, 
+        /** @docsNotRequired */
+        url: string, 
+        /** @docsNotRequired */
+        urlAfterRedirects: string, 
+        /** @docsNotRequired */
+        state: RouterStateSnapshot);
+    /** @docsNotRequired */
     toString(): string;
 }
 /**
+ * @whatItDoes Represents a router event.
+ *
+ * Please see {@link NavigationStart}, {@link NavigationEnd}, {@link NavigationCancel}, {@link
+ * NavigationError},
+ * {@link RoutesRecognized} for more information.
+ *
  * @stable
  */
 export declare type Event = NavigationStart | NavigationEnd | NavigationCancel | NavigationError | RoutesRecognized;
 /**
- * Error handler that is invoked when a navigation errors.
+ * @whatItDoes Error handler that is invoked when a navigation errors.
  *
- * If the handler retuns a value, the navigation promise will be resolved with this value.
+ * @description
+ * If the handler returns a value, the navigation promise will be resolved with this value.
  * If the handler throws an exception, the navigation promise will be rejected with
  * the exception.
  *
@@ -184,9 +243,11 @@ export declare type Event = NavigationStart | NavigationEnd | NavigationCancel |
  */
 export declare type ErrorHandler = (error: any) => any;
 /**
- * The `Router` is responsible for mapping URLs to components.
+ * @whatItDoes Provides the navigation and url manipulation capabilities.
  *
  * See {@link Routes} for more details and examples.
+ *
+ * @ngModule RouterModule
  *
  * @stable
  */
@@ -203,11 +264,14 @@ export declare class Router {
     private routerEvents;
     private navigationId;
     private configLoader;
+    /**
+     * Error handler that is invoked when a navigation errors.
+     *
+     * See {@link ErrorHandler} for more information.
+     */
     errorHandler: ErrorHandler;
     /**
      * Indicates if at least one navigation happened.
-     *
-     * @stable
      */
     navigated: boolean;
     /**
@@ -215,11 +279,11 @@ export declare class Router {
      */
     constructor(rootComponentType: Type<any>, urlSerializer: UrlSerializer, outletMap: RouterOutletMap, location: Location, injector: Injector, loader: NgModuleFactoryLoader, compiler: Compiler, config: Routes);
     /**
-     * Sets up the location change listener and performs the inital navigation
+     * Sets up the location change listener and performs the initial navigation.
      */
     initialNavigation(): void;
     /**
-     * Sets up the location change listener
+     * Sets up the location change listener.
      */
     setUpLocationChangeListener(): void;
     /**
@@ -249,14 +313,16 @@ export declare class Router {
      * ```
      */
     resetConfig(config: Routes): void;
+    /**
+     * @docsNotRequired
+     */
     ngOnDestroy(): void;
     /**
      * Disposes of the router.
      */
     dispose(): void;
     /**
-     * Applies an array of commands to the current url tree and creates
-     * a new url tree.
+     * Applies an array of commands to the current url tree and creates a new url tree.
      *
      * When given an activate route, applies the given commands starting from the route.
      * When not given a route, applies the given command starting from the root.
@@ -330,10 +396,10 @@ export declare class Router {
      * ### Usage
      *
      * ```
-     * router.navigate(['team', 33, 'team', '11], {relativeTo: route});
+     * router.navigate(['team', 33, 'user', 11], {relativeTo: route});
      *
      * // Navigate without updating the URL
-     * router.navigate(['team', 33, 'team', '11], {relativeTo: route, skipLocationChange: true });
+     * router.navigate(['team', 33, 'user', 11], {relativeTo: route, skipLocationChange: true });
      * ```
      *
      * In opposite to `navigateByUrl`, `navigate` always takes a delta
@@ -345,7 +411,7 @@ export declare class Router {
      */
     serializeUrl(url: UrlTree): string;
     /**
-     * Parse a string into a {@link UrlTree}.
+     * Parses a string into a {@link UrlTree}.
      */
     parseUrl(url: string): UrlTree;
     /**

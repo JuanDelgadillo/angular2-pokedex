@@ -3,24 +3,24 @@
     [
       {
         "name": "rxjs",
-        "raw": "rxjs@5.0.0-beta.11",
-        "rawSpec": "5.0.0-beta.11",
+        "raw": "rxjs@5.0.0-beta.12",
+        "rawSpec": "5.0.0-beta.12",
         "scope": null,
-        "spec": "5.0.0-beta.11",
+        "spec": "5.0.0-beta.12",
         "type": "version"
       },
       "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex"
     ]
   ],
-  "_from": "rxjs@5.0.0-beta.11",
-  "_id": "rxjs@5.0.0-beta.11",
+  "_from": "rxjs@5.0.0-beta.12",
+  "_id": "rxjs@5.0.0-beta.12",
   "_inCache": true,
   "_installable": true,
   "_location": "/rxjs",
   "_nodeVersion": "5.0.0",
   "_npmOperationalInternal": {
-    "host": "packages-12-west.internal.npmjs.com",
-    "tmp": "tmp/rxjs-5.0.0-beta.11.tgz_1470762149276_0.8274131978396326"
+    "host": "packages-16-east.internal.npmjs.com",
+    "tmp": "tmp/rxjs-5.0.0-beta.12.tgz_1473443366415_0.7348345792852342"
   },
   "_npmUser": {
     "email": "ben@benlesh.com",
@@ -30,19 +30,19 @@
   "_phantomChildren": {},
   "_requested": {
     "name": "rxjs",
-    "raw": "rxjs@5.0.0-beta.11",
-    "rawSpec": "5.0.0-beta.11",
+    "raw": "rxjs@5.0.0-beta.12",
+    "rawSpec": "5.0.0-beta.12",
     "scope": null,
-    "spec": "5.0.0-beta.11",
+    "spec": "5.0.0-beta.12",
     "type": "version"
   },
   "_requiredBy": [
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/rxjs/-/rxjs-5.0.0-beta.11.tgz",
-  "_shasum": "abac447d6f801c1bf066b7f0e49c65d2fee36ca2",
+  "_resolved": "https://registry.npmjs.org/rxjs/-/rxjs-5.0.0-beta.12.tgz",
+  "_shasum": "cdfde2d8c4639d20ae7794bff8fddf32da7ad337",
   "_shrinkwrap": null,
-  "_spec": "rxjs@5.0.0-beta.11",
+  "_spec": "rxjs@5.0.0-beta.12",
   "_where": "/Users/delgadillojuanm/projects/jdelgadillo/angular2-pokedex",
   "author": {
     "email": "blesh@netflix.com",
@@ -142,8 +142,8 @@
   },
   "directories": {},
   "dist": {
-    "shasum": "abac447d6f801c1bf066b7f0e49c65d2fee36ca2",
-    "tarball": "https://registry.npmjs.org/rxjs/-/rxjs-5.0.0-beta.11.tgz"
+    "shasum": "cdfde2d8c4639d20ae7794bff8fddf32da7ad337",
+    "tarball": "https://registry.npmjs.org/rxjs/-/rxjs-5.0.0-beta.12.tgz"
   },
   "engines": {
     "npm": ">=2.0.0"
@@ -186,8 +186,7 @@
   },
   "scripts": {},
   "scripts-info": {
-    "build_all": "Build all packages(ES6, CJS, AMD, Global) and generate packages",
-    "build_amd": "Build AMD package with clean up existing build, copy source into dist",
+    "build_all": "Build all packages (ES6, CJS, UMD) and generate packages",
     "build_cjs": "Build CJS package with clean up existing build, copy source into dist",
     "build_closure_core": "Minify Global core build using closure compiler",
     "build_cover": "Run lint to current code, build CJS & test spec, execute test coverage",
@@ -198,12 +197,10 @@
     "build_spec": "Build test specs",
     "build_test": "Build CJS package & test spec, execute mocha test runner",
     "check_circular_dependencies": "Check codebase has circular dependencies",
-    "clean_dist_amd": "Clean up existing AMD package output",
     "clean_dist_cjs": "Clean up existing CJS package output",
     "clean_dist_es6": "Clean up existing ES6 package output",
     "clean_spec": "Clean up existing test spec build output",
     "commit": "Run git commit wizard",
-    "compile_dist_amd": "Compile codebase into AMD module",
     "compile_dist_cjs": "Compile codebase into CJS module",
     "compile_dist_es6": "Compile codebase into ES6",
     "cover": "Execute test coverage",
@@ -222,5 +219,5 @@
     "watch": "Watch codebase, trigger compile when source code changes"
   },
   "typings": "Rx.d.ts",
-  "version": "5.0.0-beta.11"
+  "version": "5.0.0-beta.12"
 }

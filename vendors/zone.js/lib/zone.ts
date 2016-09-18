@@ -232,6 +232,11 @@ interface ZoneType {
    * @returns {Task} The task associated with the current execution.
    */
   currentTask: Task;
+
+  /**
+   * Verify that Zone has been correctly patched. Specifically that Promise is zone aware.
+   */
+  assertZonePatched();
 }
 
 /**
@@ -507,6 +512,16 @@ const Zone: ZoneType = (function(global: any) {
 
   class Zone implements AmbientZone {
     static __symbol__: (name: string) => string = __symbol__;
+
+    static assertZonePatched() {
+      if (global.Promise !== ZoneAwarePromise) {
+        throw new Error("Zone.js has detected that ZoneAwarePromise `(window|global).Promise` " +
+            "has been overwritten.\n" +
+            "Most likely cause is that a Promise polyfill has been loaded " +
+            "after Zone.js (Polyfilling Promise api is not necessary when zone.js is loaded. " +
+            "If you must load one, do so before loading zone.js.)");
+      }
+    }
 
 
     static get current(): AmbientZone { return _currentZone; };
@@ -901,7 +916,7 @@ const Zone: ZoneType = (function(global: any) {
           'Unhandled Promise rejection:', rejection instanceof Error ? rejection.message : rejection,
           '; Zone:', (<Zone>e.zone).name,
           '; Task:', e.task && (<Task>e.task).source,
-          '; Value:', rejection, 
+          '; Value:', rejection,
           rejection instanceof Error ? rejection.stack : undefined
       );
     }
@@ -1035,7 +1050,7 @@ const Zone: ZoneType = (function(global: any) {
       return resolvePromise(<ZoneAwarePromise<U>>new this(null), REJECTED, error);
     }
 
-    static race<R>(values: Thenable<any>[]): Promise<R> {
+    static race<R>(values: PromiseLike<any>[]): Promise<R> {
       let resolve: (v: any) => void;
       let reject: (v: any) => void;
       let promise: any = new this((res, rej) => {resolve = res; reject = rej});
@@ -1057,8 +1072,6 @@ const Zone: ZoneType = (function(global: any) {
       let promise = new this((res, rej) => {resolve = res; reject = rej;});
       let count = 0;
       const resolvedValues = [];
-      function onReject(error) { promise && reject(error); promise = null; }
-
       for(let value of values) {
         if (!isThenable(value)) {
           value = this.resolve(value);
@@ -1066,18 +1079,17 @@ const Zone: ZoneType = (function(global: any) {
         value.then(((index) => (value) => {
           resolvedValues[index] = value;
           count--;
-          if (promise && !count) {
+          if (!count) {
             resolve(resolvedValues);
           }
-          promise == null;
-        })(count), onReject);
+        })(count), reject);
         count++;
       }
       if (!count) resolve(resolvedValues);
       return promise;
     }
 
-    constructor(executor: (resolve : (value?: R | Thenable<R>) => void,
+    constructor(executor: (resolve : (value?: R | PromiseLike<R>) => void,
                            reject: (error?: any) => void) => void) {
       const promise: ZoneAwarePromise<R> = this;
       if (!(promise instanceof ZoneAwarePromise)) {
@@ -1092,8 +1104,8 @@ const Zone: ZoneType = (function(global: any) {
       }
     }
 
-    then<R, U>(onFulfilled?: (value: R) => U | Thenable<U>,
-               onRejected?: (error: any) => U | Thenable<U>): Promise<R>
+    then<R, U>(onFulfilled?: (value: R) => U | PromiseLike<U>,
+               onRejected?: (error: any) => U | PromiseLike<U>): Promise<R>
     {
       const chainPromise: Promise<R> = new (this.constructor as typeof ZoneAwarePromise)(null);
       const zone = Zone.current;
@@ -1105,14 +1117,20 @@ const Zone: ZoneType = (function(global: any) {
       return chainPromise;
     }
 
-    catch<U>(onRejected?: (error: any) => U | Thenable<U>): Promise<R> {
+    catch<U>(onRejected?: (error: any) => U | PromiseLike<U>): Promise<R> {
       return this.then(null, onRejected);
     }
   }
+  // Protect against aggressive optimizers dropping seemingly unused properties.
+  // E.g. Closure Compiler in advanced mode.
+  ZoneAwarePromise['resolve'] = ZoneAwarePromise.resolve;
+  ZoneAwarePromise['reject'] = ZoneAwarePromise.reject;
+  ZoneAwarePromise['race'] = ZoneAwarePromise.race;
+  ZoneAwarePromise['all'] = ZoneAwarePromise.all;
 
   const NativePromise = global[__symbol__('Promise')] = global.Promise;
   global.Promise = ZoneAwarePromise;
-  if (NativePromise) {
+  function patchThen(NativePromise) {
     const NativePromiseProtototype = NativePromise.prototype;
     const NativePromiseThen = NativePromiseProtototype[__symbol__('then')]
         = NativePromiseProtototype.then;
@@ -1121,10 +1139,29 @@ const Zone: ZoneType = (function(global: any) {
       return new ZoneAwarePromise((resolve, reject) => {
         NativePromiseThen.call(nativePromise, resolve, reject);
       }).then(onResolve, onReject);
+    };
+  }
+
+  if (NativePromise) {
+    patchThen(NativePromise);
+    if (typeof global['fetch'] !== 'undefined') {
+      let fetchPromise: Promise<any>;
+      try {
+        // In MS Edge this throws
+        fetchPromise = global['fetch']();
+      } catch (e) {
+        // In Chrome this throws instead.
+        fetchPromise = global['fetch']('about:blank');
+      }
+      // ignore output to prevent error;
+      fetchPromise.then(() => null, () => null);
+      if (fetchPromise.constructor != NativePromise) {
+        patchThen(fetchPromise.constructor);
+      }
     }
   }
 
   // This is not part of public API, but it is usefull for tests, so we expose it.
   Promise[Zone.__symbol__('uncaughtPromiseErrors')] = _uncaughtPromiseErrors;
   return global.Zone = Zone;
-})(typeof window === 'undefined' ? global : window);
+})(typeof window === 'object' && window || typeof self === 'object' && self || global);

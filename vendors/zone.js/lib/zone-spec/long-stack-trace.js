@@ -74,19 +74,34 @@
         onHandleError: function (parentZoneDelegate, currentZone, targetZone, error) {
             var parentTask = Zone.currentTask || error.task;
             if (error instanceof Error && parentTask) {
-                var descriptor = Object.getOwnPropertyDescriptor(error, 'stack');
-                if (descriptor) {
-                    var delegateGet_1 = descriptor.get;
-                    var value_1 = descriptor.value;
-                    descriptor = {
-                        get: function () {
-                            return renderLongStackTrace(parentTask.data && parentTask.data[creationTrace], delegateGet_1 ? delegateGet_1.apply(this) : value_1);
-                        }
-                    };
-                    Object.defineProperty(error, 'stack', descriptor);
+                var stackSetSucceded = null;
+                try {
+                    var descriptor = Object.getOwnPropertyDescriptor(error, 'stack');
+                    if (descriptor && descriptor.configurable) {
+                        var delegateGet_1 = descriptor.get;
+                        var value_1 = descriptor.value;
+                        descriptor = {
+                            get: function () {
+                                return renderLongStackTrace(parentTask.data && parentTask.data[creationTrace], delegateGet_1 ? delegateGet_1.apply(this) : value_1);
+                            }
+                        };
+                        Object.defineProperty(error, 'stack', descriptor);
+                        stackSetSucceded = true;
+                    }
                 }
-                else {
-                    error.stack = renderLongStackTrace(parentTask.data && parentTask.data[creationTrace], error.stack);
+                catch (e) { }
+                var longStack = stackSetSucceded ? null : renderLongStackTrace(parentTask.data && parentTask.data[creationTrace], error.stack);
+                if (!stackSetSucceded) {
+                    try {
+                        stackSetSucceded = error.stack = longStack;
+                    }
+                    catch (e) { }
+                }
+                if (!stackSetSucceded) {
+                    try {
+                        stackSetSucceded = error.longStack = longStack;
+                    }
+                    catch (e) { }
                 }
             }
             return parentZoneDelegate.handleError(targetZone, error);

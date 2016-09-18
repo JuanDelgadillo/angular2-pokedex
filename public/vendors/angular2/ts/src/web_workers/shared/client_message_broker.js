@@ -20,6 +20,8 @@ var collection_1 = require("angular2/src/facade/collection");
 var serializer_1 = require("angular2/src/web_workers/shared/serializer");
 var di_1 = require("angular2/src/core/di");
 var lang_2 = require("angular2/src/facade/lang");
+var lang_3 = require("angular2/src/facade/lang");
+exports.Type = lang_3.Type;
 var ClientMessageBrokerFactory = (function () {
     function ClientMessageBrokerFactory() {
     }

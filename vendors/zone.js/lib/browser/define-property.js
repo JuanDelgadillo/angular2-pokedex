@@ -4,8 +4,8 @@ var utils_1 = require("../common/utils");
  * This is necessary for Chrome and Chrome mobile, to enable
  * things like redefining `createdCallback` on an element.
  */
-var _defineProperty = Object.defineProperty;
-var _getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+var _defineProperty = Object[utils_1.zoneSymbol('defineProperty')] = Object.defineProperty;
+var _getOwnPropertyDescriptor = Object[utils_1.zoneSymbol('getOwnPropertyDescriptor')] = Object.getOwnPropertyDescriptor;
 var _create = Object.create;
 var unconfigurablesKey = utils_1.zoneSymbol('unconfigurables');
 function propertyPatch() {
@@ -76,7 +76,19 @@ function _tryDefineProperty(obj, prop, desc, originalConfigurableFlag) {
             else {
                 desc.configurable = originalConfigurableFlag;
             }
-            return _defineProperty(obj, prop, desc);
+            try {
+                return _defineProperty(obj, prop, desc);
+            }
+            catch (e) {
+                var descJson = null;
+                try {
+                    descJson = JSON.stringify(desc);
+                }
+                catch (e) {
+                    descJson = descJson.toString();
+                }
+                console.log("Attempting to configure '" + prop + "' with descriptor '" + descJson + "' on object '" + obj + "' and got error, giving up: " + e);
+            }
         }
         else {
             throw e;

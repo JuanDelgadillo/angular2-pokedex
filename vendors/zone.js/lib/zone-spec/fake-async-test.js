@@ -1,4 +1,4 @@
-(function () {
+(function (global) {
     var Scheduler = (function () {
         function Scheduler() {
             // Next scheduler id.
@@ -235,5 +235,5 @@
     // Export the class so that new instances can be created with proper
     // constructor params.
     Zone['FakeAsyncTestZoneSpec'] = FakeAsyncTestZoneSpec;
-})();
+})(typeof window === 'object' && window || typeof self === 'object' && self || global);
 //# sourceMappingURL=fake-async-test.js.map

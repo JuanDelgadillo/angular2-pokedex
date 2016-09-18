@@ -12,6 +12,8 @@ __export(require('./src/core/util'));
 __export(require('./src/core/prod_mode'));
 __export(require('./src/core/di'));
 __export(require('./src/facade/facade'));
+var lang_1 = require('angular2/src/facade/lang');
+exports.enableProdMode = lang_1.enableProdMode;
 var application_ref_1 = require('./src/core/application_ref');
 exports.platform = application_ref_1.platform;
 exports.createNgZone = application_ref_1.createNgZone;

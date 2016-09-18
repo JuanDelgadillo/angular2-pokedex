@@ -37,8 +37,7 @@
     "type": "range"
   },
   "_requiredBy": [
-    "/",
-    "/@angular/compiler-cli"
+    "/"
   ],
   "_resolved": "https://registry.npmjs.org/reflect-metadata/-/reflect-metadata-0.1.8.tgz",
   "_shasum": "72426d570b60776e3688968bd5ab9537a15cecf6",
