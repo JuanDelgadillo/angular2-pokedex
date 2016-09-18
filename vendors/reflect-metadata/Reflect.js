@@ -616,12 +616,12 @@ var Reflect;
         if (ownKeys.length <= 0)
             return parentKeys;
         var keys = new _Set();
-        for (var _i = 0, ownKeys_1 = ownKeys; _i < ownKeys_1.length; _i++) {
-            var key = ownKeys_1[_i];
+        for (var _i = 0; _i < ownKeys.length; _i++) {
+            var key = ownKeys[_i];
             keys.add(key);
         }
-        for (var _a = 0, parentKeys_1 = parentKeys; _a < parentKeys_1.length; _a++) {
-            var key = parentKeys_1[_a];
+        for (var _a = 0; _a < parentKeys.length; _a++) {
+            var key = parentKeys[_a];
             keys.add(key);
         }
         return getKeys(keys);
@@ -699,7 +699,7 @@ var Reflect;
         var entries = source.entries;
         if (typeof entries === "function") {
             var iterator = entries.call(source);
-            var result = void 0;
+            var result;
             try {
                 while (result = IteratorStep(iterator)) {
                     var _a = result.value, key = _a[0], value = _a[1];
@@ -818,7 +818,7 @@ var Reflect;
                 return this._cacheKey = key, this._cacheIndex = index;
             };
             return Map;
-        }());
+        })();
     }
     // naive Set shim
     function CreateSetPolyfill() {
@@ -839,7 +839,7 @@ var Reflect;
             Set.prototype.values = function () { return this._map.values(); };
             Set.prototype.entries = function () { return this._map.entries(); };
             return Set;
-        }());
+        })();
     }
     // naive WeakMap shim
     function CreateWeakMapPolyfill() {
@@ -872,7 +872,7 @@ var Reflect;
                 this._key = CreateUniqueKey();
             };
             return WeakMap;
-        }());
+        })();
         function FillRandomBytes(buffer, size) {
             for (var i = 0; i < size; ++i)
                 buffer[i] = Math.random() * 0xff | 0;
