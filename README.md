@@ -18,6 +18,7 @@ A simple Pokédex built with Angular 2.0 with Ahead of Time "AoT" compilation, T
       npm install
     ```
 4. Start and enjoy
+
     ```bash
       npm start
     ```
