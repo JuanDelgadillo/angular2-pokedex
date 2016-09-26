@@ -1,6 +1,24 @@
-# Pokédex
+# Pokédex - AoT
 
-A simple Pokédex built with Angular.js version 2
+A simple Pokédex built with Angular 2.0 with Ahead of Time "AoT" compilation, Tree Shaking process, rollup and TypeScript.
+
+## Prerequisites
+
+1. Install [Node.js](http://nodejs.org)
+ - on OSX use [homebrew](http://brew.sh) `brew install node`
+ - on Windows use [chocolatey](https://chocolatey.org/) `choco install nodejs`
+
+2. Clone pokedex's repo
+
+```bash
+  git clone https://github.com/JuanDelgadillo/angular2-pokedex.git
+```
+
+3. Install npm dependencies
+
+```bash
+  npm install
+```
 
 ## LEGAL
 
