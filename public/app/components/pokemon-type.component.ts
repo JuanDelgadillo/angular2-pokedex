@@ -12,5 +12,5 @@ import { Component, Input } from '@angular/core'
 })
 
 export class PokemonTypeComponent {
-	@Input() pokemon:Object = {}
+	@Input() pokemon:any = {}
 }
