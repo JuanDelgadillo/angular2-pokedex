@@ -3,9 +3,9 @@
   "version": "2.0.0",
   "description": "A Pokedex built in Angular.js version 2",
   "scripts": {
-    "start": "concurrently \"npm run tsc:w\" \"npm run lite\" ",
+    "start": "npm run lite",
     "lite": "lite-server",
-    "postinstall": "typings install",
+    "postinstall": "typings install && npm run AoTCompilation && npm run rollup",
     "tsc": "tsc",
     "tsc:w": "tsc -w",
     "typings": "typings",
