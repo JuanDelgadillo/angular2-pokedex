@@ -3,3 +3,5 @@ node_modules
 typings/
 public/**/*.js
 public/**/*.js.map
+dist/
+aot/

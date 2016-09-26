@@ -46,7 +46,8 @@ export class PokemonService {
 	}
 	
 	getComments (pokemon) {
-		var comments = localStorage.getItem(pokemon)
+    let comments:any = [];
+		comments = localStorage.getItem(pokemon)
 		if (!comments) 
 			comments = []
 		else
