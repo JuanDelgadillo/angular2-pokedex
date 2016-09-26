@@ -9,16 +9,18 @@ A simple Pokédex built with Angular 2.0 with Ahead of Time "AoT" compilation, T
  - on Windows use [chocolatey](https://chocolatey.org/) `choco install nodejs`
 
 2. Clone pokedex's repo
-
-```bash
-  git clone https://github.com/JuanDelgadillo/angular2-pokedex.git
-```
+    ```bash
+      git clone https://github.com/JuanDelgadillo/angular2-pokedex.git
+    ```
 
 3. Install npm dependencies
-
-```bash
-  npm install
-```
+    ```bash
+      npm install
+    ```
+4. Start and enjoy
+    ```bash
+      npm start
+    ```
 
 ## LEGAL
 
