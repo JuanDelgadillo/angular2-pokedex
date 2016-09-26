@@ -1,6 +1,6 @@
 node_modules
 *.log
 typings/
-public/**/*.js
-public/**/*.js.map
+public/app/**/*.js
+public/app/**/*.js.map
 aot/
