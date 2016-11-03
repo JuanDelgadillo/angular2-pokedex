@@ -9,7 +9,7 @@
     "tsc": "tsc",
     "tsc:w": "tsc -w",
     "typings": "typings",
-    "rollup": "rollup -c rollup.js",
+    "rollup": "node ./node_modules/rollup/bin/rollup -c rollup.js",
     "AoTCompilation": "ngc -p tsconfig-aot.json --locale=en-US"
   },
   "author": "Juan Delgadillo <j.mnuelh@gmail.com>",
