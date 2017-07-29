@@ -5,3 +5,8 @@ public/**/*.js
 public/**/*.js.map
 dist/
 aot/
+
+
+#System Files
+.DS_Store
+Thumbs.db
