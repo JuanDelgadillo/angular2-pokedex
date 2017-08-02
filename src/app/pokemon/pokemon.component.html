@@ -1,0 +1,40 @@
+<div class="page-header">
+  <pokemon-name [pokemon]="pokemon"></pokemon-name>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <pokemon-image [pokemon]="pokemon"></pokemon-image>
+  </div>
+  <div class="col-md-6">
+    <ul class="nav nav-tabs nav-justified">
+      <li [ngClass]="{ 'active': tab === 1 }">
+        <a (click)="selectTab(1)">Pokédex</a>
+      </li>
+      <li [ngClass]="{ 'active': tab === 2 }">
+        <a (click)="selectTab(2)">Stats</a>
+      </li>
+      <li [ngClass]="{ 'active': tab === 3 }">
+        <a (click)="selectTab(3)">Evolution</a>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <div *ngIf="tab === 1">
+        <pokemon-data [pokemon]="pokemon"></pokemon-data>
+      </div>
+
+      <!-- Stats -->
+      <div *ngIf="tab === 2">
+        <pokemon-stats [pokemon]="pokemon"></pokemon-stats>
+      </div>
+
+      <!-- Evolution -->
+      <div *ngIf="tab === 3">
+        <pokemon-evolution [pokemon]="pokemon"></pokemon-evolution>
+      </div>
+    </div>
+  </div>
+</div>
+
+<pokemon-comments [pokemon]="pokemon"></pokemon-comments>
